@@ -2,7 +2,11 @@ module SHOP_PORTAL_BACKEND
 
 go 1.22.5
 
-require github.com/kataras/iris/v12 v12.2.11
+require (
+	github.com/kataras/iris/v12 v12.2.11
+	github.com/lib/pq v1.10.9
+	github.com/sirupsen/logrus v1.8.1
+)
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
@@ -31,7 +35,6 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.26 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/schollz/closestmatch v2.1.0+incompatible // indirect
-	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/tdewolff/minify/v2 v2.20.19 // indirect
 	github.com/tdewolff/parse/v2 v2.7.12 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
