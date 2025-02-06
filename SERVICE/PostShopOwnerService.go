@@ -17,11 +17,13 @@ func PostShopOwner(reqBody structs.ShopOwner) interface{} {
 	ServiceQuery := database.InsertShopOwnerData()
 	_, err := DB.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, reqBody.RegDate, reqBody.PhNo, reqBody.Address, utils.ACTIVE_YES, reqBody.Remarks)
 	if err != nil {
-		utils.Logger.Error("Error in Inserting Shop Owner Data")
 		rsp := utils.CodeMap["500001"]
-		response = helper.CreateErrorResponse(rsp, "Error in Inserting Shop Owner Data")
+		rsp.Description = "Error in Inserting Shop Owner Data"
+		response = helper.CreateErrorResponse(rsp)
+		utils.Logger.Error(rsp.Description, err.Error())
 	} else {
 		response = helper.CreateSuccessResponse("Shop Owner Added Successfully")
+		utils.Logger.Info(response)
 	}
 
 	return response

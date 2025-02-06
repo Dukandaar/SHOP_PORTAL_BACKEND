@@ -44,8 +44,11 @@ func ReadQParams(ctx iris.Context) (int, string) {
 	return shop_id, NULL_STRING
 }
 
-func ReadShopOwnerReqBody(ctx iris.Context) (structs.ShopOwner, error) {
+func ReadShopOwnerReqBody(ctx iris.Context) (structs.ShopOwner, string) {
 	body := structs.ShopOwner{}
 	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
-	return body, err
+	if err != nil {
+		return body, "Error in decoding request body"
+	}
+	return body, NULL_STRING
 }
