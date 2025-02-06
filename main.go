@@ -1,7 +1,9 @@
 package main
 
 import (
+	controller "SHOP_PORTAL_BACKEND/CONTROLLER"
 	helper "SHOP_PORTAL_BACKEND/HELPER"
+	util "SHOP_PORTAL_BACKEND/UTILS"
 
 	"github.com/kataras/iris/v12"
 )
@@ -15,6 +17,12 @@ func main() {
 	// to get server is up
 	app.Get("/shop/ping", func(ctx iris.Context) {
 		helper.ServerUp(ctx)
+	})
+
+	// api to add new shop owner
+	app.Post("shop/addShowOwner", func(ctx iris.Context) {
+		helper.SetApiName(util.POST_SHOP_OWNER, ctx)
+		controller.PostShopOwner(ctx)
 	})
 
 	// Start the server on port 8000
