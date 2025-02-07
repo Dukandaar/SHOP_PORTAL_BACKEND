@@ -19,11 +19,11 @@ func CheckError(headerError string, qparamsError string, bodyError string) (util
 		rspCode = utils.StatusBadRequest
 	} else if qparamsError != utils.NULL_STRING {
 		utils.Logger.Error(qparamsError)
-		rspBody = ErrorResponse("400002", headerError)
+		rspBody = ErrorResponse("400002", qparamsError)
 		rspCode = utils.StatusBadRequest
 	} else if bodyError != utils.NULL_STRING {
 		utils.Logger.Error(bodyError)
-		rspBody = ErrorResponse("400003", headerError)
+		rspBody = ErrorResponse("400003", bodyError)
 		rspCode = utils.StatusBadRequest
 	}
 
