@@ -8,44 +8,32 @@ import (
 )
 
 // todo
-func ReadHeader(ctx iris.Context) string {
-	h1 := NULL_STRING
-	h2 := NULL_STRING
-	h3 := NULL_STRING
+func ReadHeader(ctx iris.Context, reqApiHeader map[string]bool) map[string]interface{} {
 
-	h1 = ctx.GetHeader("Content-Type")
-	h2 = ctx.GetHeader("Accept")
-	h3 = ctx.GetHeader("Authorization")
+	headers := make(map[string]interface{})
 
-	if h1 == NULL_STRING {
-		return "MISSING_CONTENT_TYPE"
-	}
+	headers[CONTENT_TYPE] = ctx.GetHeader(CONTENT_TYPE)
+	headers[ACCEPT] = ctx.GetHeader(ACCEPT)
+	headers[ACCEPT_ENCODING] = ctx.GetHeader(ACCEPT_ENCODING)
 
-	if h2 == NULL_STRING {
-		return "MISSING_ACCEPT"
-	}
-
-	if h3 == NULL_STRING {
-		return "MISSING_AUTHORIZATION"
-	}
-
-	return NULL_STRING
+	return headers
 }
 
-func ReadQParams(ctx iris.Context) (int, string) {
+// func ReadQParams(ctx iris.Context) map[string]interface{} {
 
-	shop_id := NULL_INT
-	shop_id, _ = ctx.URLParamInt("shop_id")
+// 	shop_id := NULL_INT
+// 	shop_id, _ = ctx.URLParamInt("shop_id")
 
-	if shop_id == NULL_INT {
-		return NULL_INT, "MISSING_SHOP_ID"
-	}
+// 	return shop_id, NULL_STRING
+// }
 
-	return shop_id, NULL_STRING
-}
-
-func ReadShopOwnerReqBody(ctx iris.Context) (structs.ShopOwner, error) {
+func ReadShopOwnerReqBody(ctx iris.Context) (structs.ShopOwner, string) {
 	body := structs.ShopOwner{}
+	// rsp := CodeMap["200001"]
 	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
-	return body, err
+	if err != nil {
+		// rsp := helper.ErrorResponse("400001", "Error in decoding request body")
+		return body, "Error in decoding request body"
+	}
+	return body, NULL_STRING
 }

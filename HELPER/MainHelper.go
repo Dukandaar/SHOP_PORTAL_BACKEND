@@ -12,8 +12,10 @@ func Onit() {
 
 	runtime.GOMAXPROCS(runtime.NumCPU()) // Use all CPU cores
 	utils.SetCodeMap()                   // set code map
-	utils.NewLogger()
-	database.ConnectDB()
+	utils.SetApiHeaders()                // set api headers
+	utils.SetValidHeaders()              // set valid headers
+	utils.NewLogger()                    // new logger
+	database.ConnectDB()                 // connect to database
 }
 
 func ServerUp(ctx iris.Context) {

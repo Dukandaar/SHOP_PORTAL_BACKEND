@@ -4,6 +4,7 @@ import (
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	service "SHOP_PORTAL_BACKEND/SERVICE"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	validator "SHOP_PORTAL_BACKEND/VALIDATOR"
 
 	"github.com/kataras/iris/v12"
 )
@@ -11,22 +12,26 @@ import (
 func PostShopOwner(ctx iris.Context) {
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
-	headerError := utils.ReadHeader(ctx)
-	_, qParamError := utils.ReadQParams(ctx)
-	reqBody, reqBodyError := utils.ReadShopOwnerReqBody(ctx)
+	headers := utils.ReadHeader(ctx, utils.PostShopOwnerHeaders)
+	reqBody, bodyError := utils.ReadShopOwnerReqBody(ctx)
+	utils.Logger.Info(headers, reqBody)
 
-	utils.Logger.Info(logPrefix, ctx.Request())
+	headerError := validator.ValidateHeader(utils.PostShopOwnerHeaders, headers)
+	reqBodyError := validator.ValidateShopOwnerReqBody(&reqBody, bodyError)
 
-	rspBody, rspCode := helper.CheckError(headerError, qParamError, reqBodyError)
+	rspBody, rspCode := helper.CheckError(headerError, utils.NULL_STRING, reqBodyError)
 
-	var rsp interface{}
+	var response interface{}
 
 	if rspCode != utils.StatusOK {
-		rsp = helper.CreateErrorResponse(rspBody)
-
+		response = helper.CreateErrorResponse(rspBody)
 	} else {
-		rsp = service.PostShopOwner(reqBody)
+		response, rspCode = service.PostShopOwner(reqBody)
 	}
-	ctx.JSON(rsp)
+
+	utils.Logger.Info(logPrefix, response)
+
+	ctx.ResponseWriter().WriteHeader(rspCode)
+	ctx.JSON(response)
 	utils.Logger.Info(logPrefix + " Request Completed.")
 }

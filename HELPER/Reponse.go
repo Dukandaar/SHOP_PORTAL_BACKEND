@@ -5,13 +5,13 @@ import (
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 )
 
-func CreateErrorResponse(rsp utils.Codes, description string) structs.ErrorResponse {
+func CreateErrorResponse(rsp utils.Codes) structs.ErrorResponse {
 	return structs.ErrorResponse{
 		Stat: "Fail",
 		ErrorSubResponse: structs.ErrorSubResponse{
 			ErrorCode:       rsp.StatusCode,
 			ErrorMsg:        rsp.Message,
-			ErrorDescrition: description,
+			ErrorDescrition: rsp.Description,
 		},
 	}
 }

@@ -18,7 +18,7 @@ var CodeMap map[string]Codes
 
 func SetCodeMap() {
 	CodeMap = make(map[string]Codes)
-	CodeMap["200001"] = Codes{200001, "Valid Request", "Valid Request"}
+	CodeMap["200001"] = Codes{200001, "OK", "Valid Request"}
 	CodeMap["400001"] = Codes{400001, "Invalid headers", "Invalid headers"}
 	CodeMap["400002"] = Codes{400002, "Invalid Qparams", "Invalid Query Parameters"}
 	CodeMap["400003"] = Codes{400003, "Invalid Body", "Malformed ReqBody Content"}
