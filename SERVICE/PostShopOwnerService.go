@@ -63,7 +63,7 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 				response, rspCode = helper.CreateErrorResponse("500001", "Error in activating Shop Owner")
 				utils.Logger.Error(err.Error())
 			} else {
-				response, rspCode = helper.CreateSuccessResponse("Shop Owner Activated Successfully")
+				response, rspCode = helper.CreateSuccessResponse("Shop Owner Activated Successfully with regId: " + reg_id)
 			}
 		}
 	}

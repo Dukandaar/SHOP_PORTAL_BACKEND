@@ -19,13 +19,13 @@ func GenerateToken(ctx iris.Context) {
 	headerError := validator.ValidateHeader(utils.GenerateTokenHeaders, headers)
 	reqBodyError := validator.ValidateGenerateTokenReqBody(&reqBody, bodyError)
 
-	errMsg := helper.CheckError(headerError, utils.NULL_STRING, reqBodyError)
+	errMsg, errCodeStr := helper.CheckError(headerError, utils.NULL_STRING, reqBodyError)
 
 	var response interface{}
 	rspCode := utils.StatusOK
 
 	if errMsg != utils.NULL_STRING {
-		response, rspCode = helper.CreateErrorResponse("400001", errMsg)
+		response, rspCode = helper.CreateErrorResponse(errCodeStr, errMsg)
 	} else {
 		response, rspCode = service.GenerateToken(reqBody)
 	}
