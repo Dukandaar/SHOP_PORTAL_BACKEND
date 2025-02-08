@@ -16,8 +16,9 @@ CREATE TABLE shop.owner (
     reg_id varchar(10) NOT NULL,
     phone_no varchar(10) NOT NULL,
     is_active is_active NOT NULL,
-    remarks text NULL,
     reg_date date NOT NULL,
+    address VARCHAR(255),
+    remarks text NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
