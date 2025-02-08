@@ -1,6 +1,8 @@
 package maths
 
 import (
+	helper "SHOP_PORTAL_BACKEND/HELPER"
+	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"math/rand"
 )
 
@@ -31,4 +33,18 @@ func RandStringBytesMaskImpr(n int) string {
 
 func GenerateRegID() string {
 	return RandStringBytesMaskImpr(10)
+}
+
+func GenerateKey(regId string) (string, string) {
+	pubKey, err := helper.ParsePublicKey(utils.PublicKeyPEM) // Parse public key
+	if err != nil {
+		return utils.NULL_STRING, "Error in parsing public key"
+	}
+
+	encryptedID, err := helper.Encrypt(regId, pubKey) // Encrypt ID with public key
+	if err != nil {
+		return utils.NULL_STRING, "Error in encrypting ID"
+	}
+
+	return helper.Base64Encode(encryptedID), utils.NULL_STRING
 }

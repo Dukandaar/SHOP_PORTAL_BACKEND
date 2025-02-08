@@ -27,12 +27,19 @@ func ReadHeader(ctx iris.Context, reqApiHeader map[string]bool) map[string]inter
 // 	return shop_id, NULL_STRING
 // }
 
-func ReadShopOwnerReqBody(ctx iris.Context) (structs.ShopOwner, string) {
-	body := structs.ShopOwner{}
-	// rsp := CodeMap["200001"]
+func ReadGenerateTokenReqBody(ctx iris.Context) (structs.GenerateToken, string) {
+	body := structs.GenerateToken{}
 	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
 	if err != nil {
-		// rsp := helper.ErrorResponse("400001", "Error in decoding request body")
+		return body, "Error in decoding request body"
+	}
+	return body, NULL_STRING
+}
+
+func ReadShopOwnerReqBody(ctx iris.Context) (structs.ShopOwner, string) {
+	body := structs.ShopOwner{}
+	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
+	if err != nil {
 		return body, "Error in decoding request body"
 	}
 	return body, NULL_STRING

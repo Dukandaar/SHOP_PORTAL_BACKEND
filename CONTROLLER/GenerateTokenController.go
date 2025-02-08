@@ -9,15 +9,15 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
-func PostShopOwner(ctx iris.Context) {
+func GenerateToken(ctx iris.Context) {
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
-	headers := utils.ReadHeader(ctx, utils.PostShopOwnerHeaders)
-	reqBody, bodyError := utils.ReadShopOwnerReqBody(ctx)
+	headers := utils.ReadHeader(ctx, utils.GenerateTokenHeaders)
+	reqBody, bodyError := utils.ReadGenerateTokenReqBody(ctx)
 	utils.Logger.Info(headers, reqBody)
 
-	headerError := validator.ValidateHeader(utils.PostShopOwnerHeaders, headers)
-	reqBodyError := validator.ValidateShopOwnerReqBody(&reqBody, bodyError)
+	headerError := validator.ValidateHeader(utils.GenerateTokenHeaders, headers)
+	reqBodyError := validator.ValidateGenerateTokenReqBody(&reqBody, bodyError)
 
 	errMsg := helper.CheckError(headerError, utils.NULL_STRING, reqBodyError)
 
@@ -27,7 +27,7 @@ func PostShopOwner(ctx iris.Context) {
 	if errMsg != utils.NULL_STRING {
 		response, rspCode = helper.CreateErrorResponse("400001", errMsg)
 	} else {
-		response, rspCode = service.PostShopOwner(reqBody)
+		response, rspCode = service.GenerateToken(reqBody)
 	}
 
 	utils.Logger.Info(logPrefix, response)
