@@ -6,13 +6,6 @@ import (
 	"time"
 )
 
-// if h1 == NULL_STRING {
-// 	return "MISSING_CONTENT_TYPE"
-// }
-
-//	if h2 == NULL_STRING {
-//		return "MISSING_ACCEPT"
-//	}
 func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface{}) string {
 
 	// Content-Type
@@ -73,8 +66,21 @@ func ValidateQParams(qparams map[string]interface{}) error {
 	return nil
 }
 
-func ValidateBody(body map[string]interface{}) error {
-	return nil
+func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) string {
+
+	if bodyErr != utils.NULL_STRING {
+		return bodyErr
+	}
+
+	if body.RegId == utils.NULL_STRING {
+		return "Missing reg_id"
+	}
+
+	if body.Key == utils.NULL_STRING {
+		return "Missing key"
+	}
+
+	return utils.NULL_STRING
 }
 
 func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) string {

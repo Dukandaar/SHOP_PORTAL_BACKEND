@@ -19,6 +19,12 @@ func main() {
 		helper.ServerUp(ctx)
 	})
 
+	// generate token
+	app.Get("/shop/generateToken", func(ctx iris.Context) {
+		helper.SetApiName(util.GENERATE_TOKEN, ctx)
+		controller.GenerateToken(ctx)
+	})
+
 	// api to add new shop owner
 	app.Post("shop/addShowOwner", func(ctx iris.Context) {
 		helper.SetApiName(util.POST_SHOP_OWNER, ctx)

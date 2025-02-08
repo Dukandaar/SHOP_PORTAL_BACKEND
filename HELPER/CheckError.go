@@ -8,24 +8,20 @@ func ErrorResponse(errorCode string, description string) utils.Codes {
 	return rsp
 }
 
-func CheckError(headerError string, qparamsError string, bodyError string) (utils.Codes, int) {
+func CheckError(headerError string, qparamsError string, bodyError string) string {
 
-	rspBody := ErrorResponse("200001", "SUCCESS")
-	rspCode := utils.StatusOK
+	errMsg := utils.NULL_STRING
 
 	if headerError != utils.NULL_STRING {
 		utils.Logger.Error(headerError)
-		rspBody = ErrorResponse("400001", headerError)
-		rspCode = utils.StatusBadRequest
+		errMsg = headerError
 	} else if qparamsError != utils.NULL_STRING {
 		utils.Logger.Error(qparamsError)
-		rspBody = ErrorResponse("400002", qparamsError)
-		rspCode = utils.StatusBadRequest
+		errMsg = qparamsError
 	} else if bodyError != utils.NULL_STRING {
 		utils.Logger.Error(bodyError)
-		rspBody = ErrorResponse("400003", bodyError)
-		rspCode = utils.StatusBadRequest
+		errMsg = bodyError
 	}
 
-	return rspBody, rspCode
+	return errMsg
 }

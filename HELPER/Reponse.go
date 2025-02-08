@@ -5,7 +5,10 @@ import (
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 )
 
-func CreateErrorResponse(rsp utils.Codes) structs.ErrorResponse {
+func CreateErrorResponse(code string, des string) (structs.ErrorResponse, int) {
+	rsp := utils.CodeMap[code]
+	rsp.Description = des
+
 	return structs.ErrorResponse{
 		Stat: "Fail",
 		ErrorSubResponse: structs.ErrorSubResponse{
@@ -13,14 +16,14 @@ func CreateErrorResponse(rsp utils.Codes) structs.ErrorResponse {
 			ErrorMsg:        rsp.Message,
 			ErrorDescrition: rsp.Description,
 		},
-	}
+	}, rsp.StatusCode
 }
 
-func CreateSuccessResponse(message string) structs.SuccessResponse {
+func CreateSuccessResponse(message string) (structs.SuccessResponse, int) {
 	return structs.SuccessResponse{
 		Stat: "OK",
 		SuccessSubResponse: structs.SuccessSubResponse{
 			SuccessMsg: message,
 		},
-	}
+	}, utils.StatusOK
 }

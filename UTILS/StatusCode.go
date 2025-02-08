@@ -18,11 +18,18 @@ var CodeMap map[string]Codes
 
 func SetCodeMap() {
 	CodeMap = make(map[string]Codes)
-	CodeMap["200001"] = Codes{200001, "OK", "Valid Request"}
-	CodeMap["400001"] = Codes{400001, "Invalid headers", "Invalid headers"}
-	CodeMap["400002"] = Codes{400002, "Invalid Qparams", "Invalid Query Parameters"}
-	CodeMap["400003"] = Codes{400003, "Invalid Body", "Malformed ReqBody Content"}
-	CodeMap["404001"] = Codes{404001, "4002", "Not Found"}
-	CodeMap["408001"] = Codes{408001, "4003", "Request Timeout"}
-	CodeMap["500001"] = Codes{500001, "Internal Server Error", "Internal Server Error"}
+	CodeMap["200001"] = Codes{StatusCode: StatusOK, Message: "OK"}
+	CodeMap["400001"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400002"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400003"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400004"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400005"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400006"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400007"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400008"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400009"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400010"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400011"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400012"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["500001"] = Codes{StatusCode: StatusInternalServerError, Message: "Internal Server Error"}
 }
