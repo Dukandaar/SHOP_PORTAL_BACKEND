@@ -106,3 +106,45 @@ func GenerateJWT(encryptedID string) (string, error) {
 
 	return signedToken, nil
 }
+
+// Parse a JWT and decrypt the ID
+func ParseAndDecryptJWT(tokenString string) (string, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Method)
+		}
+		return []byte(utils.JwtSecret), nil
+	})
+
+	if err != nil {
+		return "", fmt.Errorf("parsing token failed: %w", err)
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		encryptedID, ok := claims["reg_id"].(string)
+		if !ok {
+			return "", fmt.Errorf("invalid reg_id in token")
+		}
+
+		// Base64 decode
+		decodedEncryptedID, err := base64.StdEncoding.DecodeString(encryptedID)
+		if err != nil {
+			return "", fmt.Errorf("base64 decode failed: %w", err)
+		}
+
+		// RSA decrypt (you'll need the private key)
+		privKey, err := ParsePrivateKey(utils.PrivateKeyPEM)
+		if err != nil {
+			return "", fmt.Errorf("parsing private key failed: %w", err)
+		}
+
+		decryptedID, err := Decrypt(decodedEncryptedID, privKey)
+		if err != nil {
+			return "", fmt.Errorf("rsa decryption failed: %w", err)
+		}
+
+		return decryptedID, nil
+	}
+
+	return "", fmt.Errorf("invalid token claims")
+}
