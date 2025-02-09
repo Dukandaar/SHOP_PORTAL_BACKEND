@@ -31,6 +31,12 @@ func main() {
 		controller.PostShopOwner(ctx)
 	})
 
+	// api to update shop owner
+	app.Put("shop/updateShopOwner", func(ctx iris.Context) {
+		helper.SetApiName(util.PUT_SHOP_OWNER, ctx)
+		controller.PutShopOwner(ctx)
+	})
+
 	// Start the server on port 8000
 	err := app.Listen(":8000")
 	if err != nil {

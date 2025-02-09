@@ -31,7 +31,7 @@ func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) (
 			utils.Logger.Info("Row with reg_id : ", body.RegId, " exists")
 		} else {
 			utils.Logger.Info("Row with reg_id", body.RegId, "exists")
-			return "Partner Registration ID does not exist", "400004"
+			return "Owner Registration ID does not exist", "400004"
 		}
 	}
 

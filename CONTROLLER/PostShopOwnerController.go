@@ -17,11 +17,11 @@ func PostShopOwner(ctx iris.Context) {
 
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
-	headers := utils.ReadHeader(ctx, utils.PostShopOwnerHeaders)
+	headers := utils.ReadHeader(ctx)
 	reqBody, bodyError := utils.ReadShopOwnerReqBody(ctx)
 	utils.Logger.Info(headers, reqBody)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.PostShopOwnerHeaders, headers)
+	headerError, errCodeStr := validator.ValidateHeader(utils.PostShopOwnerHeaders, headers, ctx)
 	if errCodeStr != utils.SUCCESS {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(headerError)

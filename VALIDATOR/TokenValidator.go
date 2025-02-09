@@ -36,3 +36,19 @@ func ValidateKey(key string, regId string) (string, string) {
 	utils.Logger.Info("Valid key for reg_id: ", regId)
 	return utils.NULL_STRING, utils.SUCCESS
 }
+
+func ValidateToken(token string, regId string) (string, string) {
+
+	decryptedID, err := helper.ParseAndDecryptJWT(token)
+	if err != nil {
+		utils.Logger.Error(err.Error())
+		return "Invalid token", "400002"
+	}
+
+	if decryptedID != regId {
+		return "Invalid token for reg_id", "400002"
+	}
+	utils.Logger.Info("RegId in token is: ", decryptedID)
+
+	return utils.NULL_STRING, utils.SUCCESS
+}

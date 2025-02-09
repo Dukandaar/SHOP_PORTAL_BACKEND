@@ -1,8 +1,32 @@
 package validator
 
-import utils "SHOP_PORTAL_BACKEND/UTILS"
+import (
+	utils "SHOP_PORTAL_BACKEND/UTILS"
 
-func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface{}) (string, string) {
+	"github.com/kataras/iris/v12"
+)
+
+func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface{}, ctx iris.Context) (string, string) {
+
+	// Token validation
+	if reqApiHeader[utils.TOKEN] {
+		if apiHeader[utils.TOKEN] == utils.NULL_STRING {
+			return "Missing Token header", "400001"
+		}
+
+		token, _ := apiHeader[utils.TOKEN].(string)
+		regId := ctx.URLParam("reg_id")
+
+		if len(regId) != 10 {
+			return "Invalid reg_id length", "400004"
+		}
+
+		errMsg, rspCode := ValidateToken(token, regId)
+		if rspCode != utils.SUCCESS {
+			return errMsg, rspCode
+		}
+
+	}
 
 	// Content-Type
 	if reqApiHeader[utils.CONTENT_TYPE] {

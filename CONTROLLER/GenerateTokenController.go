@@ -17,11 +17,11 @@ func GenerateToken(ctx iris.Context) {
 
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
-	headers := utils.ReadHeader(ctx, utils.GenerateTokenHeaders)
+	headers := utils.ReadHeader(ctx)
 	reqBody, bodyError := utils.ReadGenerateTokenReqBody(ctx)
 	utils.Logger.Info(headers, reqBody)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.GenerateTokenHeaders, headers)
+	headerError, errCodeStr := validator.ValidateHeader(utils.GenerateTokenHeaders, headers, ctx)
 	if errCodeStr != utils.SUCCESS {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(headerError)

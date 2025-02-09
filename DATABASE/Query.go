@@ -51,7 +51,7 @@ func UpdateShopOwnerData() string {
 			address = $6,
 			remarks = $7,
 			updated_at = $8
-		WHERE id = $9;
+		WHERE reg_id = $9;
 	`
 	return query
 }

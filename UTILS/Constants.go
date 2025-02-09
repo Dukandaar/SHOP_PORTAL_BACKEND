@@ -4,6 +4,7 @@ const (
 	// API NAME
 	GENERATE_TOKEN  = "GENERATE_TOKEN"
 	POST_SHOP_OWNER = "POST_SHOP_OWNER"
+	PUT_SHOP_OWNER  = "PUT_SHOP_OWNER"
 
 	// EMPTY
 	NULL_STRING = ""
@@ -17,6 +18,10 @@ const (
 	ACCEPT_ENCODING = "Accept-Encoding"
 	CONTENT_TYPE    = "Content-Type"
 	ACCEPT          = "Accept"
+	TOKEN           = "Token"
+
+	// QPARAMS NAMES
+	OWNER_REG_ID = "owner_reg_id"
 
 	JwtSecret = "YourStrongJwtSecretKeyHere"
 
@@ -45,19 +50,29 @@ FgDpvt6OhdJENf67AgMBAAE=
 -----END PUBLIC KEY-----`
 )
 
+// headers
 var GenerateTokenHeaders map[string]bool
 var PostShopOwnerHeaders map[string]bool
+var PutShopOwnerHeaders map[string]bool
+
+// Qparams
+var UpdateShopOwnerQParams map[string]bool
 
 func SetApiHeaders() {
-	PostShopOwnerHeaders = map[string]bool{"Content-Type": true, "Accept": true, "Accept-Encoding": true}
-	GenerateTokenHeaders = map[string]bool{"Content-Type": true, "Accept": true, "Accept-Encoding": true}
+	PostShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GenerateTokenHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	PutShopOwnerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+}
+
+func SetApiQParams() {
+	UpdateShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
 }
 
 var ValidHeaders map[string][]interface{}
 
 func SetValidHeaders() {
 	ValidHeaders = make(map[string][]interface{})
-	ValidHeaders["Content-Type"] = []interface{}{"application/json", "text/plain", "application.json; charset=utf-8"}
-	ValidHeaders["Accept"] = []interface{}{"application/json, text/plain", "*/*"}
-	ValidHeaders["Accept-Encoding"] = []interface{}{"gzip, deflate, br"}
+	ValidHeaders[CONTENT_TYPE] = []interface{}{"application/json", "text/plain", "application.json; charset=utf-8"}
+	ValidHeaders[ACCEPT] = []interface{}{"application/json, text/plain", "*/*"}
+	ValidHeaders[ACCEPT_ENCODING] = []interface{}{"gzip, deflate, br"}
 }
