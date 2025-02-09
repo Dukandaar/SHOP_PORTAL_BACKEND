@@ -28,3 +28,20 @@ type TokenResponse struct {
 type TokenSubResponse struct {
 	Token string `json:"token"`
 }
+
+type ShopOwnerDetailsResponse struct {
+	Stat                        string                      `json:"stat"`
+	ShopOwnerDetailsSubResponse ShopOwnerDetailsSubResponse `json:"rsp"`
+}
+
+type ShopOwnerDetailsSubResponse struct {
+	ShopName  string  `json:"shop_name"`
+	OwnerName string  `json:"owner_name"`
+	PhNo      string  `json:"ph_no"`
+	RegDate   string  `json:"reg_date"`
+	Address   string  `json:"address"`
+	Remarks   string  `json:"remarks"`
+	Gold      float32 `json:"gold"`
+	Silver    float32 `json:"silver"`
+	Cash      float32 `json:"cash"`
+}
