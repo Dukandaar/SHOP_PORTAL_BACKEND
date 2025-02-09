@@ -27,7 +27,7 @@ func PutShopOwner(ctx iris.Context) {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(headerError)
 	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.UpdateShopOwnerQParams, qparams)
+		QparamsError, errCodeStr := validator.ValidateQParams(utils.PutShopOwnerQParams, qparams)
 		if errCodeStr != utils.SUCCESS { // qparams error
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
 			utils.Logger.Error(QparamsError)
@@ -37,7 +37,7 @@ func PutShopOwner(ctx iris.Context) {
 				response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
 				utils.Logger.Error(reqBodyError)
 			} else {
-				response, rspCode = service.PutShopOwner(reqBody, ctx.URLParam("reg_id"))
+				response, rspCode = service.PutShopOwner(reqBody, ctx.URLParam(utils.OWNER_REG_ID))
 			}
 		}
 	}

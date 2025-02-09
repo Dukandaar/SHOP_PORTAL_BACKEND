@@ -27,6 +27,6 @@ func SetCodeMap() {
 	CodeMap["400006"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [INVLAID BODY FIELD]"}
 	CodeMap["400007"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [MALFORMED BODY CONTENT]"}
 	CodeMap["400008"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [ALREADY EXIST]"}
-	CodeMap["404001"] = Codes{StatusCode: StatusNotFound, Message: "Not Found"}
+	CodeMap["404001"] = Codes{StatusCode: StatusNotFound, Message: "Data Not Found"}
 	CodeMap["500001"] = Codes{StatusCode: StatusInternalServerError, Message: "Internal Server Error"}
 }

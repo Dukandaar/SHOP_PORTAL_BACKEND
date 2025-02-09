@@ -15,7 +15,7 @@ func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface
 		}
 
 		token, _ := apiHeader[utils.TOKEN].(string)
-		regId := ctx.URLParam("reg_id")
+		regId := ctx.URLParam(utils.OWNER_REG_ID)
 
 		if len(regId) != 10 {
 			return "Invalid reg_id length", "400004"

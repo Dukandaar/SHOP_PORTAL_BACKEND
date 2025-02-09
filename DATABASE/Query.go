@@ -55,3 +55,37 @@ func UpdateShopOwnerData() string {
 	`
 	return query
 }
+
+func GetShopOwnerData() string {
+	query := `
+		SELECT
+			o.shop_name,
+			o.owner_name,
+			o.phone_no,
+			o.reg_date::text,
+			o.address,
+			o.remarks,
+			COALESCE(b_gold.balance, 0) as gold,
+			COALESCE(b_silver.balance, 0) as silver,
+			COALESCE(b_cash.balance, 0) as cash
+		FROM
+			shop.owner o
+		LEFT JOIN LATERAL (
+			SELECT balance
+			FROM shop.balance
+			WHERE owner_id = o.id AND type = 'Gold'
+		) AS b_gold ON TRUE
+		LEFT JOIN LATERAL (
+			SELECT balance
+			FROM shop.balance
+			WHERE owner_id = o.id AND type = 'Silver'
+		) AS b_silver ON TRUE
+		LEFT JOIN LATERAL (
+			SELECT balance
+			FROM shop.balance
+			WHERE owner_id = o.id AND type = 'Cash'
+		) AS b_cash ON TRUE
+		WHERE
+			o.reg_id = $1;`
+	return query
+}

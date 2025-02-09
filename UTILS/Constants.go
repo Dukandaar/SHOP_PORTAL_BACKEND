@@ -5,6 +5,7 @@ const (
 	GENERATE_TOKEN  = "GENERATE_TOKEN"
 	POST_SHOP_OWNER = "POST_SHOP_OWNER"
 	PUT_SHOP_OWNER  = "PUT_SHOP_OWNER"
+	GET_SHOP_OWNER  = "GET_SHOP_OWNER"
 
 	// EMPTY
 	NULL_STRING = ""
@@ -13,6 +14,9 @@ const (
 	ACTIVE_YES  = "Y"
 	ACTIVE_NO   = "N"
 	SUCCESS     = "200000"
+	GOLD        = "Gold"
+	SILVER      = "Silver"
+	CASH        = "Cash"
 
 	// HEADER NAMES
 	ACCEPT_ENCODING = "Accept-Encoding"
@@ -54,18 +58,22 @@ FgDpvt6OhdJENf67AgMBAAE=
 var GenerateTokenHeaders map[string]bool
 var PostShopOwnerHeaders map[string]bool
 var PutShopOwnerHeaders map[string]bool
+var GetShopOwnerHeaders map[string]bool
 
 // Qparams
-var UpdateShopOwnerQParams map[string]bool
+var PutShopOwnerQParams map[string]bool
+var GetShopOwnerQParams map[string]bool
 
 func SetApiHeaders() {
 	PostShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GenerateTokenHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PutShopOwnerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetShopOwnerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 }
 
 func SetApiQParams() {
-	UpdateShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
+	PutShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
+	GetShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
 }
 
 var ValidHeaders map[string][]interface{}

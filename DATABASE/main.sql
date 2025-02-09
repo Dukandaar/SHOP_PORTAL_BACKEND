@@ -169,5 +169,17 @@ CREATE TRIGGER update_bill_updated_at BEFORE UPDATE ON shop.bill FOR EACH ROW EX
 CREATE TRIGGER update_transaction_updated_at BEFORE UPDATE ON shop.transaction FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 
+-- create index
+CREATE INDEX idx_owner_id ON shop.owner (id);
+CREATE INDEX idx_stock_id ON shop.stock (id);
+CREATE INDEX idx_customer_id ON shop.customer (id);
+CREATE INDEX idx_owner_customer_id ON shop.owner_customer (id);
+CREATE INDEX idx_balance_id ON shop.balance (id);
+CREATE INDEX idx_bill_id ON shop.bill (id);
+CREATE INDEX idx_transaction_id ON shop.transaction (id);
+CREATE INDEX idx_payment_id ON shop.payment (id);
+CREATE INDEX idx_stock_transactions_id ON shop.stock_transactions (id);
 
+CREATE INDEX idx_reg_id ON shop.owner (reg_id);
+CREATE INDEX idx_owner_type ON shop.balance (owner_id, type);
 
