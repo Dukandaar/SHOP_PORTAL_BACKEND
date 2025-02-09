@@ -19,6 +19,15 @@ func CheckOwnerPresent() string {
 	return query
 }
 
+func CheckValidRegId() string {
+	query := `
+			SELECT EXISTS 
+			(SELECT 1 FROM shop.owner 
+			WHERE reg_id = $1)
+	`
+	return query
+}
+
 func ToggleShopOwnerActiveStatus() string {
 	query := `
 		UPDATE shop.owner

@@ -4,7 +4,6 @@ import (
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"math/rand"
-	"os"
 )
 
 const (
@@ -37,7 +36,7 @@ func GenerateRegID() string {
 }
 
 func GenerateKey(regId string) (string, string) {
-	pubKey, err := helper.ParsePublicKey(os.Getenv("PublicKeyPEM")) // Parse public key
+	pubKey, err := helper.ParsePublicKey(utils.PublicKeyPEM) // Parse public key
 	if err != nil {
 		return utils.NULL_STRING, "Error in parsing public key"
 	}

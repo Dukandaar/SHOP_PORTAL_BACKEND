@@ -1,17 +1,41 @@
 package helper
 
 import (
+	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 )
+
+// Base64Encode encodes data to Base64.
+func Base64Encode(data []byte) string {
+	return base64.StdEncoding.EncodeToString(data)
+}
+
+// Base64Decode decodes Base64-encoded data.
+func Base64Decode(base64String string) ([]byte, error) {
+	return base64.StdEncoding.DecodeString(base64String)
+}
+
+// Base64EncodeToString encodes a string to Base64.
+func Base64EncodeToString(s string) string {
+	return base64.StdEncoding.EncodeToString([]byte(s))
+}
+
+// Base64DecodeToString decodes a Base64-encoded string to a string.
+func Base64DecodeToString(base64String string) (string, error) {
+	decoded, err := base64.StdEncoding.DecodeString(base64String)
+	if err != nil {
+		return "", err
+	}
+	return string(decoded), nil
+}
 
 // Key Parsing Functions
 func ParsePublicKey(publicKeyPEM string) (*rsa.PublicKey, error) {
@@ -32,7 +56,23 @@ func ParsePublicKey(publicKeyPEM string) (*rsa.PublicKey, error) {
 	return pubKey, nil
 }
 
+// ParsePrivateKey parses a PEM-encoded private key.
+func ParsePrivateKey(privateKeyPEM string) (*rsa.PrivateKey, error) {
+	block, _ := pem.Decode([]byte(privateKeyPEM))
+	if block == nil || block.Type != "RSA PRIVATE KEY" {
+		return nil, fmt.Errorf("invalid private key PEM")
+	}
+
+	privKey, err := x509.ParsePKCS1PrivateKey(block.Bytes)
+	if err != nil {
+		return nil, fmt.Errorf("parsing private key failed: %w", err)
+	}
+
+	return privKey, nil
+}
+
 // RSA Encryption/Decryption Functions
+// Encrypt encrypts data using RSA public key.
 func Encrypt(plaintext string, pubKey *rsa.PublicKey) ([]byte, error) {
 	ciphertext, err := rsa.EncryptPKCS1v15(rand.Reader, pubKey, []byte(plaintext))
 	if err != nil {
@@ -41,11 +81,13 @@ func Encrypt(plaintext string, pubKey *rsa.PublicKey) ([]byte, error) {
 	return ciphertext, nil
 }
 
-// base 64 enryption
-func Base64Encode(encryptedID []byte) string {
-	base64EncryptedID := base64.StdEncoding.EncodeToString(encryptedID)
-	fmt.Println("Base64 Encrypted ID:", base64EncryptedID)
-	return base64EncryptedID
+// Decrypt decrypts data using RSA private key.
+func Decrypt(ciphertext []byte, privKey *rsa.PrivateKey) (string, error) {
+	plaintext, err := rsa.DecryptPKCS1v15(rand.Reader, privKey, ciphertext)
+	if err != nil {
+		return "", fmt.Errorf("decryption failed: %w", err)
+	}
+	return string(plaintext), nil
 }
 
 // Generate a JWT containing the Base64-encoded, RSA-encrypted ID
@@ -57,7 +99,7 @@ func GenerateJWT(encryptedID string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(os.Getenv("JwtSecret")))
+	signedToken, err := token.SignedString([]byte(utils.JwtSecret))
 	if err != nil {
 		return "", fmt.Errorf("signing token failed: %w", err)
 	}

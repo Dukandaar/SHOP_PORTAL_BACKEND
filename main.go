@@ -20,7 +20,7 @@ func main() {
 	})
 
 	// generate token
-	app.Get("/shop/generateToken", func(ctx iris.Context) {
+	app.Post("/shop/generateToken", func(ctx iris.Context) {
 		helper.SetApiName(util.GENERATE_TOKEN, ctx)
 		controller.GenerateToken(ctx)
 	})

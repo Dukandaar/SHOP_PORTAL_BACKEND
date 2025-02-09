@@ -10,24 +10,29 @@ import (
 )
 
 func GenerateToken(ctx iris.Context) {
+
+	var response interface{}
+	var errCodeStr string
+	rspCode := utils.StatusOK
+
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
 	headers := utils.ReadHeader(ctx, utils.GenerateTokenHeaders)
 	reqBody, bodyError := utils.ReadGenerateTokenReqBody(ctx)
 	utils.Logger.Info(headers, reqBody)
 
-	headerError := validator.ValidateHeader(utils.GenerateTokenHeaders, headers)
-	reqBodyError := validator.ValidateGenerateTokenReqBody(&reqBody, bodyError)
-
-	errMsg, errCodeStr := helper.CheckError(headerError, utils.NULL_STRING, reqBodyError)
-
-	var response interface{}
-	rspCode := utils.StatusOK
-
-	if errMsg != utils.NULL_STRING {
-		response, rspCode = helper.CreateErrorResponse(errCodeStr, errMsg)
+	headerError, errCodeStr := validator.ValidateHeader(utils.GenerateTokenHeaders, headers)
+	if errCodeStr != utils.SUCCESS {
+		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
+		utils.Logger.Error(headerError)
 	} else {
-		response, rspCode = service.GenerateToken(reqBody)
+		reqBodyError, errCodeStr := validator.ValidateGenerateTokenReqBody(&reqBody, bodyError)
+		if errCodeStr != utils.SUCCESS {
+			response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
+			utils.Logger.Error(reqBodyError)
+		} else {
+			response, rspCode = service.GenerateToken(reqBody)
+		}
 	}
 
 	utils.Logger.Info(logPrefix, response)

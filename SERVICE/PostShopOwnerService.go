@@ -25,11 +25,7 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 	var isActive string
 
 	err := DB.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhNo).Scan(&rowId, &reg_id, &isActive)
-	if err != nil {
-		response, rspCode = helper.CreateErrorResponse("500001", "Error in checking Shop Owner Data")
-		utils.Logger.Error(err.Error())
-
-	} else if err == sql.ErrNoRows {
+	if err == sql.ErrNoRows {
 
 		// insert row
 		ServiceQuery = database.InsertShopOwnerData()
@@ -52,9 +48,13 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 			}
 		}
 
+	} else if err != nil {
+		response, rspCode = helper.CreateErrorResponse("500001", "Error in checking Shop Owner Data")
+		utils.Logger.Error(err.Error())
+
 	} else {
 		if isActive == utils.ACTIVE_YES {
-			response, rspCode = helper.CreateErrorResponse("400004", "Shop Owner with same details is already present")
+			response, rspCode = helper.CreateErrorResponse("400008", "Shop Owner with same details is already present")
 			utils.Logger.Error("Shop Owner with same details is already present")
 		} else {
 			ServiceQuery = database.ToggleShopOwnerActiveStatus()
