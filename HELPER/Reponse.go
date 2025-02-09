@@ -3,10 +3,13 @@ package helper
 import (
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"strconv"
 )
 
 func CreateErrorResponse(code string, des string) (structs.ErrorResponse, int) {
 	rsp := utils.CodeMap[code]
+	errCode := rsp.StatusCode
+	rsp.StatusCode, _ = strconv.Atoi(code)
 	rsp.Description = des
 
 	return structs.ErrorResponse{
@@ -16,7 +19,7 @@ func CreateErrorResponse(code string, des string) (structs.ErrorResponse, int) {
 			ErrorMsg:        rsp.Message,
 			ErrorDescrition: rsp.Description,
 		},
-	}, rsp.StatusCode
+	}, errCode
 }
 
 func CreateSuccessResponse(message string) (structs.SuccessResponse, int) {

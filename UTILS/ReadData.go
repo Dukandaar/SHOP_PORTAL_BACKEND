@@ -7,7 +7,6 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
-// todo
 func ReadHeader(ctx iris.Context, reqApiHeader map[string]bool) map[string]interface{} {
 
 	headers := make(map[string]interface{})

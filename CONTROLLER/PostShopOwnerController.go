@@ -10,24 +10,29 @@ import (
 )
 
 func PostShopOwner(ctx iris.Context) {
+
+	var response interface{}
+	var errCodeStr string
+	rspCode := utils.StatusOK
+
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
 	headers := utils.ReadHeader(ctx, utils.PostShopOwnerHeaders)
 	reqBody, bodyError := utils.ReadShopOwnerReqBody(ctx)
 	utils.Logger.Info(headers, reqBody)
 
-	headerError := validator.ValidateHeader(utils.PostShopOwnerHeaders, headers)
-	reqBodyError := validator.ValidateShopOwnerReqBody(&reqBody, bodyError)
-
-	errMsg := helper.CheckError(headerError, utils.NULL_STRING, reqBodyError)
-
-	var response interface{}
-	rspCode := utils.StatusOK
-
-	if errMsg != utils.NULL_STRING {
-		response, rspCode = helper.CreateErrorResponse("400001", errMsg)
+	headerError, errCodeStr := validator.ValidateHeader(utils.PostShopOwnerHeaders, headers)
+	if errCodeStr != utils.SUCCESS {
+		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
+		utils.Logger.Error(headerError)
 	} else {
-		response, rspCode = service.PostShopOwner(reqBody)
+		reqBodyError, errCodeStr := validator.ValidateShopOwnerReqBody(&reqBody, bodyError)
+		if errCodeStr != utils.SUCCESS {
+			response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
+			utils.Logger.Error(reqBodyError)
+		} else {
+			response, rspCode = service.PostShopOwner(reqBody)
+		}
 	}
 
 	utils.Logger.Info(logPrefix, response)

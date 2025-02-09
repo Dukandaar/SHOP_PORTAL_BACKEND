@@ -19,17 +19,14 @@ var CodeMap map[string]Codes
 func SetCodeMap() {
 	CodeMap = make(map[string]Codes)
 	CodeMap["200001"] = Codes{StatusCode: StatusOK, Message: "OK"}
-	CodeMap["400001"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400002"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400003"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400004"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400005"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400006"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400007"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400008"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400009"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400010"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400011"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
-	CodeMap["400012"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request"}
+	CodeMap["400001"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [MISSING HEADER]"}
+	CodeMap["400002"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [INVLAID HEADER]"}
+	CodeMap["400003"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [MISSING QPARAM]"}
+	CodeMap["400004"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [INVLAID QPARAM]"}
+	CodeMap["400005"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [MISSING BODY FIELD]"}
+	CodeMap["400006"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [INVLAID BODY FIELD]"}
+	CodeMap["400007"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [MALFORMED BODY CONTENT]"}
+	CodeMap["400008"] = Codes{StatusCode: StatusBadRequest, Message: "Bad Request [ALREADY EXIST]"}
+	CodeMap["404001"] = Codes{StatusCode: StatusNotFound, Message: "Not Found"}
 	CodeMap["500001"] = Codes{StatusCode: StatusInternalServerError, Message: "Internal Server Error"}
 }
