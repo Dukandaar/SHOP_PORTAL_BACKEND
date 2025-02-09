@@ -16,15 +16,6 @@ const (
 	ACCEPT_ENCODING = "Accept-Encoding"
 	CONTENT_TYPE    = "Content-Type"
 	ACCEPT          = "Accept"
-
-	JwtSecret = "YourStrongJwtSecretKeyHere"
-
-	PublicKeyPEM = `-----BEGIN PUBLIC KEY-----
-MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgGhM3rfXDjV0hTJIrq5bvt+e+EqP
-VF8S0EHUGSVJpRagyZyBMlNdJW4mPEryxG4zP19MS3pqLpMaZADNNvS/jW1pHfLO
-JwWRFwpAXLgGuT9Q/+j32S/BftAJJLDSHo6BcyJwaT9pVOmSIGsQMCl/1tiyof/r
-FgDpvt6OhdJENf67AgMBAAE=
------END PUBLIC KEY-----`
 )
 
 var GenerateTokenHeaders map[string]bool

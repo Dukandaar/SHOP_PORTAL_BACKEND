@@ -54,7 +54,7 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 
 	} else {
 		if isActive == utils.ACTIVE_YES {
-			response, rspCode = helper.CreateErrorResponse("400001", "Shop Owner with same details is already present")
+			response, rspCode = helper.CreateErrorResponse("400004", "Shop Owner with same details is already present")
 			utils.Logger.Error("Shop Owner with same details is already present")
 		} else {
 			ServiceQuery = database.ToggleShopOwnerActiveStatus()

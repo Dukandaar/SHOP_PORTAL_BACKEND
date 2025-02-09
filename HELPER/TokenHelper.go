@@ -1,13 +1,13 @@
 package helper
 
 import (
-	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -57,7 +57,7 @@ func GenerateJWT(encryptedID string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(utils.JwtSecret))
+	signedToken, err := token.SignedString([]byte(os.Getenv("JwtSecret")))
 	if err != nil {
 		return "", fmt.Errorf("signing token failed: %w", err)
 	}

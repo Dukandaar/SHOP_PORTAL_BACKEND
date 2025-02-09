@@ -19,3 +19,12 @@ type SuccessResponse struct {
 type SuccessSubResponse struct {
 	SuccessMsg string `json:"msg"`
 }
+
+type TokenResponse struct {
+	Stat             string           `json:"stat"`
+	TokenSubResponse TokenSubResponse `json:"rsp"`
+}
+
+type TokenSubResponse struct {
+	Token string `json:"token"`
+}
