@@ -82,3 +82,20 @@ func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) (string, 
 
 	return utils.NULL_STRING, utils.SUCCESS
 }
+
+func ValidateAllShowOwnerBody(body *structs.AllShowOwner, bodyErr string) (string, string) {
+
+	if bodyErr != utils.NULL_STRING {
+		return bodyErr, "400007"
+	}
+
+	if body.IsActive == utils.NULL_STRING {
+		return "Missing is_active", "400005"
+	} else {
+		if body.IsActive != utils.ACTIVE_YES && body.IsActive != utils.ACTIVE_NO && body.IsActive != utils.ALL {
+			return "Invalid is_active", "400006"
+		}
+	}
+
+	return utils.NULL_STRING, utils.SUCCESS
+}

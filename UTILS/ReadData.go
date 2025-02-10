@@ -46,3 +46,12 @@ func ReadShopOwnerReqBody(ctx iris.Context) (structs.ShopOwner, string) {
 	}
 	return body, NULL_STRING
 }
+
+func ReadAllShowOwnerBody(ctx iris.Context) (structs.AllShowOwner, string) {
+	body := structs.AllShowOwner{}
+	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
+	if err != nil {
+		return body, "Error in decoding request body"
+	}
+	return body, NULL_STRING
+}

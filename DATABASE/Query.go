@@ -1,5 +1,7 @@
 package database
 
+import utils "SHOP_PORTAL_BACKEND/UTILS"
+
 func InsertShopOwnerData() string {
 	query := `
 		INSERT INTO
@@ -87,5 +89,47 @@ func GetShopOwnerData() string {
 		) AS b_cash ON TRUE
 		WHERE
 			o.reg_id = $1;`
+	return query
+}
+
+func GetAllShopOwnerData(isActiveStates string) string {
+	query := `
+		SELECT
+			o.shop_name,
+			o.owner_name,
+			o.phone_no,
+			o.reg_date::text,
+			o.address,
+			o.remarks,
+			COALESCE(b_gold.balance, 0) as gold,
+			COALESCE(b_silver.balance, 0) as silver,
+			COALESCE(b_cash.balance, 0) as cash,
+			o.is_active
+		FROM
+			shop.owner o
+		LEFT JOIN LATERAL (
+			SELECT balance
+			FROM shop.balance
+			WHERE owner_id = o.id AND type = 'Gold'
+		) AS b_gold ON TRUE
+		LEFT JOIN LATERAL (
+			SELECT balance
+			FROM shop.balance
+			WHERE owner_id = o.id AND type = 'Silver'
+		) AS b_silver ON TRUE
+		LEFT JOIN LATERAL (
+			SELECT balance
+			FROM shop.balance
+			WHERE owner_id = o.id AND type = 'Cash'
+		) AS b_cash ON TRUE
+	`
+
+	if isActiveStates == utils.ACTIVE_YES {
+		query += " WHERE o.is_active = 'Y'"
+	} else if isActiveStates == utils.ACTIVE_NO {
+		query += " WHERE o.is_active = 'N'"
+	} else {
+		query += " WHERE o.is_active = 'Y' OR o.is_active = 'N'"
+	}
 	return query
 }

@@ -2,10 +2,11 @@ package utils
 
 const (
 	// API NAME
-	GENERATE_TOKEN  = "GENERATE_TOKEN"
-	POST_SHOP_OWNER = "POST_SHOP_OWNER"
-	PUT_SHOP_OWNER  = "PUT_SHOP_OWNER"
-	GET_SHOP_OWNER  = "GET_SHOP_OWNER"
+	GENERATE_TOKEN     = "GENERATE_TOKEN"
+	POST_SHOP_OWNER    = "POST_SHOP_OWNER"
+	PUT_SHOP_OWNER     = "PUT_SHOP_OWNER"
+	GET_SHOP_OWNER     = "GET_SHOP_OWNER"
+	GET_ALL_SHOP_OWNER = "GET_ALL_SHOP_OWNER"
 
 	// EMPTY
 	NULL_STRING = ""
@@ -13,6 +14,7 @@ const (
 	OK          = "OK"
 	ACTIVE_YES  = "Y"
 	ACTIVE_NO   = "N"
+	ALL         = "ALL"
 	SUCCESS     = "200000"
 	GOLD        = "Gold"
 	SILVER      = "Silver"
@@ -59,6 +61,7 @@ var GenerateTokenHeaders map[string]bool
 var PostShopOwnerHeaders map[string]bool
 var PutShopOwnerHeaders map[string]bool
 var GetShopOwnerHeaders map[string]bool
+var GetAllShopOwnerHeaders map[string]bool
 
 // Qparams
 var PutShopOwnerQParams map[string]bool
@@ -69,6 +72,7 @@ func SetApiHeaders() {
 	GenerateTokenHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PutShopOwnerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetShopOwnerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetAllShopOwnerHeaders = map[string]bool{ACCEPT: true, ACCEPT_ENCODING: true}
 }
 
 func SetApiQParams() {

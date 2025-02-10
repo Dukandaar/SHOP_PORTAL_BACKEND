@@ -43,6 +43,12 @@ func main() {
 		controller.GetShopOwner(ctx)
 	})
 
+	// api to get all shop owners
+	app.Get("shop/getAllShopOwners", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_ALL_SHOP_OWNER, ctx)
+		controller.GetAllShopOwner(ctx)
+	})
+
 	// Start the server on port 8000
 	err := app.Listen(":8000")
 	if err != nil {
