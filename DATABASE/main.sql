@@ -19,7 +19,7 @@ CREATE TABLE shop.owner (
     reg_date date NOT NULL,
     address VARCHAR(255),
     remarks text NULL,
-    key VARCHAR(500) NOT NULL;
+    key VARCHAR(500) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

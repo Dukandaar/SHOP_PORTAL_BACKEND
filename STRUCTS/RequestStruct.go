@@ -13,3 +13,7 @@ type ShopOwner struct {
 	Address   string `json:"address"`
 	Remarks   string `json:"remarks"`
 }
+
+type AllShowOwner struct {
+	IsActive string `json:"is_active"`
+}
