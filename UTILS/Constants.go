@@ -7,6 +7,10 @@ const (
 	PUT_SHOP_OWNER     = "PUT_SHOP_OWNER"
 	GET_SHOP_OWNER     = "GET_SHOP_OWNER"
 	GET_ALL_SHOP_OWNER = "GET_ALL_SHOP_OWNER"
+	POST_CUSTOMER      = "POST_CUSTOMER"
+	PUT_CUSTOMER       = "PUT_CUSTOMER"
+	GET_CUSTOMER       = "GET_CUSTOMER"
+	GET_ALL_CUSTOMER   = "GET_ALL_CUSTOMER"
 
 	// EMPTY
 	NULL_STRING = ""
@@ -27,7 +31,8 @@ const (
 	TOKEN           = "Token"
 
 	// QPARAMS NAMES
-	OWNER_REG_ID = "owner_reg_id"
+	OWNER_REG_ID    = "owner_reg_id"
+	Customer_REG_ID = "Customer_reg_id"
 
 	JwtSecret = "YourStrongJwtSecretKeyHere"
 
@@ -62,10 +67,18 @@ var PostShopOwnerHeaders map[string]bool
 var PutShopOwnerHeaders map[string]bool
 var GetShopOwnerHeaders map[string]bool
 var GetAllShopOwnerHeaders map[string]bool
+var PostCustomerHeaders map[string]bool
+var PutCustomerHeaders map[string]bool
+var GetCustomerHeaders map[string]bool
+var GetAllCustomerHeaders map[string]bool
 
 // Qparams
 var PutShopOwnerQParams map[string]bool
 var GetShopOwnerQParams map[string]bool
+var PostCustomerQParams map[string]bool
+var PutCustomerQParams map[string]bool
+var GetCustomerQParams map[string]bool
+var GetALLCustomerQParams map[string]bool
 
 func SetApiHeaders() {
 	PostShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
@@ -73,11 +86,19 @@ func SetApiHeaders() {
 	PutShopOwnerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetShopOwnerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetAllShopOwnerHeaders = map[string]bool{ACCEPT: true, ACCEPT_ENCODING: true}
+	PostCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	PutCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetAllCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 }
 
 func SetApiQParams() {
 	PutShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
 	GetShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
+	PostCustomerQParams = map[string]bool{OWNER_REG_ID: true, Customer_REG_ID: true}
+	PutCustomerQParams = map[string]bool{OWNER_REG_ID: true, Customer_REG_ID: true}
+	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, Customer_REG_ID: true}
+	GetALLCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 }
 
 var ValidHeaders map[string][]interface{}

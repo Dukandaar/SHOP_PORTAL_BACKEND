@@ -24,7 +24,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		DB := database.ConnectDB()
 		defer DB.Close()
 
-		ServiceQuery := database.CheckValidRegId()
+		ServiceQuery := database.CheckValidOwnerRegId()
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 		if err != nil {

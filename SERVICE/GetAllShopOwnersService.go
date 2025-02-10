@@ -16,6 +16,7 @@ func GetAllShopOwner(reqBody structs.AllShowOwner) (interface{}, int) {
 
 	var shopName string
 	var ownerName string
+	var regId string
 	var phoneNo string
 	var regDate string
 	var address string
@@ -35,7 +36,7 @@ func GetAllShopOwner(reqBody structs.AllShowOwner) (interface{}, int) {
 	if err == nil {
 		for rows.Next() {
 
-			err = rows.Scan(&shopName, &ownerName, &phoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
+			err = rows.Scan(&shopName, &ownerName, &regId, &phoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
 			if err != nil {
 				utils.Logger.Error(err.Error())
 				response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows")
