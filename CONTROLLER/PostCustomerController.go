@@ -47,5 +47,5 @@ func PostCustomer(ctx iris.Context) {
 
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
-	utils.Logger.Info("Request Completed.")
+	utils.Logger.Info(logPrefix + "Response Completed.")
 }
