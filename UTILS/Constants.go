@@ -32,7 +32,7 @@ const (
 
 	// QPARAMS NAMES
 	OWNER_REG_ID    = "owner_reg_id"
-	CUSTOMER_REG_ID = "Customer_reg_id"
+	CUSTOMER_REG_ID = "customer_reg_id"
 
 	JwtSecret = "YourStrongJwtSecretKeyHere"
 

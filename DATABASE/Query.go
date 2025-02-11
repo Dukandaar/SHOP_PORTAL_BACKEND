@@ -207,30 +207,81 @@ func GetCustomerData() string {
         SELECT
             c.name,
             c.company_name,
-            c.reg_id,
-            c.reg_date::text,
             c.ph_no,
-            c.address
+            c.reg_date::text,
+            c.address,
+            oc.remark,
+            COALESCE(b_gold.balance, 0) as gold,
+            COALESCE(b_silver.balance, 0) as silver,
+            COALESCE(b_cash.balance, 0) as cash,
+			oc.is_active
         FROM
             shop.customer c
+        LEFT JOIN
+            shop.owner_customer oc ON c.id = oc.customer_id
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Gold'
+        ) AS b_gold ON TRUE
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Silver'
+        ) AS b_silver ON TRUE
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Cash'
+        ) AS b_cash ON TRUE
         WHERE
-            c.reg_id = $1;
+            c.reg_id = $1 AND oc.owner_id = $2;
     `
 	return query
 }
 
-func GetAllCustomerData() string {
+func GetAllCustomerData(isActiveStates string) string {
 	query := `
-        SELECT
-            c.name,
-            c.company_name,
-            c.reg_id,
-            c.reg_date::text,
-            c.ph_no,
-            c.address
-        FROM
-            shop.customer c;
-    `
+	SELECT
+		c.name,
+		c.company_name,
+		c.reg_id,
+		c.ph_no,
+		c.reg_date::text,
+		c.address,
+		oc.remark,
+		COALESCE(b_gold.balance, 0) as gold,
+		COALESCE(b_silver.balance, 0) as silver,
+		COALESCE(b_cash.balance, 0) as cash,
+		oc.is_active  -- Get is_active from owner_customer
+	FROM
+		shop.customer c
+	LEFT JOIN
+		shop.owner_customer oc ON c.id = oc.customer_id
+	LEFT JOIN LATERAL (
+		SELECT balance
+		FROM shop.balance
+		WHERE customer_id = c.id AND type = 'Gold'
+	) AS b_gold ON TRUE
+	LEFT JOIN LATERAL (
+		SELECT balance
+		FROM shop.balance
+		WHERE customer_id = c.id AND type = 'Silver'
+	) AS b_silver ON TRUE
+	LEFT JOIN LATERAL (
+		SELECT balance
+		FROM shop.balance
+		WHERE customer_id = c.id AND type = 'Cash'
+	) AS b_cash ON TRUE
+	WHERE c.id IN (SELECT customer_id FROM shop.owner_customer); -- Get all customers related to an owner
+
+`
+
+	if isActiveStates == utils.ACTIVE_YES {
+		query += " AND oc.is_active = 'Y'" // Filter on owner_customer.is_active
+	} else if isActiveStates == utils.ACTIVE_NO {
+		query += " AND oc.is_active = 'N'" // Filter on owner_customer.is_active
+	}
 	return query
 }
 

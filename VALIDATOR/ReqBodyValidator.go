@@ -30,7 +30,7 @@ func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) (
 		if exists {
 			utils.Logger.Info("Row with reg_id : ", body.RegId, " exists")
 		} else {
-			utils.Logger.Info("Row with reg_id ", body.RegId, " does notexists")
+			utils.Logger.Info("Row with reg_id ", body.RegId, " does not exists")
 			return "Owner Registration ID does not exist", "400004"
 		}
 	}
@@ -83,7 +83,7 @@ func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) (string, 
 	return utils.NULL_STRING, utils.SUCCESS
 }
 
-func ValidateAllShowOwnerBody(body *structs.AllShowOwner, bodyErr string) (string, string) {
+func ValidateAllShopOwnerBody(body *structs.AllShopOwner, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
 		return bodyErr, "400007"
@@ -135,6 +135,23 @@ func ValidateCustomerReqBody(body *structs.Customer, bodyErr string) (string, st
 
 	if body.Remarks == utils.NULL_STRING {
 		return "Missing remarks", "400005"
+	}
+
+	return utils.NULL_STRING, utils.SUCCESS
+}
+
+func ValidateAllCustomerBody(body *structs.AllCustomer, bodyErr string) (string, string) {
+
+	if bodyErr != utils.NULL_STRING {
+		return bodyErr, "400007"
+	}
+
+	if body.IsActive == utils.NULL_STRING {
+		return "Missing is_active", "400005"
+	} else {
+		if body.IsActive != utils.ACTIVE_YES && body.IsActive != utils.ACTIVE_NO && body.IsActive != utils.ALL {
+			return "Invalid is_active", "400006"
+		}
 	}
 
 	return utils.NULL_STRING, utils.SUCCESS

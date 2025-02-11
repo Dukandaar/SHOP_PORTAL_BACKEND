@@ -18,7 +18,7 @@ func GetAllShopOwner(ctx iris.Context) {
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
 	headers := utils.ReadHeader(ctx)
-	reqBody, bodyError := utils.ReadAllShowOwnerBody(ctx)
+	reqBody, bodyError := utils.ReadAllShopOwnerBody(ctx)
 	utils.Logger.Info(headers)
 
 	headerError, errCodeStr := validator.ValidateHeader(utils.GetAllShopOwnerHeaders, headers, ctx)
@@ -27,7 +27,7 @@ func GetAllShopOwner(ctx iris.Context) {
 		utils.Logger.Error(headerError)
 	} else {
 
-		reqBodyError, errCodeStr := validator.ValidateAllShowOwnerBody(&reqBody, bodyError)
+		reqBodyError, errCodeStr := validator.ValidateAllShopOwnerBody(&reqBody, bodyError)
 		if errCodeStr != utils.SUCCESS {
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
 			utils.Logger.Error(reqBodyError)
@@ -46,5 +46,5 @@ func GetAllShopOwner(ctx iris.Context) {
 
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
-	utils.Logger.Info("Request Completed.")
+	utils.Logger.Info(logPrefix + "Response Completed.")
 }

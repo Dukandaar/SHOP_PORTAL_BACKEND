@@ -67,6 +67,7 @@ type AllShopOwnerDetailsSubResponse struct {
 
 type CustomerDetailsResponse struct {
 	Stat                       string                     `json:"stat"`
+	Count                      int                        `json:"count"`
 	CustomerDetailsSubResponse CustomerDetailsSubResponse `json:"rsp"`
 }
 

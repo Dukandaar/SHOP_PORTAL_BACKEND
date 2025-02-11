@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func GetAllShopOwner(reqBody structs.AllShowOwner) (interface{}, int) {
+func GetAllShopOwner(reqBody structs.AllShopOwner) (interface{}, int) {
 
 	var response interface{}
 	rspCount := 0
@@ -70,7 +70,7 @@ func GetAllShopOwner(reqBody structs.AllShowOwner) (interface{}, int) {
 	}
 
 	response = structs.AllShopOwnerDetailsResponse{
-		Stat:                           "success",
+		Stat:                           "OK",
 		Count:                          rspCount,
 		AllShopOwnerDetailsSubResponse: rsp,
 	}

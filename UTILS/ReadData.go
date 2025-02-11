@@ -47,8 +47,8 @@ func ReadShopOwnerReqBody(ctx iris.Context) (structs.ShopOwner, string) {
 	return body, NULL_STRING
 }
 
-func ReadAllShowOwnerBody(ctx iris.Context) (structs.AllShowOwner, string) {
-	body := structs.AllShowOwner{}
+func ReadAllShopOwnerBody(ctx iris.Context) (structs.AllShopOwner, string) {
+	body := structs.AllShopOwner{}
 	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
 	if err != nil {
 		return body, "Error in decoding request body"
@@ -58,6 +58,15 @@ func ReadAllShowOwnerBody(ctx iris.Context) (structs.AllShowOwner, string) {
 
 func ReadCustomerReqBody(ctx iris.Context) (structs.Customer, string) {
 	body := structs.Customer{}
+	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
+	if err != nil {
+		return body, "Error in decoding request body"
+	}
+	return body, NULL_STRING
+}
+
+func ReadAllCustomerReqBody(ctx iris.Context) (structs.AllCustomer, string) {
+	body := structs.AllCustomer{}
 	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
 	if err != nil {
 		return body, "Error in decoding request body"

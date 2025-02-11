@@ -46,4 +46,5 @@ func PutCustomer(ctx iris.Context) {
 
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
+	utils.Logger.Info(logPrefix + "Response Completed.")
 }
