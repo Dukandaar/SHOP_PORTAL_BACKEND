@@ -10,61 +10,72 @@ import (
 	"time"
 )
 
-func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
+// Helper function to set error response and log (NO ROLLBACK HERE)
 
+func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 	var response interface{}
 	rspCode := utils.StatusOK
 
 	DB := database.ConnectDB()
 	defer DB.Close()
 
-	// check if owner with same shop_name, owner_name, phone_no is present
+	tx, err := DB.Begin()
+	if err != nil {
+		return helper.SetErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error())
+	}
+
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			utils.Logger.Error("Panic occurred during transaction:", r, err)
+		}
+		if rspCode != utils.StatusOK {
+			tx.Rollback()
+		}
+	}()
+
 	ServiceQuery := database.CheckOwnerPresent()
 	var rowId int
 	var reg_id string
 	var isActive string
 
-	err := DB.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhNo).Scan(&rowId, &reg_id, &isActive)
-	if err == sql.ErrNoRows {
-
-		// insert row
+	err = tx.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhNo).Scan(&rowId, &reg_id, &isActive)
+	if err == sql.ErrNoRows { // Shop owner NOT found (proceed with insertion)
 		ServiceQuery = database.InsertShopOwnerData()
 		date, _ := time.Parse("2006-01-02", reqBody.RegDate)
-		regId := maths.GenerateRegID() // todo in future it should be unique by checking in DB
-		key, errMsg := maths.GenerateKey(regId)
+		regId := maths.GenerateRegID()
+		key, errMsg := maths.GenerateKey(regId) // Key generation *before* transaction
 
 		if errMsg != utils.NULL_STRING {
-			response, rspCode = helper.CreateErrorResponse("500001", errMsg)
-			utils.Logger.Error(errMsg)
-
+			return helper.SetErrorResponse(errMsg, "Key generation error:"+errMsg)
 		} else {
-			_, err = DB.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.PhNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now())
+			_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.PhNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now())
 			if err != nil {
-				response, rspCode = helper.CreateErrorResponse("500001", "Error in inserting Shop Owner Data")
-				utils.Logger.Error(err.Error())
-
+				return helper.SetErrorResponse("Error inserting Shop Owner Data", "Error inserting Shop Owner Data:"+err.Error())
 			} else {
 				response, rspCode = helper.CreateSuccessResponse("Shop Owner Added Successfully with regId: " + regId)
 			}
 		}
-
-	} else if err != nil {
-		response, rspCode = helper.CreateErrorResponse("500001", "Error in checking Shop Owner Data")
-		utils.Logger.Error(err.Error())
-
-	} else {
+	} else if err != nil { // Error checking if owner exists
+		return helper.SetErrorResponse("Error checking Shop Owner Data", "Error checking Shop Owner Data:"+err.Error())
+	} else { // Shop owner ALREADY exists (proceed with update if not active)
 		if isActive == utils.ACTIVE_YES {
 			response, rspCode = helper.CreateErrorResponse("400008", "Shop Owner with same details is already present")
-			utils.Logger.Error("Shop Owner with same details is already present")
+			return response, rspCode
 		} else {
-			ServiceQuery = database.ToggleShopOwnerActiveStatus() // update shop owner details
-			_, err = DB.Exec(ServiceQuery, utils.ACTIVE_YES, time.Now(), rowId)
+			ServiceQuery = database.ToggleShopOwnerActiveStatus()
+			_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, time.Now(), rowId)
 			if err != nil {
-				response, rspCode = helper.CreateErrorResponse("500001", "Error in activating Shop Owner")
-				utils.Logger.Error(err.Error())
+				return helper.SetErrorResponse("Error activating Shop Owner", "Error activating Shop Owner:"+err.Error())
 			} else {
 				response, rspCode = helper.CreateSuccessResponse("Shop Owner Activated Successfully with regId: " + reg_id)
 			}
+		}
+	}
+
+	if rspCode == utils.StatusOK {
+		err = tx.Commit()
+		if err != nil {
+			return helper.SetErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error())
 		}
 	}
 

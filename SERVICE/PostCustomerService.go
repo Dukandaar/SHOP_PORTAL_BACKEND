@@ -1,6 +1,7 @@
 package service
 
 import (
+	database "SHOP_PORTAL_BACKEND/DATABASE"
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	maths "SHOP_PORTAL_BACKEND/MATHS"
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
@@ -8,74 +9,80 @@ import (
 	"database/sql"
 	"strconv"
 	"time"
-
-	database "SHOP_PORTAL_BACKEND/DATABASE"
 )
 
 func PostCustomer(reqBody structs.Customer, OwnerRegId string) (interface{}, int) {
-
 	var response interface{}
 	rspCode := utils.StatusOK
 
 	DB := database.ConnectDB()
 	defer DB.Close()
 
-	// fetch row_id of owner with same reg_id is present
-	ServiceQuery := database.GetOwnerRowId()
-	var ownerRowId string
-	err := DB.QueryRow(ServiceQuery, OwnerRegId).Scan(&ownerRowId)
+	tx, err := DB.Begin()
 	if err != nil {
-		utils.Logger.Error(err.Error())
-		response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row")
-		return response, rspCode
+		return helper.SetErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error())
 	}
 
-	// check if customer with same company_name, name, phone_no is present
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			utils.Logger.Error("Panic occurred during transaction:", r, err)
+		}
+		if rspCode != utils.StatusOK { // Rollback only if there was an error
+			tx.Rollback()
+		}
+	}()
+
+	ServiceQuery := database.GetOwnerRowId()
+	var ownerRowId string
+	err = tx.QueryRow(ServiceQuery, OwnerRegId).Scan(&ownerRowId)
+	if err != nil {
+		return helper.SetErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error())
+	}
+
 	ServiceQuery = database.CheckCustomerPresent()
 	var rowId int
 	var isActive string
 
-	err = DB.QueryRow(ServiceQuery, reqBody.Name, reqBody.CompanyName, reqBody.PhNo).Scan(&rowId, &isActive)
-	if err == sql.ErrNoRows {
-
-		// insert row
+	err = tx.QueryRow(ServiceQuery, reqBody.Name, reqBody.CompanyName, reqBody.PhNo).Scan(&rowId, &isActive)
+	if err == sql.ErrNoRows { // New customer
 		ServiceQuery = database.InsertCustomerData()
 		date, _ := time.Parse("2006-01-02", reqBody.RegDate)
-		regId := maths.GenerateRegID() // todo in future it should be unique by checking in DB
-		err = DB.QueryRow(ServiceQuery, reqBody.Name, reqBody.CompanyName, regId, date, reqBody.PhNo, reqBody.Address, time.Now(), time.Now()).Scan(&rowId)
+		regId := maths.GenerateRegID()
+		err = tx.QueryRow(ServiceQuery, reqBody.Name, reqBody.CompanyName, regId, date, reqBody.PhNo, reqBody.Address, time.Now(), time.Now()).Scan(&rowId)
 		if err != nil {
-			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in inserting row in customer table")
+			helper.SetErrorResponse("Error in inserting row in customer table", "Error inserting customer data:"+err.Error())
 		} else {
-			utils.Logger.Info("Inserted row with reg_id", regId)
+			utils.Logger.Info("Inserted customer with reg_id:", regId)
 			ServiceQuery = database.InsertOwnerCustomerData()
-			_, err = DB.Exec(ServiceQuery, rowId, ownerRowId, utils.ACTIVE_YES, reqBody.Remarks)
+			_, err = tx.Exec(ServiceQuery, ownerRowId, rowId, utils.ACTIVE_YES, reqBody.Remarks)
 			if err != nil {
-				utils.Logger.Error(err.Error())
-				response, rspCode = helper.CreateErrorResponse("500001", "Error in inserting row in owner_customer table")
+				helper.SetErrorResponse("Error in inserting row in owner_customer table", "Error inserting owner_customer data:"+err.Error())
 			} else {
-				response, rspCode = helper.CreateSuccessResponse("Customer Added Successfully" + "with reg_id [" + regId + "] and row_id [" + strconv.Itoa(rowId) + "]")
+				response, rspCode = helper.CreateSuccessResponse("Customer Added Successfully" + "with reg_id [" + regId + "] and row_id [" + strconv.Itoa(rowId) + "]") // Capture both values
 			}
 		}
-	} else if err != nil {
-		utils.Logger.Error(err.Error())
-		response, rspCode = helper.CreateErrorResponse("500001", "Error in checking row")
-	} else {
-
+	} else if err != nil { // Database error checking for existing customer
+		return helper.SetErrorResponse("Error in checking row", "Error checking for existing customer:"+err.Error())
+	} else { // Existing customer
 		if isActive == utils.ACTIVE_YES {
-			utils.Logger.Info("Same data exists")
-			response, rspCode = helper.CreateErrorResponse("400008", "Same data exists")
-		} else {
-			// update row
+			utils.Logger.Info("Same customer data exists")
+			response, rspCode = helper.CreateErrorResponse("400008", "Same data exists") // Capture both values
+			return response, rspCode
+		} else { // Activate existing customer
 			ServiceQuery = database.UpdateOwnerCustomerData()
-			_, err = DB.Exec(ServiceQuery, utils.ACTIVE_YES, reqBody.Remarks)
+			_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, reqBody.Remarks, ownerRowId, rowId)
 			if err != nil {
-				utils.Logger.Error(err.Error())
-				response, rspCode = helper.CreateErrorResponse("500001", "Error in updating active status")
+				return helper.SetErrorResponse("Error in updating active status", "Error updating customer status:"+err.Error())
 			} else {
-				utils.Logger.Info("Updated row")
-				response, rspCode = helper.CreateSuccessResponse("Customer Activated Successfully")
+				response, rspCode = helper.CreateSuccessResponse("Customer Activated Successfully") // Capture both values
 			}
+		}
+	}
+
+	if rspCode == utils.StatusOK {
+		err = tx.Commit()
+		if err != nil {
+			return helper.SetErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error())
 		}
 	}
 
