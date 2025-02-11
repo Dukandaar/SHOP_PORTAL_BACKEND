@@ -8,14 +8,14 @@ import (
 	"database/sql"
 )
 
-func GetAllShopOwner(reqBody structs.AllShopOwner) (interface{}, int) {
+func GetAllCustomer(reqBody structs.AllCustomer, owner_reg_id string) (interface{}, int) {
 
 	var response interface{}
 	rspCount := 0
 	rspCode := utils.StatusOK
 
+	var name string
 	var shopName string
-	var ownerName string
 	var regId string
 	var phoneNo string
 	var regDate string
@@ -26,33 +26,35 @@ func GetAllShopOwner(reqBody structs.AllShopOwner) (interface{}, int) {
 	var cash float32
 	var isActive string
 
-	rsp := make([]structs.AllShopOwnerDetailsSubResponse, 0)
+	rsp := make([]structs.CustomerDetailsSubResponse, 0)
 
 	DB := database.ConnectDB()
 	defer DB.Close()
 
-	ServiceQuery := database.GetAllShopOwnerData(reqBody.IsActive)
+	ServiceQuery := database.GetAllCustomerData(reqBody.IsActive)
 	rows, err := DB.Query(ServiceQuery)
 	if err == nil {
 		for rows.Next() {
 
-			err = rows.Scan(&shopName, &ownerName, &regId, &phoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
+			err = rows.Scan(&name, &shopName, &regId, &phoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
 			if err != nil {
 				utils.Logger.Error(err.Error())
 				response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows")
 				return response, rspCode
 			} else {
-				rsp = append(rsp, structs.AllShopOwnerDetailsSubResponse{
-					ShopName:  shopName,
-					OwnerName: ownerName,
-					PhNo:      phoneNo,
-					RegDate:   regDate,
-					Address:   address,
-					Remarks:   remarks,
-					Gold:      gold,
-					Silver:    silver,
-					Cash:      cash,
-					IsActive:  isActive,
+
+				rsp = append(rsp, structs.CustomerDetailsSubResponse{
+					Name:        name,
+					CompanyName: shopName,
+					RegId:       regId,
+					PhNo:        phoneNo,
+					RegDate:     regDate,
+					Address:     address,
+					Remarks:     remarks,
+					Gold:        gold,
+					Silver:      silver,
+					Cash:        cash,
+					IsActive:    isActive,
 				})
 				rspCount++
 			}
@@ -69,10 +71,10 @@ func GetAllShopOwner(reqBody structs.AllShopOwner) (interface{}, int) {
 		}
 	}
 
-	response = structs.AllShopOwnerDetailsResponse{
-		Stat:                           "OK",
-		Count:                          rspCount,
-		AllShopOwnerDetailsSubResponse: rsp,
+	response = structs.AllCustomerDetailsResponse{
+		Stat:                       "OK",
+		Count:                      rspCount,
+		CustomerDetailsSubResponse: rsp,
 	}
 
 	return response, rspCode

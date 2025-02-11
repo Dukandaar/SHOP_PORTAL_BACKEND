@@ -31,9 +31,9 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string) (interface{}, in
 		}
 	}
 
-	if rowId != 0 {
+	if isActive != utils.NULL_STRING {
 		if reg_id == OwnerRegId {
-			utils.Logger.Info("Row with reg_id", OwnerRegId, "exists") // update row
+			utils.Logger.Info("Row with reg_id ", OwnerRegId, " exists") // update row
 		} else {
 			utils.Logger.Info("Same data with reg_id", OwnerRegId, "exists")
 			response, rspCode = helper.CreateErrorResponse("400008", "Same data with reg_id "+OwnerRegId+" exists")

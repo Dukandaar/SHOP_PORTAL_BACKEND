@@ -9,7 +9,7 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
-func GetAllShopOwner(ctx iris.Context) {
+func GetCustomer(ctx iris.Context) {
 
 	var response interface{}
 	var errCodeStr string
@@ -18,27 +18,20 @@ func GetAllShopOwner(ctx iris.Context) {
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
 	headers := utils.ReadHeader(ctx)
-	reqBody, bodyError := utils.ReadAllShopOwnerBody(ctx)
-	utils.Logger.Info(headers)
+	qparams := utils.ReadQParams(ctx)
+	utils.Logger.Info(headers, qparams)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.GetAllShopOwnerHeaders, headers, ctx)
+	headerError, errCodeStr := validator.ValidateHeader(utils.GetCustomerHeaders, headers, ctx)
 	if errCodeStr != utils.SUCCESS {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(headerError)
 	} else {
-
-		reqBodyError, errCodeStr := validator.ValidateAllShopOwnerBody(&reqBody, bodyError)
+		QparamsError, errCodeStr := validator.ValidateQParams(utils.GetCustomerQParams, qparams)
 		if errCodeStr != utils.SUCCESS {
-			response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
-			utils.Logger.Error(reqBodyError)
+			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
+			utils.Logger.Error(QparamsError)
 		} else {
-			response, rspCode = service.GetAllShopOwner(reqBody)
-			if rspCode != utils.StatusOK {
-				utils.Logger.Error("Error in getting all rows")
-				response, rspCode = helper.CreateErrorResponse("500001", "Error in getting all rows")
-			} else {
-				utils.Logger.Info("Got all rows")
-			}
+			response, rspCode = service.GetCustomer(ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.CUSTOMER_REG_ID))
 		}
 	}
 
@@ -47,4 +40,5 @@ func GetAllShopOwner(ctx iris.Context) {
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
 	utils.Logger.Info(logPrefix + "Response Completed.")
+
 }

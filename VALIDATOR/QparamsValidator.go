@@ -24,7 +24,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		DB := database.ConnectDB()
 		defer DB.Close()
 
-		ServiceQuery := database.CheckValidRegId()
+		ServiceQuery := database.CheckValidOwnerRegId()
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 		if err != nil {
@@ -36,7 +36,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		if exists {
 			utils.Logger.Info("Row with reg_id : ", regId, " exists")
 		} else {
-			utils.Logger.Info("Row with reg_id", regId, "exists")
+			utils.Logger.Info("Row with reg_id ", regId, " does not exists")
 			return "Owner Registration ID does not exist", "400004"
 		}
 

@@ -21,7 +21,7 @@ func CheckOwnerPresent() string {
 	return query
 }
 
-func CheckValidRegId() string {
+func CheckValidOwnerRegId() string {
 	query := `
 			SELECT EXISTS 
 			(SELECT 1 FROM shop.owner 
@@ -38,6 +38,15 @@ func ToggleShopOwnerActiveStatus() string {
 			updated_at = $2
 		WHERE id = $3;
 	`
+	return query
+}
+
+func GetOwnerRowId() string {
+	query := `
+        SELECT id
+        FROM shop.owner
+        WHERE reg_id = $1;
+    `
 	return query
 }
 
@@ -97,6 +106,7 @@ func GetAllShopOwnerData(isActiveStates string) string {
 		SELECT
 			o.shop_name,
 			o.owner_name,
+			o.reg_id,
 			o.phone_no,
 			o.reg_date::text,
 			o.address,
@@ -131,5 +141,203 @@ func GetAllShopOwnerData(isActiveStates string) string {
 	} else {
 		query += " WHERE o.is_active = 'Y' OR o.is_active = 'N'"
 	}
+	return query
+}
+
+func InsertCustomerData() string {
+	query := `
+        INSERT INTO
+            shop.customer (name, company_name, reg_id, reg_date, ph_no, address, created_at, updated_at)
+        VALUES
+            ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id;
+    `
+	return query
+}
+
+func CheckCustomerPresent() string {
+	query := `
+        SELECT c.id, oc.is_active, c.reg_id
+        FROM shop.customer c
+		JOIN shop.owner_customer oc ON oc.customer_id = c.id
+        WHERE name = $1 and company_name = $2 and ph_no = $3;
+    `
+	return query
+}
+
+func CheckValidCustomerRegId() string {
+	query := `
+            SELECT EXISTS 
+            (SELECT 1 FROM shop.customer 
+            WHERE reg_id = $1)
+    `
+	return query
+}
+
+func UpdateCustomerData() string {
+	query := `
+			UPDATE 
+				shop.customer c
+			SET
+				name = $1,
+				company_name = $2,
+				ph_no = $3,
+				reg_date = $4,
+				address = $5,
+				updated_at = $6
+			WHERE c.id = $7;
+	`
+	return query
+}
+
+func UpdateCustomerOwnerData() string {
+	query := `
+			UPDATE 
+				shop.owner_customer
+			SET
+				is_active = $1,
+				remark = $2
+			WHERE owner_id = $3 AND customer_id = $4;
+	`
+	return query
+}
+
+func GetCustomerData() string {
+	query := `
+        SELECT
+            c.name,
+            c.company_name,
+            c.ph_no,
+            c.reg_date::text,
+            c.address,
+            oc.remark,
+            COALESCE(b_gold.balance, 0) as gold,
+            COALESCE(b_silver.balance, 0) as silver,
+            COALESCE(b_cash.balance, 0) as cash,
+			oc.is_active
+        FROM
+            shop.customer c
+        LEFT JOIN
+            shop.owner_customer oc ON c.id = oc.customer_id
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Gold'
+        ) AS b_gold ON TRUE
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Silver'
+        ) AS b_silver ON TRUE
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Cash'
+        ) AS b_cash ON TRUE
+        WHERE
+            c.reg_id = $1 AND oc.owner_id = $2;
+    `
+	return query
+}
+
+func GetAllCustomerData(isActiveStates string) string {
+	query := `
+	SELECT
+		c.name,
+		c.company_name,
+		c.reg_id,
+		c.ph_no,
+		c.reg_date::text,
+		c.address,
+		oc.remark,
+		COALESCE(b_gold.balance, 0) as gold,
+		COALESCE(b_silver.balance, 0) as silver,
+		COALESCE(b_cash.balance, 0) as cash,
+		oc.is_active  -- Get is_active from owner_customer
+	FROM
+		shop.customer c
+	LEFT JOIN
+		shop.owner_customer oc ON c.id = oc.customer_id
+	LEFT JOIN LATERAL (
+		SELECT balance
+		FROM shop.balance
+		WHERE customer_id = c.id AND type = 'Gold'
+	) AS b_gold ON TRUE
+	LEFT JOIN LATERAL (
+		SELECT balance
+		FROM shop.balance
+		WHERE customer_id = c.id AND type = 'Silver'
+	) AS b_silver ON TRUE
+	LEFT JOIN LATERAL (
+		SELECT balance
+		FROM shop.balance
+		WHERE customer_id = c.id AND type = 'Cash'
+	) AS b_cash ON TRUE
+	WHERE c.id IN (SELECT customer_id FROM shop.owner_customer); -- Get all customers related to an owner
+
+`
+
+	if isActiveStates == utils.ACTIVE_YES {
+		query += " AND oc.is_active = 'Y'" // Filter on owner_customer.is_active
+	} else if isActiveStates == utils.ACTIVE_NO {
+		query += " AND oc.is_active = 'N'" // Filter on owner_customer.is_active
+	}
+	return query
+}
+
+// Owner Customer Function
+func InsertOwnerCustomerData() string {
+	query := `
+        INSERT INTO
+            shop.owner_customer (owner_id, customer_id, is_active, remark)
+        VALUES
+            ($1, $2, $3, $4);
+    `
+	return query
+}
+
+func GetCustomerRegId() string {
+	return `SELECT reg_id FROM shop.customer WHERE reg_id = $1;`
+}
+
+func CheckOwnerCustomerPresent() string {
+	query := `
+        SELECT id
+        FROM shop.owner_customer
+        WHERE owner_id = $1 AND customer_id = $2;
+    `
+	return query
+}
+
+func UpdateOwnerCustomerData() string {
+	query := `
+        UPDATE shop.owner_customer
+        SET
+            is_active = $1,
+            remark = $2
+        WHERE owner_id = $3 AND customer_id = $4;
+    `
+	return query
+}
+
+func GetOwnerCustomerData(ownerId int) string {
+	query := `
+        SELECT
+            oc.customer_id,
+            c.name as customer_name,
+            c.company_name,
+            c.reg_id as customer_reg_id,
+            c.reg_date::text as customer_reg_date,
+            c.ph_no as customer_ph_no,
+            c.address as customer_address,
+            oc.is_active,
+            oc.remark
+        FROM
+            shop.owner_customer oc
+        JOIN
+            shop.customer c ON oc.customer_id = c.id
+        WHERE
+            oc.owner_id = $1;
+    `
 	return query
 }

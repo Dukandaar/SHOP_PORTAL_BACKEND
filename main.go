@@ -49,6 +49,30 @@ func main() {
 		controller.GetAllShopOwner(ctx)
 	})
 
+	// api to add Customer
+	app.Post("shop/addCustomer", func(ctx iris.Context) {
+		helper.SetApiName(util.POST_CUSTOMER, ctx)
+		controller.PostCustomer(ctx)
+	})
+
+	// api to update Customer
+	app.Put("shop/updateCustomer", func(ctx iris.Context) {
+		helper.SetApiName(util.PUT_CUSTOMER, ctx)
+		controller.PutCustomer(ctx)
+	})
+
+	// api to get Customer details
+	app.Get("shop/getCustomer", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_CUSTOMER, ctx)
+		controller.GetCustomer(ctx)
+	})
+
+	// api to get all Customers
+	app.Get("shop/getAllCustomers", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_ALL_CUSTOMER, ctx)
+		controller.GetAllCustomer(ctx)
+	})
+
 	// Start the server on port 8000
 	err := app.Listen(":8000")
 	if err != nil {

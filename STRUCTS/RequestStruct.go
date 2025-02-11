@@ -14,6 +14,19 @@ type ShopOwner struct {
 	Remarks   string `json:"remarks"`
 }
 
-type AllShowOwner struct {
+type AllShopOwner struct {
 	IsActive string `json:"is_active"`
+}
+
+type AllCustomer struct {
+	IsActive string `json:"is_active"`
+}
+
+type Customer struct {
+	Name        string `json:"name"`
+	CompanyName string `json:"company_name"`
+	PhNo        string `json:"ph_no"`
+	RegDate     string `json:"reg_date"`
+	Address     string `json:"address"`
+	Remarks     string `json:"remarks"`
 }
