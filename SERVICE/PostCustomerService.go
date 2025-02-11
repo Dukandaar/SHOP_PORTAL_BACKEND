@@ -42,8 +42,9 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string) (interface{}, int
 	ServiceQuery = database.CheckCustomerPresent()
 	var rowId int
 	var isActive string
+	var customerRegId string
 
-	err = tx.QueryRow(ServiceQuery, reqBody.Name, reqBody.CompanyName, reqBody.PhNo).Scan(&rowId, &isActive)
+	err = tx.QueryRow(ServiceQuery, reqBody.Name, reqBody.CompanyName, reqBody.PhNo).Scan(&rowId, &isActive, &customerRegId)
 	if err == sql.ErrNoRows { // New customer
 		ServiceQuery = database.InsertCustomerData()
 		date, _ := time.Parse("2006-01-02", reqBody.RegDate)
@@ -58,7 +59,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string) (interface{}, int
 			if err != nil {
 				helper.SetErrorResponse("Error in inserting row in owner_customer table", "Error inserting owner_customer data:"+err.Error())
 			} else {
-				response, rspCode = helper.CreateSuccessResponse("Customer Added Successfully" + "with reg_id [" + regId + "] and row_id [" + strconv.Itoa(rowId) + "]") // Capture both values
+				response, rspCode = helper.CreateSuccessResponse("Customer Added Successfully " + "with reg_id [" + regId + "] and row_id [" + strconv.Itoa(rowId) + "]") // Capture both values
 			}
 		}
 	} else if err != nil { // Database error checking for existing customer

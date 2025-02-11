@@ -157,7 +157,7 @@ func InsertCustomerData() string {
 
 func CheckCustomerPresent() string {
 	query := `
-        SELECT c.id, oc.is_active
+        SELECT c.id, oc.is_active, c.reg_id
         FROM shop.customer c
 		JOIN shop.owner_customer oc ON oc.customer_id = c.id
         WHERE name = $1 and company_name = $2 and ph_no = $3;
@@ -176,16 +176,29 @@ func CheckValidCustomerRegId() string {
 
 func UpdateCustomerData() string {
 	query := `
-        UPDATE shop.customer
-        SET
-            name = $1,
-            company_name = $2,
-            reg_date = $3,
-            ph_no = $4,
-            address = $5,
-            updated_at = $6
-        WHERE reg_id = $7;
-    `
+			UPDATE 
+				shop.customer c
+			SET
+				name = $1,
+				company_name = $2,
+				ph_no = $3,
+				reg_date = $4,
+				address = $5,
+				updated_at = $6
+			WHERE c.id = $7;
+	`
+	return query
+}
+
+func UpdateCustomerOwnerData() string {
+	query := `
+			UPDATE 
+				shop.owner_customer
+			SET
+				is_active = $1,
+				remark = $2
+			WHERE owner_id = $3 AND customer_id = $4;
+	`
 	return query
 }
 
@@ -230,6 +243,10 @@ func InsertOwnerCustomerData() string {
             ($1, $2, $3, $4);
     `
 	return query
+}
+
+func GetCustomerRegId() string {
+	return `SELECT reg_id FROM shop.customer WHERE reg_id = $1;`
 }
 
 func CheckOwnerCustomerPresent() string {

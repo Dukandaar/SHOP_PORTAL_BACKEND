@@ -32,7 +32,7 @@ const (
 
 	// QPARAMS NAMES
 	OWNER_REG_ID    = "owner_reg_id"
-	Customer_REG_ID = "Customer_reg_id"
+	CUSTOMER_REG_ID = "Customer_reg_id"
 
 	JwtSecret = "YourStrongJwtSecretKeyHere"
 
@@ -95,9 +95,9 @@ func SetApiHeaders() {
 func SetApiQParams() {
 	PutShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
 	GetShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
-	PostCustomerQParams = map[string]bool{OWNER_REG_ID: true, Customer_REG_ID: true}
-	PutCustomerQParams = map[string]bool{OWNER_REG_ID: true, Customer_REG_ID: true}
-	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, Customer_REG_ID: true}
+	PostCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
+	PutCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
+	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetALLCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 }
 
