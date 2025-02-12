@@ -1,6 +1,12 @@
 package database
 
-import utils "SHOP_PORTAL_BACKEND/UTILS"
+import (
+	structs "SHOP_PORTAL_BACKEND/STRUCTS"
+	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"fmt"
+	"strings"
+	"time"
+)
 
 func InsertShopOwnerData() string {
 	query := `
@@ -253,7 +259,7 @@ func GetAllCustomerData(isActiveStates string) string {
 		COALESCE(b_gold.balance, 0) as gold,
 		COALESCE(b_silver.balance, 0) as silver,
 		COALESCE(b_cash.balance, 0) as cash,
-		oc.is_active  -- Get is_active from owner_customer
+		oc.is_active
 	FROM
 		shop.customer c
 	LEFT JOIN
@@ -339,5 +345,94 @@ func GetOwnerCustomerData(ownerId int) string {
         WHERE
             oc.owner_id = $1;
     `
+	return query
+}
+func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
+	query := `
+        SELECT
+            c.name,
+            c.company_name,
+            c.reg_id,
+            c.ph_no,
+            c.reg_date::text,
+            c.address,
+            COALESCE(oc.remark, '') as remark,
+            COALESCE(b_gold.balance, 0) as gold,
+            COALESCE(b_silver.balance, 0) as silver,
+            COALESCE(b_cash.balance, 0) as cash,
+            oc.is_active
+        FROM
+            shop.customer c
+        LEFT JOIN
+            shop.owner_customer oc ON c.id = oc.customer_id
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Gold'
+        ) AS b_gold ON TRUE
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Silver'
+        ) AS b_silver ON TRUE
+        LEFT JOIN LATERAL (
+            SELECT balance
+            FROM shop.balance
+            WHERE customer_id = c.id AND type = 'Cash'
+        ) AS b_cash ON TRUE
+        WHERE oc.owner_id = $1`
+
+	whereClauses := []string{}
+
+	if filter.RegId != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("c.reg_id = '%s'", filter.RegId))
+	}
+	if filter.Name != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("c.name ILIKE '%%%s%%'", filter.Name)) // Case-insensitive search
+	}
+	if filter.CompanyName != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("c.company_name ILIKE '%%%s%%'", filter.CompanyName)) // Case-insensitive
+	}
+	if filter.PhNo != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("c.ph_no = '%s'", filter.PhNo))
+	}
+	if filter.RegDate != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("c.reg_date = '%s'", filter.RegDate))
+	}
+	if filter.IsActive != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("oc.is_active = '%s'", filter.IsActive))
+	}
+
+	if filter.DateInterval.Type != "" {
+		switch filter.DateInterval.Type {
+		case "Today":
+			whereClauses = append(whereClauses, "c.reg_date = CURRENT_DATE")
+		case "Week":
+			whereClauses = append(whereClauses, "c.reg_date BETWEEN CURRENT_DATE - INTERVAL '7 days' AND CURRENT_DATE")
+		case "Month":
+			whereClauses = append(whereClauses, "c.reg_date BETWEEN date_trunc('month', CURRENT_DATE) AND CURRENT_DATE")
+		case "Year":
+			whereClauses = append(whereClauses, "c.reg_date BETWEEN date_trunc('year', CURRENT_DATE) AND CURRENT_DATE")
+		case "All":
+			// No additional WHERE clause needed for "All"
+		case "Custom":
+			if filter.DateInterval.Start != "" && filter.DateInterval.End != "" {
+				startDate, _ := time.Parse("2006-01-02", filter.DateInterval.Start)
+				endDate, _ := time.Parse("2006-01-02", filter.DateInterval.End)
+				whereClauses = append(whereClauses, fmt.Sprintf("c.reg_date BETWEEN '%s' AND '%s'", startDate.Format("2006-01-02"), endDate.Format("2006-01-02")))
+			}
+		default:
+			utils.Logger.Warn("Invalid DateInterval Type:", filter.DateInterval.Type) // Log invalid type
+		}
+	}
+	if filter.Id > 0 {
+		whereClauses = append(whereClauses, fmt.Sprintf("c.id = %d", filter.Id))
+	}
+
+	if len(whereClauses) > 0 {
+		query += " AND " + strings.Join(whereClauses, " AND ")
+	}
+
+	utils.Logger.Info(query)
 	return query
 }

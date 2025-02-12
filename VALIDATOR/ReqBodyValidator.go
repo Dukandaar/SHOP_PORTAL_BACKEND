@@ -156,3 +156,40 @@ func ValidateAllCustomerBody(body *structs.AllCustomer, bodyErr string) (string,
 
 	return utils.NULL_STRING, utils.SUCCESS
 }
+
+func ValidateFilteredCustomerReqBody(body *structs.FilteredCustomer, bodyErr string) (string, string) {
+
+	if bodyErr != utils.NULL_STRING {
+		return bodyErr, "400007"
+	}
+
+	id := body.Id
+	regId := body.RegId
+	name := body.Name
+	companyName := body.CompanyName
+	phNo := body.PhNo
+	regDate := body.RegDate
+	isActive := body.IsActive
+	dateInterval := body.DateInterval
+
+	if (id == utils.NULL_INT) && (regId == utils.NULL_STRING) && (name == utils.NULL_STRING) && (companyName == utils.NULL_STRING) && (phNo == utils.NULL_STRING) && (regDate == utils.NULL_STRING) && (isActive == utils.NULL_STRING) {
+		if (dateInterval.Type == utils.NULL_STRING) || (dateInterval.Type == utils.CUSTOM && (dateInterval.Start == utils.NULL_STRING || dateInterval.End == utils.NULL_STRING)) {
+			return "Missing reqBody fields", "400005"
+		}
+	}
+
+	if dateInterval.Type == utils.CUSTOM {
+		_, err := time.Parse("2006-01-02", dateInterval.Start) // YYYY-MM-DD
+		if err != nil {
+			return "Invalid start date format", "400006"
+		}
+
+		_, err = time.Parse("2006-01-02", dateInterval.End) // YYYY-MM-DD
+		if err != nil {
+			return "Invalid end date format", "400006"
+		}
+	}
+
+	return utils.NULL_STRING, utils.SUCCESS
+
+}
