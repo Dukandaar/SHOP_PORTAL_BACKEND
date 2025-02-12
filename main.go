@@ -73,6 +73,12 @@ func main() {
 		controller.GetAllCustomer(ctx)
 	})
 
+	// api tp get filtered customer
+	app.Get("shop/getFilteredCustomer", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_FILTERED_CUSTOMER, ctx)
+		controller.GetFilteredCustomer(ctx)
+	})
+
 	// Start the server on port 8000
 	err := app.Listen(":8000")
 	if err != nil {

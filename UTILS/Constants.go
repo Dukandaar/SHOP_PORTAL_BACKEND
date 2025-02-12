@@ -2,15 +2,16 @@ package utils
 
 const (
 	// API NAME
-	GENERATE_TOKEN     = "GENERATE_TOKEN"
-	POST_SHOP_OWNER    = "POST_SHOP_OWNER"
-	PUT_SHOP_OWNER     = "PUT_SHOP_OWNER"
-	GET_SHOP_OWNER     = "GET_SHOP_OWNER"
-	GET_ALL_SHOP_OWNER = "GET_ALL_SHOP_OWNER"
-	POST_CUSTOMER      = "POST_CUSTOMER"
-	PUT_CUSTOMER       = "PUT_CUSTOMER"
-	GET_CUSTOMER       = "GET_CUSTOMER"
-	GET_ALL_CUSTOMER   = "GET_ALL_CUSTOMER"
+	GENERATE_TOKEN        = "GENERATE_TOKEN"
+	POST_SHOP_OWNER       = "POST_SHOP_OWNER"
+	PUT_SHOP_OWNER        = "PUT_SHOP_OWNER"
+	GET_SHOP_OWNER        = "GET_SHOP_OWNER"
+	GET_ALL_SHOP_OWNER    = "GET_ALL_SHOP_OWNER"
+	POST_CUSTOMER         = "POST_CUSTOMER"
+	PUT_CUSTOMER          = "PUT_CUSTOMER"
+	GET_CUSTOMER          = "GET_CUSTOMER"
+	GET_ALL_CUSTOMER      = "GET_ALL_CUSTOMER"
+	GET_FILTERED_CUSTOMER = "GET_FILTERED_CUSTOMER"
 
 	// EMPTY
 	NULL_STRING = ""
@@ -23,6 +24,11 @@ const (
 	GOLD        = "Gold"
 	SILVER      = "Silver"
 	CASH        = "Cash"
+	TODAY       = "Today"
+	WEEK        = "Week"
+	MONTH       = "Month"
+	YEAR        = "Year"
+	CUSTOM      = "Custom"
 
 	// HEADER NAMES
 	ACCEPT_ENCODING = "Accept-Encoding"
@@ -71,6 +77,7 @@ var PostCustomerHeaders map[string]bool
 var PutCustomerHeaders map[string]bool
 var GetCustomerHeaders map[string]bool
 var GetAllCustomerHeaders map[string]bool
+var GetFilteredCustomerHeaders map[string]bool
 
 // Qparams
 var PutShopOwnerQParams map[string]bool
@@ -79,6 +86,7 @@ var PostCustomerQParams map[string]bool
 var PutCustomerQParams map[string]bool
 var GetCustomerQParams map[string]bool
 var GetALLCustomerQParams map[string]bool
+var GetFilteredCustomerQParams map[string]bool
 
 func SetApiHeaders() {
 	PostShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
@@ -90,6 +98,7 @@ func SetApiHeaders() {
 	PutCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetAllCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetFilteredCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 }
 
 func SetApiQParams() {
@@ -99,6 +108,7 @@ func SetApiQParams() {
 	PutCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetALLCustomerQParams = map[string]bool{OWNER_REG_ID: true}
+	GetFilteredCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 }
 
 var ValidHeaders map[string][]interface{}
