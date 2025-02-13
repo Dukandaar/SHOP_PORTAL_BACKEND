@@ -388,13 +388,13 @@ func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 		whereClauses = append(whereClauses, fmt.Sprintf("c.reg_id = '%s'", filter.RegId))
 	}
 	if filter.Name != "" {
-		whereClauses = append(whereClauses, fmt.Sprintf("c.name ILIKE '%%%s%%'", filter.Name)) // Case-insensitive search
+		whereClauses = append(whereClauses, fmt.Sprintf("c.name ILIKE '%%%s%%'", filter.Name))
 	}
 	if filter.CompanyName != "" {
-		whereClauses = append(whereClauses, fmt.Sprintf("c.company_name ILIKE '%%%s%%'", filter.CompanyName)) // Case-insensitive
+		whereClauses = append(whereClauses, fmt.Sprintf("c.company_name ILIKE '%%%s%%'", filter.CompanyName))
 	}
 	if filter.PhNo != "" {
-		whereClauses = append(whereClauses, fmt.Sprintf("c.ph_no = '%s'", filter.PhNo))
+		whereClauses = append(whereClauses, fmt.Sprintf("c.ph_no ILIKE '%%%s%%'", filter.PhNo))
 	}
 	if filter.RegDate != "" {
 		whereClauses = append(whereClauses, fmt.Sprintf("c.reg_date = '%s'", filter.RegDate))
