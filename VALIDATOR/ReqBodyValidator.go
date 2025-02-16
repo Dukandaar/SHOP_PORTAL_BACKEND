@@ -31,12 +31,12 @@ func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) (
 			utils.Logger.Info("Row with reg_id : ", body.RegId, " exists")
 		} else {
 			utils.Logger.Info("Row with reg_id ", body.RegId, " does not exists")
-			return "Owner Registration ID does not exist", "400004"
+			return "Owner Registration ID does not exist", "400006"
 		}
 	}
 
 	if body.Key == utils.NULL_STRING {
-		return "Missing key", "400003"
+		return "Missing key", "400005"
 	} else {
 		errMsg, errCodeStr := ValidateKey(body.Key, body.RegId)
 		if errMsg != utils.NULL_STRING {
