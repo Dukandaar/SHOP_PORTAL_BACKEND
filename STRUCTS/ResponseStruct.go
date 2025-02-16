@@ -49,22 +49,9 @@ type ShopOwnerDetailsSubResponse struct {
 }
 
 type AllShopOwnerDetailsResponse struct {
-	Stat                           string                           `json:"stat"`
-	Count                          int                              `json:"count"`
-	AllShopOwnerDetailsSubResponse []AllShopOwnerDetailsSubResponse `json:"rsp"`
-}
-type AllShopOwnerDetailsSubResponse struct {
-	ShopName  string  `json:"shopName"`
-	OwnerName string  `json:"ownerName"`
-	RegId     string  `json:"regId"`
-	PhNo      string  `json:"phoneNo"`
-	RegDate   string  `json:"regDate"`
-	Address   string  `json:"address"`
-	Remarks   string  `json:"remarks"`
-	Gold      float32 `json:"gold"`
-	Silver    float32 `json:"silver"`
-	Cash      float32 `json:"cash"`
-	IsActive  string  `json:"isActive"`
+	Stat                           string                        `json:"stat"`
+	Count                          int                           `json:"count"`
+	AllShopOwnerDetailsSubResponse []ShopOwnerDetailsSubResponse `json:"rsp"`
 }
 
 type CustomerDetailsResponse struct {
