@@ -35,7 +35,7 @@ func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) (
 	if exists {
 		utils.Logger.Info("Row with reg_id : ", body.RegId, " exists")
 	} else {
-		utils.Logger.Info("Row with reg_id ", body.RegId, " does not exists")
+		utils.Logger.Info("Row with reg_id ", body.RegId, " does not exist")
 		return "Owner Registration ID does not exist", "400006"
 	}
 
@@ -86,8 +86,8 @@ func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) (string, 
 		body.GstIN = "NOT PROVIDED"
 	}
 
-	if len(body.GstIN) > utils.GST_IN_MAX_LEN {
-		return "gst_in length greater than 15", "400007"
+	if len(body.GstIN) != utils.GST_IN_MAX_LEN {
+		return "gst_in length not equal to 15", "400007"
 	}
 
 	if body.PhNo == utils.NULL_STRING {

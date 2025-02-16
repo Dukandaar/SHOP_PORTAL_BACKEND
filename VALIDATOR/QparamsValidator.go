@@ -36,7 +36,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		if exists {
 			utils.Logger.Info("Row with reg_id : ", regId, " exists")
 		} else {
-			utils.Logger.Info("Row with reg_id ", regId, " does not exists")
+			utils.Logger.Info("Row with reg_id ", regId, " does not exist")
 			return "Owner Registration ID does not exist", "400004"
 		}
 

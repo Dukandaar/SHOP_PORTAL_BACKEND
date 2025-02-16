@@ -71,13 +71,14 @@ func UpdateShopOwnerData() string {
 		SET
 			shop_name = $1,
 			owner_name = $2,
-			phone_no = $3,
-			is_active = $4,
-			reg_date = $5,
-			address = $6,
-			remarks = $7,
-			updated_at = $8
-		WHERE reg_id = $9;
+			gst_in = $3,
+			phone_no = $4,
+			is_active = $5,
+			reg_date = $6,
+			address = $7,
+			remarks = $8,
+			updated_at = $9
+		WHERE reg_id = $10;
 	`
 	return query
 }

@@ -6,8 +6,8 @@ import (
 	"strconv"
 )
 
-func SetErrorResponse(errMessage string, logMessage string) (interface{}, int) { // 500 error only
-	utils.Logger.Error(logMessage)
+func Set500ErrorResponse(errMessage string, logMessage string, logPrefix string) (interface{}, int) { // 500 error only
+	utils.Logger.Error(logPrefix, logMessage)
 	return CreateErrorResponse("500001", errMessage)
 }
 
