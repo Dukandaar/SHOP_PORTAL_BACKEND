@@ -11,9 +11,9 @@ import (
 func InsertShopOwnerData() string {
 	query := `
 		INSERT INTO
-			shop.owner (shop_name, owner_name, reg_id, phone_no, is_active, reg_date, address, remarks, key, created_at, updated_at)
+			shop.owner (shop_name, owner_name, reg_id, gst_in, phone_no, is_active, reg_date, address, remarks, key, created_at, updated_at)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
 	`
 	return query
 }
@@ -23,6 +23,15 @@ func CheckOwnerPresent() string {
 		SELECT id, reg_id, is_active
 		FROM shop.owner
 		WHERE owner_name = $1 AND shop_name = $2 AND phone_no = $3;
+	`
+	return query
+}
+
+func CheckRegIdPresent() string {
+	query := `
+		SELECT EXISTS 
+		(SELECT 1 FROM shop.owner 
+		WHERE reg_id = $1)
 	`
 	return query
 }

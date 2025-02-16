@@ -6,9 +6,9 @@ import (
 	"strconv"
 )
 
-func SetErrorResponse(errMessage string, logMessage string) (interface{}, int) {
+func SetErrorResponse(errMessage string, logMessage string) (interface{}, int) { // 500 error only
 	utils.Logger.Error(logMessage)
-	return CreateErrorResponse("500001", errMessage) // Or appropriate error code
+	return CreateErrorResponse("500001", errMessage)
 }
 
 func CreateErrorResponse(code string, des string) (structs.ErrorResponse, int) {
