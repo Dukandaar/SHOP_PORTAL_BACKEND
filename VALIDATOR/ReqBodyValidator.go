@@ -11,28 +11,32 @@ import (
 func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
-		return bodyErr, "400007"
+		return bodyErr, "400008"
 	}
 
 	if body.RegId == utils.NULL_STRING {
 		return "Missing reg_id", "400005"
-	} else {
-		var exists bool
-		ServiceQuery := database.CheckValidOwnerRegId()
-		db := database.ConnectDB()
-		err := db.QueryRow(ServiceQuery, body.RegId).Scan(&exists)
-		if err != nil {
-			errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", body.RegId)
-			utils.Logger.Error(err.Error())
-			return errMsg, "500001"
-		}
+	}
 
-		if exists {
-			utils.Logger.Info("Row with reg_id : ", body.RegId, " exists")
-		} else {
-			utils.Logger.Info("Row with reg_id ", body.RegId, " does not exists")
-			return "Owner Registration ID does not exist", "400006"
-		}
+	if len(body.RegId) > utils.SHOP_REG_ID_MAX_LEN {
+		return "reg_id length greater than 10", "400007"
+	}
+
+	var exists bool
+	ServiceQuery := database.CheckValidOwnerRegId()
+	db := database.ConnectDB()
+	err := db.QueryRow(ServiceQuery, body.RegId).Scan(&exists)
+	if err != nil {
+		errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", body.RegId)
+		utils.Logger.Error(err.Error())
+		return errMsg, "500001"
+	}
+
+	if exists {
+		utils.Logger.Info("Row with reg_id : ", body.RegId, " exists")
+	} else {
+		utils.Logger.Info("Row with reg_id ", body.RegId, " does not exists")
+		return "Owner Registration ID does not exist", "400006"
 	}
 
 	if body.Key == utils.NULL_STRING {
@@ -50,15 +54,23 @@ func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) (
 func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
-		return bodyErr, "400007"
+		return bodyErr, "400008"
 	}
 
 	if body.ShopName == utils.NULL_STRING {
 		return "Missing shop_name", "400005"
 	}
 
+	if len(body.ShopName) > utils.SHOP_NAME_MAX_LEN {
+		return "shop_name length greater than 255", "400007"
+	}
+
 	if body.OwnerName == utils.NULL_STRING {
 		return "Missing owner_name", "400005"
+	}
+
+	if len(body.OwnerName) > utils.OWNER_NAME_MAX_LEN {
+		return "owner_name length greater than 255", "400007"
 	}
 
 	if body.RegDate == utils.NULL_STRING {
@@ -70,10 +82,20 @@ func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) (string, 
 		}
 	}
 
+	if body.GstIN == utils.NULL_STRING {
+		body.GstIN = "NOT PROVIDED"
+	}
+
+	if len(body.GstIN) > utils.GST_IN_MAX_LEN {
+		return "gst_in length greater than 15", "400007"
+	}
+
 	if body.PhNo == utils.NULL_STRING {
 		return "Missing ph_no", "400005"
-	} else if len(body.PhNo) != 10 {
-		return "Invalid ph_no", "400006"
+	}
+
+	if len(body.PhNo) > utils.PHONE_NO_MAX_LEN {
+		return "ph_no length greater than 10", "400007"
 	}
 
 	if body.Address == utils.NULL_STRING {
@@ -86,7 +108,7 @@ func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) (string, 
 func ValidateAllShopOwnerBody(body *structs.AllShopOwner, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
-		return bodyErr, "400007"
+		return bodyErr, "400008"
 	}
 
 	if body.IsActive == utils.NULL_STRING {
@@ -103,7 +125,7 @@ func ValidateAllShopOwnerBody(body *structs.AllShopOwner, bodyErr string) (strin
 func ValidateCustomerReqBody(body *structs.Customer, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
-		return bodyErr, "400007"
+		return bodyErr, "400008"
 	}
 
 	if body.Name == utils.NULL_STRING {
@@ -143,7 +165,7 @@ func ValidateCustomerReqBody(body *structs.Customer, bodyErr string) (string, st
 func ValidateAllCustomerBody(body *structs.AllCustomer, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
-		return bodyErr, "400007"
+		return bodyErr, "400008"
 	}
 
 	if body.IsActive == utils.NULL_STRING {
@@ -160,7 +182,7 @@ func ValidateAllCustomerBody(body *structs.AllCustomer, bodyErr string) (string,
 func ValidateFilteredCustomerReqBody(body *structs.FilteredCustomer, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
-		return bodyErr, "400007"
+		return bodyErr, "400008"
 	}
 
 	id := body.Id

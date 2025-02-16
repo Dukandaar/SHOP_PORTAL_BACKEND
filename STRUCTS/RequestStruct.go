@@ -8,6 +8,7 @@ type GenerateToken struct {
 type ShopOwner struct {
 	ShopName  string `json:"shop_name"`
 	OwnerName string `json:"owner_name"`
+	GstIN     string `json:"gst_in"`
 	PhNo      string `json:"ph_no"`
 	RegDate   string `json:"reg_date"`
 	Address   string `json:"address"`

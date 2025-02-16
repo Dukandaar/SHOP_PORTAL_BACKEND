@@ -2,20 +2,26 @@ package utils
 
 const (
 	// API NAME
-	GENERATE_TOKEN        = "GENERATE_TOKEN"
-	POST_SHOP_OWNER       = "POST_SHOP_OWNER"
-	PUT_SHOP_OWNER        = "PUT_SHOP_OWNER"
-	GET_SHOP_OWNER        = "GET_SHOP_OWNER"
-	GET_ALL_SHOP_OWNER    = "GET_ALL_SHOP_OWNER"
-	POST_CUSTOMER         = "POST_CUSTOMER"
-	PUT_CUSTOMER          = "PUT_CUSTOMER"
-	GET_CUSTOMER          = "GET_CUSTOMER"
-	GET_ALL_CUSTOMER      = "GET_ALL_CUSTOMER"
-	GET_FILTERED_CUSTOMER = "GET_FILTERED_CUSTOMER"
+	SERVER_UP                         = "SERVER_UP"
+	GENERATE_TOKEN                    = "GENERATE_TOKEN"
+	POST_SHOP_OWNER                   = "POST_SHOP_OWNER"
+	PUT_SHOP_OWNER                    = "PUT_SHOP_OWNER"
+	GET_SHOP_OWNER                    = "GET_SHOP_OWNER"
+	GET_ALL_SHOP_OWNER                = "GET_ALL_SHOP_OWNER"
+	POST_CUSTOMER                     = "POST_CUSTOMER"
+	PUT_CUSTOMER                      = "PUT_CUSTOMER"
+	GET_CUSTOMER                      = "GET_CUSTOMER"
+	GET_ALL_CUSTOMER                  = "GET_ALL_CUSTOMER"
+	GET_FILTERED_CUSTOMER             = "GET_FILTERED_CUSTOMER"
+	PUT_CUSTOMER_TRANSACTION          = "PUT_CUSTOMER_TRANSACTION"
+	GET_CUSTOMER_TRANSACTION          = "GET_CUSTOMER_TRANSACTION"
+	GET_ALL_CUSTOMER_TRANSACTION      = "GET_ALL_CUSTOMER_TRANSACTION"
+	GET_FILTERED_CUSTOMER_TRANSACTION = "GET_FILTERED_CUSTOMER_TRANS"
 
-	// EMPTY
+	// DEFAULTS
 	NULL_STRING = ""
 	NULL_INT    = 0
+	NULL_FLOAT  = 0.0
 	OK          = "OK"
 	ACTIVE_YES  = "Y"
 	ACTIVE_NO   = "N"
@@ -24,11 +30,24 @@ const (
 	GOLD        = "Gold"
 	SILVER      = "Silver"
 	CASH        = "Cash"
+	UPI         = "Upi"
+	NEFT        = "NEFT"
+	RTGS        = "RTGS"
+	CHEQUE      = "Cheque"
+	CARD        = "Card"
+	OTHER       = "Other"
 	TODAY       = "Today"
 	WEEK        = "Week"
 	MONTH       = "Month"
 	YEAR        = "Year"
 	CUSTOM      = "Custom"
+
+	// MAX FIELD LENGTH
+	SHOP_NAME_MAX_LEN   = 255
+	OWNER_NAME_MAX_LEN  = 255
+	SHOP_REG_ID_MAX_LEN = 10
+	PHONE_NO_MAX_LEN    = 10
+	GST_IN_MAX_LEN      = 15
 
 	// HEADER NAMES
 	ACCEPT_ENCODING = "Accept-Encoding"
@@ -37,8 +56,9 @@ const (
 	TOKEN           = "Token"
 
 	// QPARAMS NAMES
-	OWNER_REG_ID    = "owner_reg_id"
-	CUSTOMER_REG_ID = "customer_reg_id"
+	OWNER_REG_ID      = "owner_reg_id"
+	CUSTOMER_REG_ID   = "customer_reg_id"
+	CUSTOMER_TRASC_ID = "customer_trasc_id"
 
 	JwtSecret = "YourStrongJwtSecretKeyHere"
 
@@ -78,6 +98,10 @@ var PutCustomerHeaders map[string]bool
 var GetCustomerHeaders map[string]bool
 var GetAllCustomerHeaders map[string]bool
 var GetFilteredCustomerHeaders map[string]bool
+var PutCustomerTransactionHeaders map[string]bool
+var GetCustomerTransactionHeaders map[string]bool
+var GetAllCustomerTransactionHeaders map[string]bool
+var GetFilteredCustomerTransactionHeaders map[string]bool
 
 // Qparams
 var PutShopOwnerQParams map[string]bool
@@ -87,6 +111,10 @@ var PutCustomerQParams map[string]bool
 var GetCustomerQParams map[string]bool
 var GetALLCustomerQParams map[string]bool
 var GetFilteredCustomerQParams map[string]bool
+var PutCustomerTransactionQParams map[string]bool
+var GetCustomerTransactionQParams map[string]bool
+var GetAllCustomerTransactionQParams map[string]bool
+var GetFilteredCustomerTransactionQParams map[string]bool
 
 func SetApiHeaders() {
 	PostShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
@@ -99,6 +127,10 @@ func SetApiHeaders() {
 	GetCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetAllCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetFilteredCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	PutCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetCustomerTransactionHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetAllCustomerTransactionHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetFilteredCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 }
 
 func SetApiQParams() {
@@ -109,6 +141,10 @@ func SetApiQParams() {
 	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetALLCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 	GetFilteredCustomerQParams = map[string]bool{OWNER_REG_ID: true}
+	PutCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
+	GetCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
+	GetAllCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
+	GetFilteredCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
 }
 
 var ValidHeaders map[string][]interface{}

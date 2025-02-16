@@ -7,6 +7,7 @@ import (
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"database/sql"
+	"fmt"
 	"time"
 )
 
@@ -41,31 +42,37 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 	err = tx.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhNo).Scan(&rowId, &reg_id, &isActive)
 	if err == sql.ErrNoRows { // Shop owner NOT found (proceed with insertion)
 		ServiceQuery = database.InsertShopOwnerData()
+
 		date, _ := time.Parse("2006-01-02", reqBody.RegDate)
-		regId := maths.GenerateRegID()
+		regId := maths.GenerateShopRegID(tx)
+		if regId == utils.NULL_STRING {
+			return helper.SetErrorResponse("Error generating Shop Owner Registration ID", "Error generating Shop Owner Registration ID")
+		}
 		key, errMsg := maths.GenerateKey(regId) // Key generation *before* transaction
 
 		if errMsg != utils.NULL_STRING {
 			return helper.SetErrorResponse(errMsg, "Key generation error:"+errMsg)
 		} else {
-			_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.PhNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now())
+			_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.GstIN, reqBody.PhNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now())
 			if err != nil {
 				return helper.SetErrorResponse("Error inserting Shop Owner Data", "Error inserting Shop Owner Data:"+err.Error())
 			} else {
-				response, rspCode = helper.CreateSuccessResponse("Shop Owner Added Successfully with regId: " + regId)
+				msg := fmt.Sprintf("Shop Owner Added Successfully with regId: %s, key: %s", regId, key)
+				response, rspCode = helper.CreateSuccessResponse(msg)
 			}
 		}
 	} else if err != nil { // Error checking if owner exists
-		return helper.SetErrorResponse("Error checking Shop Owner Data", "Error checking Shop Owner Data:"+err.Error())
-	} else { // Shop owner ALREADY exists (proceed with update if not active)
+		return helper.SetErrorResponse("Error checking Shop Owner Data", "Error checking Shop Owner Data: "+err.Error())
+	} else {
+		// Shop owner ALREADY exists (proceed with update if not active)
 		if isActive == utils.ACTIVE_YES {
-			response, rspCode = helper.CreateErrorResponse("400008", "Shop Owner with same details is already present")
+			response, rspCode = helper.CreateErrorResponse("400009", "Shop Owner with same details is already present")
 			return response, rspCode
 		} else {
 			ServiceQuery = database.ToggleShopOwnerActiveStatus()
 			_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, time.Now(), rowId)
 			if err != nil {
-				return helper.SetErrorResponse("Error activating Shop Owner", "Error activating Shop Owner:"+err.Error())
+				return helper.SetErrorResponse("Error activating Shop Owner", "Error activating Shop Owner: "+err.Error())
 			} else {
 				response, rspCode = helper.CreateSuccessResponse("Shop Owner Activated Successfully with regId: " + reg_id)
 			}
@@ -77,6 +84,7 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 		if err != nil {
 			return helper.SetErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error())
 		}
+		utils.Logger.Info("Transaction committed successfully")
 	}
 
 	return response, rspCode

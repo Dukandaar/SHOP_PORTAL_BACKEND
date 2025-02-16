@@ -27,6 +27,7 @@ func DecodeKey(encryptedRegID string) (string, string) {
 func ValidateKey(key string, regId string) (string, string) {
 
 	decreptedRegId, errMsg := DecodeKey(key)
+	utils.Logger.Info("Decrypted reg_id: ", decreptedRegId)
 
 	if errMsg != utils.NULL_STRING {
 		return errMsg, "400006"

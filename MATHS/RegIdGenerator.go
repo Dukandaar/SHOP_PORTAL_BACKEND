@@ -1,8 +1,10 @@
 package maths
 
 import (
+	database "SHOP_PORTAL_BACKEND/DATABASE"
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"database/sql"
 	"math/rand"
 )
 
@@ -29,6 +31,24 @@ func RandStringBytesMaskImpr(n int) string {
 	}
 
 	return string(b)
+}
+
+func GenerateShopRegID(tx *sql.Tx) string {
+	regId := RandStringBytesMaskImpr(10)
+
+	ServiceQuery := database.CheckRegIdPresent()
+	var exists bool
+	err := tx.QueryRow(ServiceQuery, regId).Scan(&exists)
+	if err != nil {
+		utils.Logger.Error(err.Error())
+		return utils.NULL_STRING
+	}
+
+	if exists {
+		return GenerateShopRegID(tx)
+	} else {
+		return regId
+	}
 }
 
 func GenerateRegID() string {
