@@ -29,9 +29,9 @@ func ValidateKey(key string, regId string) (string, string) {
 	decreptedRegId, errMsg := DecodeKey(key)
 
 	if errMsg != utils.NULL_STRING {
-		return errMsg, "400004"
+		return errMsg, "400006"
 	} else if decreptedRegId != regId {
-		return "Invalid key for reg_id", "400004"
+		return "Invalid key for reg_id", "400006"
 	}
 	utils.Logger.Info("Valid key for reg_id: ", regId)
 	return utils.NULL_STRING, utils.SUCCESS
