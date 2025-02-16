@@ -15,8 +15,9 @@ func Onit() {
 	utils.SetCodeMap()                   // set code map
 	utils.SetApiHeaders()                // set api headers
 	utils.SetValidHeaders()              // set valid headers
-	utils.NewLogger()                    // new logger
-	database.ConnectDB()                 // connect to database
+	utils.SetApiQParams()
+	utils.NewLogger()    // new logger
+	database.ConnectDB() // connect to database
 }
 
 func ServerUp(ctx iris.Context) {

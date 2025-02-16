@@ -32,7 +32,7 @@ func main() {
 		controller.PostShopOwner(ctx)
 	})
 
-	// api to update shop owner
+	// update shop owner
 	app.Put("shop/updateShopOwner", func(ctx iris.Context) {
 		helper.SetApiName(util.PUT_SHOP_OWNER, ctx)
 		controller.PutShopOwner(ctx)

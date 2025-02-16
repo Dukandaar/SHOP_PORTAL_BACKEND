@@ -13,7 +13,7 @@ import (
 
 // Helper function to set error response and log (NO ROLLBACK HERE)
 
-func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
+func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, int) {
 	var response interface{}
 	rspCode := utils.StatusOK
 
@@ -22,12 +22,12 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.SetErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error())
+		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
 		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error("Panic occurred during transaction:", r, err)
+			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
 		}
 		if rspCode != utils.StatusOK {
 			tx.Rollback()
@@ -46,23 +46,23 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 		date, _ := time.Parse("2006-01-02", reqBody.RegDate)
 		regId := maths.GenerateShopRegID(tx)
 		if regId == utils.NULL_STRING {
-			return helper.SetErrorResponse("Error generating Shop Owner Registration ID", "Error generating Shop Owner Registration ID")
+			return helper.Set500ErrorResponse("Error generating Shop Owner Registration ID", "Error generating Shop Owner Registration ID", logPrefix)
 		}
 		key, errMsg := maths.GenerateKey(regId) // Key generation *before* transaction
 
 		if errMsg != utils.NULL_STRING {
-			return helper.SetErrorResponse(errMsg, "Key generation error:"+errMsg)
+			return helper.Set500ErrorResponse(errMsg, "Key generation error:"+errMsg, logPrefix)
 		} else {
 			_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.GstIN, reqBody.PhNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now())
 			if err != nil {
-				return helper.SetErrorResponse("Error inserting Shop Owner Data", "Error inserting Shop Owner Data:"+err.Error())
+				return helper.Set500ErrorResponse("Error inserting Shop Owner Data", "Error inserting Shop Owner Data:"+err.Error(), logPrefix)
 			} else {
 				msg := fmt.Sprintf("Shop Owner Added Successfully with regId: %s, key: %s", regId, key)
 				response, rspCode = helper.CreateSuccessResponse(msg)
 			}
 		}
 	} else if err != nil { // Error checking if owner exists
-		return helper.SetErrorResponse("Error checking Shop Owner Data", "Error checking Shop Owner Data: "+err.Error())
+		return helper.Set500ErrorResponse("Error checking Shop Owner Data", "Error checking Shop Owner Data: "+err.Error(), logPrefix)
 	} else {
 		// Shop owner ALREADY exists (proceed with update if not active)
 		if isActive == utils.ACTIVE_YES {
@@ -72,7 +72,7 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 			ServiceQuery = database.ToggleShopOwnerActiveStatus()
 			_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, time.Now(), rowId)
 			if err != nil {
-				return helper.SetErrorResponse("Error activating Shop Owner", "Error activating Shop Owner: "+err.Error())
+				return helper.Set500ErrorResponse("Error activating Shop Owner", "Error activating Shop Owner: "+err.Error(), logPrefix)
 			} else {
 				response, rspCode = helper.CreateSuccessResponse("Shop Owner Activated Successfully with regId: " + reg_id)
 			}
@@ -82,9 +82,9 @@ func PostShopOwner(reqBody structs.ShopOwner) (interface{}, int) {
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.SetErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error())
+			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
-		utils.Logger.Info("Transaction committed successfully")
+		utils.Logger.Info(logPrefix, "Transaction committed successfully")
 	}
 
 	return response, rspCode
