@@ -16,6 +16,7 @@ func main() {
 
 	// to get server is up
 	app.Get("/shop/ping", func(ctx iris.Context) {
+		helper.SetApiName(util.SERVER_UP, ctx)
 		helper.ServerUp(ctx)
 	})
 
@@ -77,6 +78,12 @@ func main() {
 	app.Get("shop/getFilteredCustomer", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_FILTERED_CUSTOMER, ctx)
 		controller.GetFilteredCustomer(ctx)
+	})
+
+	// api to add customer transaction
+	app.Post("shop/addCustomerTransaction", func(ctx iris.Context) {
+		helper.SetApiName(util.PUT_CUSTOMER_TRANSACTION, ctx)
+		controller.PutCustomerTransaction(ctx)
 	})
 
 	// Start the server on port 8000
