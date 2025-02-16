@@ -37,6 +37,7 @@ type ShopOwnerDetailsResponse struct {
 type ShopOwnerDetailsSubResponse struct {
 	ShopName  string  `json:"shop_name"`
 	OwnerName string  `json:"owner_name"`
+	GstIN     string  `json:"gst_in"`
 	PhNo      string  `json:"ph_no"`
 	RegDate   string  `json:"reg_date"`
 	Address   string  `json:"address"`
@@ -44,6 +45,7 @@ type ShopOwnerDetailsSubResponse struct {
 	Gold      float32 `json:"gold"`
 	Silver    float32 `json:"silver"`
 	Cash      float32 `json:"cash"`
+	IsActive  string  `json:"is_active"`
 }
 
 type AllShopOwnerDetailsResponse struct {

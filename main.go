@@ -38,7 +38,7 @@ func main() {
 		controller.PutShopOwner(ctx)
 	})
 
-	// api to get shop owner details
+	// get shop owner details
 	app.Get("shop/getShopOwner", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_SHOP_OWNER, ctx)
 		controller.GetShopOwner(ctx)
