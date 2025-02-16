@@ -1,8 +1,9 @@
 package database
 
 import (
+	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"database/sql"
-	"log"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -10,17 +11,19 @@ import (
 var DB *sql.DB
 
 func ConnectDB() *sql.DB {
+	logPrefix := ("[" + time.Now().Format("2006-01-02 15:04:05") + "] ")
 	driverName := "postgres"
-	dsn := "user=postgres password=Post321 host=127.0.0.1 port=5432 dbname=shop sslmode=disable"
+	dsn := "user=postgres password=Post321 host=127.0.0.1 port=5432 dbname=postgres sslmode=disable"
 	DB, err := sql.Open(driverName, dsn)
 	if err != nil {
-		log.Println("Connection unsucessfull!")
+		utils.Logger.Error(logPrefix + "Connection unsuccessful..!!!")
 		return DB
 	}
 	pingErr := DB.Ping()
 	if pingErr != nil {
-		log.Fatal(pingErr)
+		utils.Logger.Error(logPrefix + pingErr.Error())
+		return DB
 	}
-	log.Println("Connection Sucessfull!😍")
+	utils.Logger.Info(logPrefix + "Connection Successful..!!!")
 	return DB
 }
