@@ -19,26 +19,20 @@ func GetAllShopOwner(ctx iris.Context) {
 
 	headers := utils.ReadHeader(ctx)
 	reqBody, bodyError := utils.ReadAllShopOwnerBody(ctx)
-	utils.Logger.Info(headers)
+	utils.Logger.Info(logPrefix, headers, reqBody)
 
 	headerError, errCodeStr := validator.ValidateHeader(utils.GetAllShopOwnerHeaders, headers, ctx)
 	if errCodeStr != utils.SUCCESS {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
-		utils.Logger.Error(headerError)
+		utils.Logger.Error(logPrefix, headerError)
 	} else {
 
 		reqBodyError, errCodeStr := validator.ValidateAllShopOwnerBody(&reqBody, bodyError)
 		if errCodeStr != utils.SUCCESS {
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
-			utils.Logger.Error(reqBodyError)
+			utils.Logger.Error(logPrefix, reqBodyError)
 		} else {
-			response, rspCode = service.GetAllShopOwner(reqBody)
-			if rspCode != utils.StatusOK {
-				utils.Logger.Error("Error in getting all rows")
-				response, rspCode = helper.CreateErrorResponse("500001", "Error in getting all rows")
-			} else {
-				utils.Logger.Info("Got all rows")
-			}
+			response, rspCode = service.GetAllShopOwner(reqBody, logPrefix)
 		}
 	}
 
@@ -46,5 +40,5 @@ func GetAllShopOwner(ctx iris.Context) {
 
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
-	utils.Logger.Info(logPrefix + "Response Completed.")
+	utils.Logger.Info(logPrefix + "Request Completed.")
 }

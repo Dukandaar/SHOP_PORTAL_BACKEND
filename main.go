@@ -44,7 +44,7 @@ func main() {
 		controller.GetShopOwner(ctx)
 	})
 
-	// api to get all shop owners
+	// get all shop owners
 	app.Get("shop/getAllShopOwners", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_ALL_SHOP_OWNER, ctx)
 		controller.GetAllShopOwner(ctx)

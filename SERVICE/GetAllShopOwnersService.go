@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func GetAllShopOwner(reqBody structs.AllShopOwner) (interface{}, int) {
+func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCount := 0
@@ -16,7 +16,7 @@ func GetAllShopOwner(reqBody structs.AllShopOwner) (interface{}, int) {
 
 	var shopName string
 	var ownerName string
-	var regId string
+	var gst_in string
 	var phoneNo string
 	var regDate string
 	var address string
@@ -26,25 +26,39 @@ func GetAllShopOwner(reqBody structs.AllShopOwner) (interface{}, int) {
 	var cash float32
 	var isActive string
 
-	rsp := make([]structs.AllShopOwnerDetailsSubResponse, 0)
+	rsp := make([]structs.ShopOwnerDetailsSubResponse, 0)
 
 	DB := database.ConnectDB()
 	defer DB.Close()
 
+	tx, err := DB.Begin()
+	if err != nil {
+		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+	}
+
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
+		}
+		if rspCode != utils.StatusOK {
+			tx.Rollback()
+		}
+	}()
+
 	ServiceQuery := database.GetAllShopOwnerData(reqBody.IsActive)
-	rows, err := DB.Query(ServiceQuery)
+	rows, err := tx.Query(ServiceQuery)
 	if err == nil {
 		for rows.Next() {
 
-			err = rows.Scan(&shopName, &ownerName, &regId, &phoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
+			err = rows.Scan(&shopName, &ownerName, &gst_in, &phoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash)
 			if err != nil {
-				utils.Logger.Error(err.Error())
-				response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows")
+				response, rspCode = helper.Set500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 				return response, rspCode
 			} else {
-				rsp = append(rsp, structs.AllShopOwnerDetailsSubResponse{
+				rsp = append(rsp, structs.ShopOwnerDetailsSubResponse{
 					ShopName:  shopName,
 					OwnerName: ownerName,
+					GstIN:     gst_in,
 					PhNo:      phoneNo,
 					RegDate:   regDate,
 					Address:   address,
@@ -59,20 +73,27 @@ func GetAllShopOwner(reqBody structs.AllShopOwner) (interface{}, int) {
 		}
 	} else {
 		if err == sql.ErrNoRows {
-			utils.Logger.Info("No rows found")
+			utils.Logger.Info(logPrefix, "No rows found")
 			response, rspCode = helper.CreateSuccessResponse("No any owner found")
 			return response, rspCode
 		} else {
-			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows")
+			response, rspCode = helper.Set500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 			return response, rspCode
 		}
 	}
 
-	response = structs.AllShopOwnerDetailsResponse{
-		Stat:                           "OK",
-		Count:                          rspCount,
-		AllShopOwnerDetailsSubResponse: rsp,
+	if rspCode != utils.StatusOK {
+		err = tx.Commit()
+		if err != nil {
+			response, rspCode = helper.Set500ErrorResponse("Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
+			return response, rspCode
+		}
+	} else {
+		response = structs.AllShopOwnerDetailsResponse{
+			Stat:                           "OK",
+			Count:                          rspCount,
+			AllShopOwnerDetailsSubResponse: rsp,
+		}
 	}
 
 	return response, rspCode
