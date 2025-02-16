@@ -83,7 +83,7 @@ func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) (string, 
 	}
 
 	if body.GstIN == utils.NULL_STRING {
-		body.GstIN = "NOT PROVIDED"
+		body.GstIN = "NOT PROVIDED   "
 	}
 
 	if len(body.GstIN) != utils.GST_IN_MAX_LEN {

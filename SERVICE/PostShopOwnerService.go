@@ -53,10 +53,16 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 		if errMsg != utils.NULL_STRING {
 			return helper.Set500ErrorResponse(errMsg, "Key generation error:"+errMsg, logPrefix)
 		} else {
-			_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.GstIN, reqBody.PhNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now())
+			err = tx.QueryRow(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.GstIN, reqBody.PhNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now()).Scan(&rowId)
 			if err != nil {
 				return helper.Set500ErrorResponse("Error inserting Shop Owner Data", "Error inserting Shop Owner Data:"+err.Error(), logPrefix)
 			} else {
+				// insert data in balance table
+				ServiceQuery = database.InsertOwnerBalanceData()
+				_, err = tx.Exec(ServiceQuery, rowId, utils.NULL_FLOAT, utils.NULL_FLOAT, utils.NULL_FLOAT, time.Now(), time.Now())
+				if err != nil {
+					return helper.Set500ErrorResponse("Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
+				}
 				msg := fmt.Sprintf("Shop Owner Added Successfully with regId: %s, key: %s", regId, key)
 				response, rspCode = helper.CreateSuccessResponse(msg)
 			}

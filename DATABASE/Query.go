@@ -13,7 +13,18 @@ func InsertShopOwnerData() string {
 		INSERT INTO
 			shop.owner (shop_name, owner_name, reg_id, gst_in, phone_no, is_active, reg_date, address, remarks, key, created_at, updated_at)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+		RETURNING id;
+	`
+	return query
+}
+
+func InsertOwnerBalanceData() string {
+	query := `
+		INSERT INTO
+			shop.balance (owner_id, gold, silver, cash, created_at, updated_at)
+		VALUES
+			($1, $2, $3, $4, $5, $6);
 	`
 	return query
 }
@@ -88,30 +99,21 @@ func GetShopOwnerData() string {
 		SELECT
 			o.shop_name,
 			o.owner_name,
+			o.gst_in,
 			o.phone_no,
 			o.reg_date::text,
 			o.address,
 			o.remarks,
-			COALESCE(b_gold.balance, 0) as gold,
-			COALESCE(b_silver.balance, 0) as silver,
-			COALESCE(b_cash.balance, 0) as cash
+			o.is_active,
+			b.gold,
+			b.silver,
+			b.cash
 		FROM
 			shop.owner o
-		LEFT JOIN LATERAL (
-			SELECT balance
-			FROM shop.balance
-			WHERE owner_id = o.id AND type = 'Gold'
-		) AS b_gold ON TRUE
-		LEFT JOIN LATERAL (
-			SELECT balance
-			FROM shop.balance
-			WHERE owner_id = o.id AND type = 'Silver'
-		) AS b_silver ON TRUE
-		LEFT JOIN LATERAL (
-			SELECT balance
-			FROM shop.balance
-			WHERE owner_id = o.id AND type = 'Cash'
-		) AS b_cash ON TRUE
+		LEFT JOIN 
+			shop.balance b 
+		ON 
+			o.id = b.owner_id
 		WHERE
 			o.reg_id = $1;`
 	return query
