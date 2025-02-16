@@ -1,7 +1,7 @@
--- create schema
+-- Schema
 CREATE SCHEMA shop AUTHORIZATION postgres;
 
--- define enums
+-- Enums
 CREATE TYPE is_active AS ENUM ('Y', 'N');
 CREATE TYPE stock_type AS ENUM ('Gold', 'Silver', 'Cash');
 CREATE TYPE bill_type AS ENUM ('WholeSale', 'Retail');
@@ -12,7 +12,7 @@ CREATE TYPE reason AS ENUM ('Sell', 'Buy');
 
 
 
--- create tables
+-- Tables
 CREATE TABLE shop.owner (
     id SERIAL,
     shop_name VARCHAR(255) NOT NULL,
@@ -121,7 +121,7 @@ CREATE TABLE shop.stock_history(
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- primary key
+-- Primary Key
 ALTER TABLE shop.owner ADD CONSTRAINT owner_pkey PRIMARY KEY (id);
 ALTER TABLE shop.stock ADD CONSTRAINT stock_pkey PRIMARY KEY (id);
 ALTER TABLE shop.customer ADD CONSTRAINT customer_pkey PRIMARY KEY (id);
@@ -160,7 +160,7 @@ CREATE INDEX idx_payment_customer_id ON shop.payment (customer_id);
 CREATE INDEX idx_stock_history_stock_id ON shop.stock_history (stock_id);
 CREATE INDEX idx_stock_history_transaction_id ON shop.stock_history (transaction_id);
 
--- constraint
+-- Constraint
 ALTER TABLE shop.owner ADD CONSTRAINT owner_reg_id UNIQUE (reg_id);
 ALTER TABLE shop.owner ADD CONSTRAINT unique_ph_no UNIQUE (phone_no);
 ALTER TABLE shop.owner ADD CONSTRAINT unique_name_ph_no UNIQUE (shop_name, owner_name, phone_no);
@@ -170,7 +170,7 @@ ALTER TABLE shop.customer ADD CONSTRAINT unique_name_ph_no_oId UNIQUE (shop_name
 ALTER TABLE shop.balance ADD CONSTRAINT check_either_owner_or_customer CHECK ((owner_id IS NULL AND customer_id IS NOT NULL) OR (owner_id IS NOT NULL AND customer_id IS NULL));
 
 
---trigger function
+--Trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column() RETURNS TRIGGER AS $$ 
 BEGIN
    NEW.updated_at = now();
@@ -178,7 +178,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- trigger on table
+-- Trigger on table
 CREATE TRIGGER update_stock_updated_at BEFORE UPDATE ON shop.owner FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_stock_updated_at BEFORE UPDATE ON shop.stock FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_customer_updated_at BEFORE UPDATE ON shop.customer FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
