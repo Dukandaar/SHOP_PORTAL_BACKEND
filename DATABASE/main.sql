@@ -48,7 +48,7 @@ CREATE TABLE shop.customer (
     reg_id VARCHAR(12) NOT NULL,
     gst_in VARCHAR(15) DEFAULT NULL,
     reg_date DATE,
-    ph_no VARCHAR(10),
+    phone_no VARCHAR(10),
     is_active is_active NOT NULL,
     address VARCHAR(255),
     remarks TEXT,
@@ -61,7 +61,7 @@ CREATE TABLE shop.balance (
     owner_id BIGINT,
     customer_id BIGINT,
     gold FLOAT DEFAULT 0.0,
-    slver FLOAT DEFAULT 0.0,
+    silver FLOAT DEFAULT 0.0,
     cash FLOAT DEFAULT 0.0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -163,8 +163,10 @@ CREATE INDEX idx_stock_history_transaction_id ON shop.stock_history (transaction
 -- constraint
 ALTER TABLE shop.owner ADD CONSTRAINT owner_reg_id UNIQUE (reg_id);
 ALTER TABLE shop.owner ADD CONSTRAINT unique_ph_no UNIQUE (phone_no);
+ALTER TABLE shop.owner ADD CONSTRAINT unique_name_ph_no UNIQUE (shop_name, owner_name, phone_no);
 ALTER TABLE shop.stock ADD CONSTRAINT unique_type_item_tunch UNIQUE (type, item_name, tunch);
 ALTER TABLE shop.customer ADD CONSTRAINT unique_reg_id UNIQUE (reg_id);
+ALTER TABLE shop.customer ADD CONSTRAINT unique_name_ph_no_oId UNIQUE (shop_name, name, phone_no, owner_id);
 ALTER TABLE shop.balance ADD CONSTRAINT check_either_owner_or_customer CHECK ((owner_id IS NULL AND customer_id IS NOT NULL) OR (owner_id IS NOT NULL AND customer_id IS NULL));
 
 
