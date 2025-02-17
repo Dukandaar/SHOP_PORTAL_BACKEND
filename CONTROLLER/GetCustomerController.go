@@ -31,7 +31,7 @@ func GetCustomer(ctx iris.Context) {
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
 			utils.Logger.Error(QparamsError)
 		} else {
-			response, rspCode = service.GetCustomer(ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.CUSTOMER_REG_ID))
+			response, rspCode = service.GetCustomer(ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.CUSTOMER_REG_ID), logPrefix)
 		}
 	}
 

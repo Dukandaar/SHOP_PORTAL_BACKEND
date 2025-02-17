@@ -8,14 +8,14 @@ import (
 	"database/sql"
 )
 
-func GetCustomer(owner_reg_id string, customer_reg_id string) (interface{}, int) {
+func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCode := utils.StatusOK
 
 	var shopName string
 	var Name string
-	var phNo string
+	var PhoneNo string
 	var regDate string
 	var address string
 	var remarks string
@@ -31,15 +31,15 @@ func GetCustomer(owner_reg_id string, customer_reg_id string) (interface{}, int)
 	var ownerRowId string
 	err := DB.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
 	if err != nil {
-		return helper.SetErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error())
+		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetCustomerData()
-	err = DB.QueryRow(ServiceQuery, customer_reg_id, ownerRowId).Scan(&shopName, &Name, &phNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
+	err = DB.QueryRow(ServiceQuery, customer_reg_id, ownerRowId).Scan(&shopName, &Name, &PhoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			utils.Logger.Info("Data for reg_id ", customer_reg_id, " does not exists")
-			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+customer_reg_id+" does not exists")
+			utils.Logger.Info("Data for reg_id ", customer_reg_id, " does not exist")
+			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+customer_reg_id+" does not exist")
 		} else {
 			utils.Logger.Error(err.Error())
 			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row")
@@ -51,17 +51,17 @@ func GetCustomer(owner_reg_id string, customer_reg_id string) (interface{}, int)
 		response = structs.CustomerDetailsResponse{
 			Stat: "OK",
 			CustomerDetailsSubResponse: structs.CustomerDetailsSubResponse{
-				Name:        shopName,
-				CompanyName: Name,
-				RegId:       customer_reg_id,
-				PhNo:        phNo,
-				RegDate:     regDate,
-				Address:     address,
-				Remarks:     remarks,
-				Gold:        gold,
-				Silver:      silver,
-				Cash:        cash,
-				IsActive:    isActive,
+				Name:     shopName,
+				ShopName: Name,
+				RegId:    customer_reg_id,
+				PhoneNo:  PhoneNo,
+				RegDate:  regDate,
+				Address:  address,
+				Remarks:  remarks,
+				Gold:     gold,
+				Silver:   silver,
+				Cash:     cash,
+				IsActive: isActive,
 			},
 		}
 	}

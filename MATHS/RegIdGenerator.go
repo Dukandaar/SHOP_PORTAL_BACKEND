@@ -51,8 +51,22 @@ func GenerateShopRegID(tx *sql.Tx) string {
 	}
 }
 
-func GenerateRegID() string {
-	return RandStringBytesMaskImpr(10)
+func GenerateCustomerRegID() string {
+	regId := RandStringBytesMaskImpr(12)
+
+	ServiceQuery := database.CheckRegIdPresent()
+	var exists bool
+	err := database.ConnectDB().QueryRow(ServiceQuery, regId).Scan(&exists)
+	if err != nil {
+		utils.Logger.Error(err.Error())
+		return utils.NULL_STRING
+	}
+
+	if exists {
+		return GenerateCustomerRegID()
+	} else {
+		return regId
+	}
 }
 
 func GenerateKey(regId string) (string, string) {
