@@ -249,48 +249,30 @@ func GetCustomerData() string {
 	return query
 }
 
-func GetAllCustomerData(isActiveStates string) string {
+func GetAllCustomerData() string {
 	query := `
-	SELECT
-		c.name,
-		c.shop_name,
-		c.reg_id,
-		c.phone_no,
-		c.reg_date::text,
-		c.address,
-		oc.remark,
-		COALESCE(b_gold.balance, 0) as gold,
-		COALESCE(b_silver.balance, 0) as silver,
-		COALESCE(b_cash.balance, 0) as cash,
-		oc.is_active
-	FROM
-		shop.customer c
-	LEFT JOIN
-		shop.owner_customer oc ON c.id = oc.customer_id
-	LEFT JOIN LATERAL (
-		SELECT balance
-		FROM shop.balance
-		WHERE customer_id = c.id AND type = 'Gold'
-	) AS b_gold ON TRUE
-	LEFT JOIN LATERAL (
-		SELECT balance
-		FROM shop.balance
-		WHERE customer_id = c.id AND type = 'Silver'
-	) AS b_silver ON TRUE
-	LEFT JOIN LATERAL (
-		SELECT balance
-		FROM shop.balance
-		WHERE customer_id = c.id AND type = 'Cash'
-	) AS b_cash ON TRUE
-	WHERE c.id IN (SELECT customer_id FROM shop.owner_customer); -- Get all customers related to an owner
-
-`
-
-	if isActiveStates == utils.ACTIVE_YES {
-		query += " AND oc.is_active = 'Y'" // Filter on owner_customer.is_active
-	} else if isActiveStates == utils.ACTIVE_NO {
-		query += " AND oc.is_active = 'N'" // Filter on owner_customer.is_active
-	}
+        SELECT
+			c.shop_name,
+			c.name,
+			c.gst_in,
+			c.reg_id,
+			c.phone_no,
+			c.reg_date,
+			c.is_active,
+			c.address,
+			c.remarks,
+			b.gold,
+			b.silver,
+			b.cash
+		FROM
+			shop.customer c
+		LEFT JOIN
+			shop.balance b 
+		ON 
+		    c.id = b.customer_id
+		WHERE
+			c.owner_id = $1;
+    `
 	return query
 }
 

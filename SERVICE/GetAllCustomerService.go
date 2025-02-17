@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func GetAllCustomer(reqBody structs.AllCustomer, owner_reg_id string) (interface{}, int) {
+func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCount := 0
@@ -16,6 +16,7 @@ func GetAllCustomer(reqBody structs.AllCustomer, owner_reg_id string) (interface
 
 	var name string
 	var shopName string
+	var GstIN string
 	var regId string
 	var phoneNo string
 	var regDate string
@@ -31,12 +32,19 @@ func GetAllCustomer(reqBody structs.AllCustomer, owner_reg_id string) (interface
 	DB := database.ConnectDB()
 	defer DB.Close()
 
-	ServiceQuery := database.GetAllCustomerData(reqBody.IsActive)
-	rows, err := DB.Query(ServiceQuery)
+	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
+	var ownerRowId int
+	err := DB.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
+	if err != nil {
+		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+	}
+
+	ServiceQuery = database.GetAllCustomerData()
+	rows, err := DB.Query(ServiceQuery, ownerRowId)
 	if err == nil {
 		for rows.Next() {
 
-			err = rows.Scan(&name, &shopName, &regId, &phoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
+			err = rows.Scan(&shopName, &name, &GstIN, &regId, &phoneNo, &regDate, &isActive, &address, &remarks, &gold, &silver, &cash)
 			if err != nil {
 				utils.Logger.Error(err.Error())
 				response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows")

@@ -19,10 +19,6 @@ type AllShopOwner struct {
 	IsActive string `json:"is_active"`
 }
 
-type AllCustomer struct {
-	IsActive string `json:"is_active"`
-}
-
 type Customer struct {
 	Name     string `json:"name"`
 	ShopName string `json:"shop_name"`
