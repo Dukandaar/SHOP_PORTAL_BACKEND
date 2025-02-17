@@ -32,7 +32,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 	}()
 
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
-	var ownerRowId string
+	var ownerRowId int
 	err = tx.QueryRow(ServiceQuery, OwnerRegId).Scan(&ownerRowId)
 	if err != nil {
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
@@ -44,7 +44,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 	var isActive string
 	var customer_reg_id string
 
-	err = tx.QueryRow(ServiceQuery, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &isActive, &customer_reg_id) // Use tx
+	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &isActive, &customer_reg_id)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			return helper.Set500ErrorResponse("Error checking customer", "Error checking customer:"+err.Error(), logPrefix)
@@ -63,21 +63,11 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 		}
 	}
 
-	// Update customer details in DB (only if customer exists)
+	// Update customer
 	ServiceQuery = database.UpdateCustomerData()
-
-	_, err = tx.Exec(ServiceQuery, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo, reqBody.RegDate, reqBody.Address, time.Now(), rowId) // Use rowId and tx
+	_, err = tx.Exec(ServiceQuery, reqBody.Name, reqBody.ShopName, reqBody.GstIN, reqBody.RegDate, reqBody.PhoneNo, utils.ACTIVE_YES, reqBody.Address, time.Now(), CustomerRegId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error updating customer data", "Error updating customer data:"+err.Error(), logPrefix)
-	} else {
-		// update active and remark in owner_customer table
-		ServiceQuery = database.UpdateOwnerCustomerData()
-
-		_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, reqBody.Remarks, ownerRowId, rowId)
-		if err != nil {
-			return helper.Set500ErrorResponse("Error updating owner_customer data", "Error updating owner_customer data:"+err.Error(), logPrefix)
-		}
-		response, rspCode = helper.CreateSuccessResponse("Updated customer details")
+		return helper.Set500ErrorResponse("Error updating customer", "Error updating customer:"+err.Error(), logPrefix)
 	}
 
 	if rspCode == utils.StatusOK {
@@ -85,6 +75,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 		if err != nil {
 			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
+		response, rspCode = helper.CreateSuccessResponse("Customer updated successfully")
 	}
 
 	return response, rspCode

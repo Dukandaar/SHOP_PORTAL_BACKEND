@@ -56,7 +56,7 @@ func main() {
 		controller.PostCustomer(ctx)
 	})
 
-	// api to update Customer
+	// update Customer
 	app.Put("shop/updateCustomer", func(ctx iris.Context) {
 		helper.SetApiName(util.PUT_CUSTOMER, ctx)
 		controller.PutCustomer(ctx)

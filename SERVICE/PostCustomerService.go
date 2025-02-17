@@ -44,7 +44,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 	var isActive string
 	var customerRegId string
 
-	err = tx.QueryRow(ServiceQuery, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &isActive, &customerRegId)
+	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &isActive, &customerRegId)
 	if err == sql.ErrNoRows { // Add New customer
 		ServiceQuery = database.InsertCustomerData()
 		date, _ := time.Parse("2006-01-02", reqBody.RegDate)
