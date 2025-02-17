@@ -69,6 +69,7 @@ type AllCustomerDetailsResponse struct {
 type CustomerDetailsSubResponse struct {
 	Name     string  `json:"name"`
 	ShopName string  `json:"shop_name"`
+	GstIN    string  `json:"gst_in"`
 	RegId    string  `json:"reg_id"`
 	PhoneNo  string  `json:"phone_no"`
 	RegDate  string  `json:"reg_date"`

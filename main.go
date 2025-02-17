@@ -62,7 +62,7 @@ func main() {
 		controller.PutCustomer(ctx)
 	})
 
-	// api to get Customer details
+	// get Customer details
 	app.Get("shop/getCustomer", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_CUSTOMER, ctx)
 		controller.GetCustomer(ctx)
