@@ -23,12 +23,12 @@ func PostCustomer(ctx iris.Context) {
 
 	utils.Logger.Info(logPrefix, headers, qparams, reqBody)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.PostCustomerHeaders, headers, ctx)
+	headerError, errCodeStr := validator.ValidateHeader(utils.PostCustomerHeaders, headers, ctx, logPrefix)
 	if errCodeStr != utils.SUCCESS { // header error
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(logPrefix, headerError)
 	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.PostCustomerQParams, qparams)
+		QparamsError, errCodeStr := validator.ValidateQParams(utils.PostCustomerQParams, qparams, logPrefix)
 		if errCodeStr != utils.SUCCESS { // qparams error
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
 			utils.Logger.Error(logPrefix, QparamsError)

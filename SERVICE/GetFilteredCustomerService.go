@@ -34,6 +34,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	for rows.Next() {
 		var name string
 		var shopName string
+		var GstIN string
 		var regId string
 		var phoneNo string
 		var regDate string
@@ -43,7 +44,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 		var silver float32
 		var cash float32
 		var isActive string
-		err = rows.Scan(&name, &shopName, &regId, &phoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
+		err = rows.Scan(&shopName, &name, &GstIN, &regId, &regDate, &phoneNo, &isActive, &address, &remarks, &gold, &silver, &cash)
 		if err != nil {
 			utils.Logger.Error(err.Error())
 			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows")
@@ -52,6 +53,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 		rsp = append(rsp, structs.CustomerDetailsSubResponse{
 			Name:     name,
 			ShopName: shopName,
+			GstIN:    GstIN,
 			RegId:    regId,
 			PhoneNo:  phoneNo,
 			RegDate:  regDate,

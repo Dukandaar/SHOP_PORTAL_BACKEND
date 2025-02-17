@@ -335,37 +335,26 @@ func GetOwnerCustomerData(ownerId int) string {
 func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 	query := `
         SELECT
-            c.name,
-            c.shop_name,
-            c.reg_id,
-            c.phone_no,
-            c.reg_date::text,
-            c.address,
-            COALESCE(oc.remark, '') as remark,
-            COALESCE(b_gold.balance, 0) as gold,
-            COALESCE(b_silver.balance, 0) as silver,
-            COALESCE(b_cash.balance, 0) as cash,
-            oc.is_active
-        FROM
-            shop.customer c
-        LEFT JOIN
-            shop.owner_customer oc ON c.id = oc.customer_id
-        LEFT JOIN LATERAL (
-            SELECT balance
-            FROM shop.balance
-            WHERE customer_id = c.id AND type = 'Gold'
-        ) AS b_gold ON TRUE
-        LEFT JOIN LATERAL (
-            SELECT balance
-            FROM shop.balance
-            WHERE customer_id = c.id AND type = 'Silver'
-        ) AS b_silver ON TRUE
-        LEFT JOIN LATERAL (
-            SELECT balance
-            FROM shop.balance
-            WHERE customer_id = c.id AND type = 'Cash'
-        ) AS b_cash ON TRUE
-        WHERE oc.owner_id = $1`
+			c.shop_name,
+			c.name,
+			c.gst_in,
+			c.reg_id,
+			c.phone_no,
+			c.reg_date,
+			c.is_active,
+			c.address,
+			c.remarks,
+			b.gold,
+			b.silver,
+			b.cash
+		FROM
+			shop.customer c
+		LEFT JOIN
+			shop.balance b 
+		ON 
+		    c.id = b.customer_id
+		WHERE
+			c.owner_id = $1`
 
 	whereClauses := []string{}
 
@@ -385,7 +374,7 @@ func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 		whereClauses = append(whereClauses, fmt.Sprintf("c.reg_date = '%s'", filter.RegDate))
 	}
 	if filter.IsActive != "" {
-		whereClauses = append(whereClauses, fmt.Sprintf("oc.is_active = '%s'", filter.IsActive))
+		whereClauses = append(whereClauses, fmt.Sprintf("c.is_active = '%s'", filter.IsActive))
 	}
 
 	if filter.DateInterval.Type != "" {
@@ -406,8 +395,6 @@ func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 				endDate, _ := time.Parse("2006-01-02", filter.DateInterval.End)
 				whereClauses = append(whereClauses, fmt.Sprintf("c.reg_date BETWEEN '%s' AND '%s'", startDate.Format("2006-01-02"), endDate.Format("2006-01-02")))
 			}
-		default:
-			utils.Logger.Warn("Invalid DateInterval Type:", filter.DateInterval.Type) // Log invalid type
 		}
 	}
 	if filter.Id > 0 {
@@ -417,7 +404,5 @@ func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 	if len(whereClauses) > 0 {
 		query += " AND " + strings.Join(whereClauses, " AND ")
 	}
-
-	utils.Logger.Info(query)
 	return query
 }

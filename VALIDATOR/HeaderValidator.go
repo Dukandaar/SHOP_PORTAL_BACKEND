@@ -6,7 +6,7 @@ import (
 	"github.com/kataras/iris/v12"
 )
 
-func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface{}, ctx iris.Context) (string, string) {
+func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface{}, ctx iris.Context, logPrefix string) (string, string) {
 
 	// Token validation
 	if reqApiHeader[utils.TOKEN] {
@@ -21,7 +21,7 @@ func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface
 			return "Invalid owner_reg_id length", "400004"
 		}
 
-		errMsg, rspCode := ValidateToken(token, regId)
+		errMsg, rspCode := ValidateToken(token, regId, logPrefix)
 		if rspCode != utils.SUCCESS {
 			return errMsg, rspCode
 		}

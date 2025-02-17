@@ -21,7 +21,7 @@ func PostShopOwner(ctx iris.Context) {
 	reqBody, bodyError := utils.ReadShopOwnerReqBody(ctx)
 	utils.Logger.Info(logPrefix, headers, reqBody)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.PostShopOwnerHeaders, headers, ctx)
+	headerError, errCodeStr := validator.ValidateHeader(utils.PostShopOwnerHeaders, headers, ctx, logPrefix)
 	if errCodeStr != utils.SUCCESS {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(logPrefix, headerError)

@@ -30,7 +30,7 @@ const (
 	GOLD        = "Gold"
 	SILVER      = "Silver"
 	CASH        = "Cash"
-	UPI         = "Upi"
+	UPI         = "UPI"
 	NEFT        = "NEFT"
 	RTGS        = "RTGS"
 	CHEQUE      = "Cheque"
