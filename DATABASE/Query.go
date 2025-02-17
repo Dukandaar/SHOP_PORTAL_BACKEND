@@ -178,7 +178,7 @@ func CheckCustomerPresent() string {
 		FROM 
 			shop.customer
 		WHERE 
-			name = $1 AND shop_name = $2 AND phone_no = $3;
+			owner_id = $1 AND name = $2 AND shop_name = $3 AND phone_no = $4;
     `
 	return query
 }
@@ -199,11 +199,14 @@ func UpdateCustomerData() string {
 			SET
 				name = $1,
 				shop_name = $2,
-				phone_no = $3,
+				gst_in = $3,
 				reg_date = $4,
-				address = $5,
-				updated_at = $6
-			WHERE c.id = $7;
+				phone_no = $5,
+				is_active = $6,
+				address = $7,
+				updated_at = $8
+			WHERE 
+				reg_id = $9;
 	`
 	return query
 }

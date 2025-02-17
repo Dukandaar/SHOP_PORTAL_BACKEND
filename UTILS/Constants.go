@@ -140,7 +140,7 @@ func SetApiHeaders() {
 func SetApiQParams() {
 	PutShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
 	GetShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
-	PostCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
+	PostCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 	PutCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetALLCustomerQParams = map[string]bool{OWNER_REG_ID: true}
