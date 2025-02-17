@@ -182,23 +182,6 @@ func ValidateCustomerReqBody(body *structs.Customer, bodyErr string) (string, st
 	return utils.NULL_STRING, utils.SUCCESS
 }
 
-func ValidateAllCustomerBody(body *structs.AllCustomer, bodyErr string) (string, string) {
-
-	if bodyErr != utils.NULL_STRING {
-		return bodyErr, "400008"
-	}
-
-	if body.IsActive == utils.NULL_STRING {
-		return "Missing is_active", "400005"
-	} else {
-		if body.IsActive != utils.ACTIVE_YES && body.IsActive != utils.ACTIVE_NO && body.IsActive != utils.ALL {
-			return "Invalid is_active", "400006"
-		}
-	}
-
-	return utils.NULL_STRING, utils.SUCCESS
-}
-
 func ValidateFilteredCustomerReqBody(body *structs.FilteredCustomer, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {

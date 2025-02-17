@@ -19,26 +19,19 @@ func GetAllCustomer(ctx iris.Context) {
 
 	headers := utils.ReadHeader(ctx)
 	qparams := utils.ReadQParams(ctx)
-	reqBody, bodyError := utils.ReadAllCustomerReqBody(ctx)
-	utils.Logger.Info(headers, qparams)
+	utils.Logger.Info(logPrefix, headers, qparams)
 
 	headerError, errCodeStr := validator.ValidateHeader(utils.GetCustomerHeaders, headers, ctx)
 	if errCodeStr != utils.SUCCESS {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
-		utils.Logger.Error(headerError)
+		utils.Logger.Error(logPrefix, headerError)
 	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.GetCustomerQParams, qparams)
+		QparamsError, errCodeStr := validator.ValidateQParams(utils.GetAllCustomerQParams, qparams)
 		if errCodeStr != utils.SUCCESS {
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
-			utils.Logger.Error(QparamsError)
+			utils.Logger.Error(logPrefix, QparamsError)
 		} else {
-			reqBodyError, errCodeStr := validator.ValidateAllCustomerBody(&reqBody, bodyError)
-			if errCodeStr != utils.SUCCESS {
-				response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
-				utils.Logger.Error(reqBodyError)
-			} else {
-				response, rspCode = service.GetAllCustomer(reqBody, ctx.URLParam(utils.OWNER_REG_ID))
-			}
+			response, rspCode = service.GetAllCustomer(ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
 		}
 	}
 

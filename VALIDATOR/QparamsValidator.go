@@ -21,7 +21,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		regId, _ := apiQParams[utils.OWNER_REG_ID].(string)
 
 		if len(regId) != 10 {
-			return "Invalid reg_id length", "400004"
+			return "Invalid owner_reg_id length", "400004"
 		}
 
 		ServiceQuery := database.CheckValidOwnerRegId()
@@ -52,7 +52,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		regId, _ := apiQParams[utils.CUSTOMER_REG_ID].(string)
 
 		if len(regId) != 12 {
-			return "Invalid reg_id length", "400004"
+			return "Invalid customer_reg_id length", "400004"
 		}
 
 		ServiceQuery := database.CheckValidCustomerRegId()

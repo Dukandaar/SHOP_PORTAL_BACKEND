@@ -18,7 +18,7 @@ func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface
 		regId := ctx.URLParam(utils.OWNER_REG_ID)
 
 		if len(regId) != 10 {
-			return "Invalid reg_id length", "400004"
+			return "Invalid owner_reg_id length", "400004"
 		}
 
 		errMsg, rspCode := ValidateToken(token, regId)

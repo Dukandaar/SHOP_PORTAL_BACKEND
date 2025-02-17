@@ -65,15 +65,6 @@ func ReadCustomerReqBody(ctx iris.Context) (structs.Customer, string) {
 	return body, NULL_STRING
 }
 
-func ReadAllCustomerReqBody(ctx iris.Context) (structs.AllCustomer, string) {
-	body := structs.AllCustomer{}
-	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
-	if err != nil {
-		return body, "Error in decoding request body"
-	}
-	return body, NULL_STRING
-}
-
 func ReadFilteredCustomerReqBody(ctx iris.Context) (structs.FilteredCustomer, string) {
 	body := structs.FilteredCustomer{}
 	err := json.NewDecoder(ctx.Request().Body).Decode(&body)

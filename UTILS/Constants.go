@@ -113,7 +113,7 @@ var GetShopOwnerQParams map[string]bool
 var PostCustomerQParams map[string]bool
 var PutCustomerQParams map[string]bool
 var GetCustomerQParams map[string]bool
-var GetALLCustomerQParams map[string]bool
+var GetAllCustomerQParams map[string]bool
 var GetFilteredCustomerQParams map[string]bool
 var PutCustomerTransactionQParams map[string]bool
 var GetCustomerTransactionQParams map[string]bool
@@ -143,7 +143,7 @@ func SetApiQParams() {
 	PostCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 	PutCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
-	GetALLCustomerQParams = map[string]bool{OWNER_REG_ID: true}
+	GetAllCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 	GetFilteredCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 	PutCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}

@@ -68,13 +68,13 @@ func main() {
 		controller.GetCustomer(ctx)
 	})
 
-	// api to get all Customers
+	// get all Customer details
 	app.Get("shop/getAllCustomers", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_ALL_CUSTOMER, ctx)
 		controller.GetAllCustomer(ctx)
 	})
 
-	// api tp get filtered customer
+	// get filtered customer details
 	app.Get("shop/getFilteredCustomer", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_FILTERED_CUSTOMER, ctx)
 		controller.GetFilteredCustomer(ctx)

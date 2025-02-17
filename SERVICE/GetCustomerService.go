@@ -39,7 +39,7 @@ func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) 
 	err = DB.QueryRow(ServiceQuery, customer_reg_id, ownerRowId).Scan(&shopName, &name, &GstIN, &regDate, &phoneNo, &isActive, &address, &remarks, &gold, &silver, &cash)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			utils.Logger.Info("Data for reg_id ", customer_reg_id, " does not exist")
+			utils.Logger.Info(logPrefix, "Data for reg_id ", customer_reg_id, " does not exist")
 			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+customer_reg_id+" does not exist")
 		} else {
 			utils.Logger.Error(err.Error())
