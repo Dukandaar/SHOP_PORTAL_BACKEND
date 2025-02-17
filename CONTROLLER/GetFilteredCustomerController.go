@@ -37,7 +37,7 @@ func GetFilteredCustomer(ctx iris.Context) {
 				response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
 				utils.Logger.Error(reqBodyError)
 			} else {
-				response, rspCode = service.GetFilteredCustomer(reqBody, ctx.URLParam(utils.OWNER_REG_ID))
+				response, rspCode = service.GetFilteredCustomer(reqBody, ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
 			}
 		}
 	}

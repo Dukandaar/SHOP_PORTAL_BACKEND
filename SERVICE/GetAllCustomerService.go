@@ -44,17 +44,17 @@ func GetAllCustomer(reqBody structs.AllCustomer, owner_reg_id string) (interface
 			} else {
 
 				rsp = append(rsp, structs.CustomerDetailsSubResponse{
-					Name:        name,
-					CompanyName: shopName,
-					RegId:       regId,
-					PhNo:        phoneNo,
-					RegDate:     regDate,
-					Address:     address,
-					Remarks:     remarks,
-					Gold:        gold,
-					Silver:      silver,
-					Cash:        cash,
-					IsActive:    isActive,
+					Name:     name,
+					ShopName: shopName,
+					RegId:    regId,
+					PhoneNo:  phoneNo,
+					RegDate:  regDate,
+					Address:  address,
+					Remarks:  remarks,
+					Gold:     gold,
+					Silver:   silver,
+					Cash:     cash,
+					IsActive: isActive,
 				})
 				rspCount++
 			}

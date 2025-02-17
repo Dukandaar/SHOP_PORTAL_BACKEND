@@ -17,7 +17,7 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	var shopName string
 	var ownerName string
 	var GstIN string
-	var phNo string
+	var PhoneNo string
 	var regDate string
 	var address string
 	var remarks string
@@ -44,7 +44,7 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	}()
 
 	ServiceQuery := database.GetShopOwnerData()
-	err = tx.QueryRow(ServiceQuery, regId).Scan(&shopName, &ownerName, &GstIN, &phNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash)
+	err = tx.QueryRow(ServiceQuery, regId).Scan(&shopName, &ownerName, &GstIN, &PhoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info("Data for reg_id", regId, "does not exist")
@@ -66,7 +66,7 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 			ShopName:  shopName,
 			OwnerName: ownerName,
 			GstIN:     GstIN,
-			PhNo:      phNo,
+			PhoneNo:   PhoneNo,
 			RegDate:   regDate,
 			Address:   address,
 			Remarks:   remarks,

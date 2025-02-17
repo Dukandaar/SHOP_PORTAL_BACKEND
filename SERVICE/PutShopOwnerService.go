@@ -36,7 +36,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 	var reg_id string
 	var isActive string
 
-	err = tx.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhNo).Scan(&rowId, &reg_id, &isActive)
+	err = tx.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &reg_id, &isActive)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info(logPrefix, "Data for reg_id ", OwnerRegId, " does not exist")
@@ -59,7 +59,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 
 	// update details in DB
 	ServiceQuery = database.UpdateShopOwnerData()
-	_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, reqBody.GstIN, reqBody.PhNo, utils.ACTIVE_YES, reqBody.RegDate, reqBody.Address, reqBody.Remarks, time.Now(), OwnerRegId)
+	_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, reqBody.GstIN, reqBody.PhoneNo, utils.ACTIVE_YES, reqBody.RegDate, reqBody.Address, reqBody.Remarks, time.Now(), OwnerRegId)
 	if err != nil {
 		response, rspCode = helper.Set500ErrorResponse("Error in updating row", "Error in updating row:"+err.Error(), logPrefix)
 	} else {

@@ -90,12 +90,12 @@ func ValidateShopOwnerReqBody(body *structs.ShopOwner, bodyErr string) (string, 
 		return "gst_in length not equal to 15", "400007"
 	}
 
-	if body.PhNo == utils.NULL_STRING {
-		return "Missing ph_no", "400005"
+	if body.PhoneNo == utils.NULL_STRING {
+		return "Missing phone_no", "400005"
 	}
 
-	if len(body.PhNo) > utils.PHONE_NO_MAX_LEN {
-		return "ph_no length greater than 10", "400007"
+	if len(body.PhoneNo) > utils.PHONE_NO_MAX_LEN {
+		return "phone_no length greater than 10", "400007"
 	}
 
 	if body.Address == utils.NULL_STRING {
@@ -132,14 +132,30 @@ func ValidateCustomerReqBody(body *structs.Customer, bodyErr string) (string, st
 		return "Missing name", "400005"
 	}
 
-	if body.CompanyName == utils.NULL_STRING {
-		return "Missing company_name", "400005"
+	if len(body.Name) > utils.CUSTOMER_NAME_MAX_LEN {
+		return "name length greater than 255", "400007"
 	}
 
-	if body.PhNo == utils.NULL_STRING {
-		return "Missing ph_no", "400005"
-	} else if len(body.PhNo) != 10 {
-		return "Invalid ph_no", "400006"
+	if body.ShopName == utils.NULL_STRING {
+		return "Missing shop_name", "400005"
+	}
+
+	if len(body.ShopName) > utils.SHOP_NAME_MAX_LEN {
+		return "shop_name length greater than 255", "400007"
+	}
+
+	if body.GstIN == utils.NULL_STRING {
+		body.GstIN = "NOT PROVIDED   "
+	}
+
+	if len(body.GstIN) != utils.GST_IN_MAX_LEN {
+		return "gst_in length not equal to 15", "400007"
+	}
+
+	if body.PhoneNo == utils.NULL_STRING {
+		return "Missing phone_no", "400005"
+	} else if len(body.PhoneNo) != 10 {
+		return "Invalid phone_no", "400006"
 	}
 
 	if body.RegDate == utils.NULL_STRING {
@@ -153,6 +169,10 @@ func ValidateCustomerReqBody(body *structs.Customer, bodyErr string) (string, st
 
 	if body.Address == utils.NULL_STRING {
 		return "Missing address", "400005"
+	}
+
+	if len(body.Address) > utils.ADDRESS_MAX_LEN {
+		return "address length greater than 255", "400007"
 	}
 
 	if body.Remarks == utils.NULL_STRING {
@@ -188,13 +208,13 @@ func ValidateFilteredCustomerReqBody(body *structs.FilteredCustomer, bodyErr str
 	id := body.Id
 	regId := body.RegId
 	name := body.Name
-	companyName := body.CompanyName
-	phNo := body.PhNo
+	ShopName := body.ShopName
+	PhoneNo := body.PhoneNo
 	regDate := body.RegDate
 	isActive := body.IsActive
 	dateInterval := body.DateInterval
 
-	if (id == utils.NULL_INT) && (regId == utils.NULL_STRING) && (name == utils.NULL_STRING) && (companyName == utils.NULL_STRING) && (phNo == utils.NULL_STRING) && (regDate == utils.NULL_STRING) && (isActive == utils.NULL_STRING) {
+	if (id == utils.NULL_INT) && (regId == utils.NULL_STRING) && (name == utils.NULL_STRING) && (ShopName == utils.NULL_STRING) && (PhoneNo == utils.NULL_STRING) && (regDate == utils.NULL_STRING) && (isActive == utils.NULL_STRING) {
 		if (dateInterval.Type == utils.NULL_STRING) || (dateInterval.Type == utils.CUSTOM && (dateInterval.Start == utils.NULL_STRING || dateInterval.End == utils.NULL_STRING)) {
 			return "Missing reqBody fields", "400005"
 		}

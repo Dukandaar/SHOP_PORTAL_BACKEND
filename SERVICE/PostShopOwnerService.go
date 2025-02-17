@@ -39,7 +39,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 	var reg_id string
 	var isActive string
 
-	err = tx.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhNo).Scan(&rowId, &reg_id, &isActive)
+	err = tx.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &reg_id, &isActive)
 	if err == sql.ErrNoRows { // Shop owner NOT found (proceed with insertion)
 		ServiceQuery = database.InsertShopOwnerData()
 
@@ -53,7 +53,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 		if errMsg != utils.NULL_STRING {
 			return helper.Set500ErrorResponse(errMsg, "Key generation error:"+errMsg, logPrefix)
 		} else {
-			err = tx.QueryRow(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.GstIN, reqBody.PhNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now()).Scan(&rowId)
+			err = tx.QueryRow(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, regId, reqBody.GstIN, reqBody.PhoneNo, utils.ACTIVE_YES, date, reqBody.Address, reqBody.Remarks, key, time.Now(), time.Now()).Scan(&rowId)
 			if err != nil {
 				return helper.Set500ErrorResponse("Error inserting Shop Owner Data", "Error inserting Shop Owner Data:"+err.Error(), logPrefix)
 			} else {

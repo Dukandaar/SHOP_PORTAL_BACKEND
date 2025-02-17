@@ -50,7 +50,7 @@ func main() {
 		controller.GetAllShopOwner(ctx)
 	})
 
-	// api to add Customer
+	// add Customer
 	app.Post("shop/addCustomer", func(ctx iris.Context) {
 		helper.SetApiName(util.POST_CUSTOMER, ctx)
 		controller.PostCustomer(ctx)

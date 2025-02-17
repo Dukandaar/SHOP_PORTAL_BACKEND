@@ -8,7 +8,7 @@ import (
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 )
 
-func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string) (interface{}, int) {
+func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, logPrefix string) (interface{}, int) {
 	var response interface{}
 	rspCode := utils.StatusOK
 
@@ -19,7 +19,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string) (i
 	var ownerRowId string
 	err := DB.QueryRow(ServiceQuery, ownerRegID).Scan(&ownerRowId)
 	if err != nil {
-		return helper.SetErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error())
+		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetFilteredCustomerData(reqBody)
@@ -50,17 +50,17 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string) (i
 			return response, rspCode
 		}
 		rsp = append(rsp, structs.CustomerDetailsSubResponse{
-			Name:        name,
-			CompanyName: shopName,
-			RegId:       regId,
-			PhNo:        phoneNo,
-			RegDate:     regDate,
-			Address:     address,
-			Remarks:     remarks,
-			Gold:        gold,
-			Silver:      silver,
-			Cash:        cash,
-			IsActive:    isActive,
+			Name:     name,
+			ShopName: shopName,
+			RegId:    regId,
+			PhoneNo:  phoneNo,
+			RegDate:  regDate,
+			Address:  address,
+			Remarks:  remarks,
+			Gold:     gold,
+			Silver:   silver,
+			Cash:     cash,
+			IsActive: isActive,
 		})
 	}
 

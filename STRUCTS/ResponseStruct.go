@@ -38,7 +38,7 @@ type ShopOwnerDetailsSubResponse struct {
 	ShopName  string  `json:"shop_name"`
 	OwnerName string  `json:"owner_name"`
 	GstIN     string  `json:"gst_in"`
-	PhNo      string  `json:"ph_no"`
+	PhoneNo   string  `json:"phone_no"`
 	RegDate   string  `json:"reg_date"`
 	Address   string  `json:"address"`
 	Remarks   string  `json:"remarks"`
@@ -67,15 +67,15 @@ type AllCustomerDetailsResponse struct {
 }
 
 type CustomerDetailsSubResponse struct {
-	Name        string  `json:"name"`
-	CompanyName string  `json:"company_name"`
-	RegId       string  `json:"reg_id"`
-	PhNo        string  `json:"ph_no"`
-	RegDate     string  `json:"reg_date"`
-	Address     string  `json:"address"`
-	Remarks     string  `json:"remarks"`
-	Gold        float32 `json:"gold"`
-	Silver      float32 `json:"silver"`
-	Cash        float32 `json:"cash"`
-	IsActive    string  `json:"isActive"`
+	Name     string  `json:"name"`
+	ShopName string  `json:"shop_name"`
+	RegId    string  `json:"reg_id"`
+	PhoneNo  string  `json:"phone_no"`
+	RegDate  string  `json:"reg_date"`
+	Address  string  `json:"address"`
+	Remarks  string  `json:"remarks"`
+	Gold     float32 `json:"gold"`
+	Silver   float32 `json:"silver"`
+	Cash     float32 `json:"cash"`
+	IsActive string  `json:"isActive"`
 }

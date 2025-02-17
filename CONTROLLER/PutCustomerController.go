@@ -37,7 +37,7 @@ func PutCustomer(ctx iris.Context) {
 				response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
 				utils.Logger.Error(reqBodyError)
 			} else {
-				response, rspCode = service.PutCustomer(reqBody, ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.CUSTOMER_REG_ID))
+				response, rspCode = service.PutCustomer(reqBody, ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.CUSTOMER_REG_ID), logPrefix)
 			}
 		}
 	}

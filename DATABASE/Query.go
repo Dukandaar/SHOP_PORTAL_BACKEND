@@ -29,6 +29,16 @@ func InsertOwnerBalanceData() string {
 	return query
 }
 
+func InsertCustomerBalanceData() string {
+	query := `
+		INSERT INTO
+			shop.balance (customer_id, gold, silver, cash, created_at, updated_at)
+		VALUES
+			($1, $2, $3, $4, $5, $6);
+	`
+	return query
+}
+
 func CheckOwnerPresent() string {
 	query := `
 		SELECT id, reg_id, is_active
@@ -153,9 +163,9 @@ func GetAllShopOwnerData(isActiveStates string) string {
 func InsertCustomerData() string {
 	query := `
         INSERT INTO
-            shop.customer (name, company_name, reg_id, reg_date, ph_no, address, created_at, updated_at)
+            shop.customer (is_active, owner_id, name, shop_name, reg_id, reg_date, phone_no, address, remarks, gst_in, created_at, updated_at)
         VALUES
-            ($1, $2, $3, $4, $5, $6, $7, $8)
+            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         RETURNING id;
     `
 	return query
@@ -163,10 +173,12 @@ func InsertCustomerData() string {
 
 func CheckCustomerPresent() string {
 	query := `
-        SELECT c.id, oc.is_active, c.reg_id
-        FROM shop.customer c
-		JOIN shop.owner_customer oc ON oc.customer_id = c.id
-        WHERE name = $1 and company_name = $2 and ph_no = $3;
+        SELECT 
+			id, is_active, reg_id
+		FROM 
+			shop.customer
+		WHERE 
+			name = $1 AND shop_name = $2 AND phone_no = $3;
     `
 	return query
 }
@@ -186,8 +198,8 @@ func UpdateCustomerData() string {
 				shop.customer c
 			SET
 				name = $1,
-				company_name = $2,
-				ph_no = $3,
+				shop_name = $2,
+				phone_no = $3,
 				reg_date = $4,
 				address = $5,
 				updated_at = $6
@@ -212,8 +224,8 @@ func GetCustomerData() string {
 	query := `
         SELECT
             c.name,
-            c.company_name,
-            c.ph_no,
+            c.shop_name,
+            c.phone_no,
             c.reg_date::text,
             c.address,
             oc.remark,
@@ -250,9 +262,9 @@ func GetAllCustomerData(isActiveStates string) string {
 	query := `
 	SELECT
 		c.name,
-		c.company_name,
+		c.shop_name,
 		c.reg_id,
-		c.ph_no,
+		c.phone_no,
 		c.reg_date::text,
 		c.address,
 		oc.remark,
@@ -317,11 +329,11 @@ func CheckOwnerCustomerPresent() string {
 
 func UpdateOwnerCustomerData() string {
 	query := `
-        UPDATE shop.owner_customer
+        UPDATE shop.customer
         SET
             is_active = $1,
-            remark = $2
-        WHERE owner_id = $3 AND customer_id = $4;
+            remarks = $2
+        WHERE reg_id = $3;
     `
 	return query
 }
@@ -331,10 +343,10 @@ func GetOwnerCustomerData(ownerId int) string {
         SELECT
             oc.customer_id,
             c.name as customer_name,
-            c.company_name,
+            c.shop_name,
             c.reg_id as customer_reg_id,
             c.reg_date::text as customer_reg_date,
-            c.ph_no as customer_ph_no,
+            c.phone_no as customer_phone_no,
             c.address as customer_address,
             oc.is_active,
             oc.remark
@@ -351,9 +363,9 @@ func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 	query := `
         SELECT
             c.name,
-            c.company_name,
+            c.shop_name,
             c.reg_id,
-            c.ph_no,
+            c.phone_no,
             c.reg_date::text,
             c.address,
             COALESCE(oc.remark, '') as remark,
@@ -390,11 +402,11 @@ func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 	if filter.Name != "" {
 		whereClauses = append(whereClauses, fmt.Sprintf("c.name ILIKE '%%%s%%'", filter.Name))
 	}
-	if filter.CompanyName != "" {
-		whereClauses = append(whereClauses, fmt.Sprintf("c.company_name ILIKE '%%%s%%'", filter.CompanyName))
+	if filter.ShopName != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("c.shop_name ILIKE '%%%s%%'", filter.ShopName))
 	}
-	if filter.PhNo != "" {
-		whereClauses = append(whereClauses, fmt.Sprintf("c.ph_no ILIKE '%%%s%%'", filter.PhNo))
+	if filter.PhoneNo != "" {
+		whereClauses = append(whereClauses, fmt.Sprintf("c.phone_no ILIKE '%%%s%%'", filter.PhoneNo))
 	}
 	if filter.RegDate != "" {
 		whereClauses = append(whereClauses, fmt.Sprintf("c.reg_date = '%s'", filter.RegDate))

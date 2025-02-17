@@ -59,7 +59,7 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 					ShopName:  shopName,
 					OwnerName: ownerName,
 					GstIN:     gst_in,
-					PhNo:      phoneNo,
+					PhoneNo:   phoneNo,
 					RegDate:   regDate,
 					Address:   address,
 					Remarks:   remarks,
