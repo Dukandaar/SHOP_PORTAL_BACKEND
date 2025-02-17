@@ -14,8 +14,9 @@ func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) 
 	rspCode := utils.StatusOK
 
 	var shopName string
-	var Name string
-	var PhoneNo string
+	var name string
+	var GstIN string
+	var phoneNo string
 	var regDate string
 	var address string
 	var remarks string
@@ -28,14 +29,14 @@ func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) 
 	defer DB.Close()
 
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
-	var ownerRowId string
+	var ownerRowId int
 	err := DB.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
 	if err != nil {
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetCustomerData()
-	err = DB.QueryRow(ServiceQuery, customer_reg_id, ownerRowId).Scan(&shopName, &Name, &PhoneNo, &regDate, &address, &remarks, &gold, &silver, &cash, &isActive)
+	err = DB.QueryRow(ServiceQuery, customer_reg_id, ownerRowId).Scan(&shopName, &name, &GstIN, &regDate, &phoneNo, &isActive, &address, &remarks, &gold, &silver, &cash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info("Data for reg_id ", customer_reg_id, " does not exist")
@@ -52,9 +53,9 @@ func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) 
 			Stat: "OK",
 			CustomerDetailsSubResponse: structs.CustomerDetailsSubResponse{
 				Name:     shopName,
-				ShopName: Name,
-				RegId:    customer_reg_id,
-				PhoneNo:  PhoneNo,
+				ShopName: name,
+				GstIN:    GstIN,
+				PhoneNo:  phoneNo,
 				RegDate:  regDate,
 				Address:  address,
 				Remarks:  remarks,

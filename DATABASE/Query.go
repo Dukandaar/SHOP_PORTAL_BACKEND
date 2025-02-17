@@ -226,37 +226,25 @@ func UpdateCustomerOwnerData() string {
 func GetCustomerData() string {
 	query := `
         SELECT
-            c.name,
-            c.shop_name,
-            c.phone_no,
-            c.reg_date::text,
-            c.address,
-            oc.remark,
-            COALESCE(b_gold.balance, 0) as gold,
-            COALESCE(b_silver.balance, 0) as silver,
-            COALESCE(b_cash.balance, 0) as cash,
-			oc.is_active
-        FROM
-            shop.customer c
-        LEFT JOIN
-            shop.owner_customer oc ON c.id = oc.customer_id
-        LEFT JOIN LATERAL (
-            SELECT balance
-            FROM shop.balance
-            WHERE customer_id = c.id AND type = 'Gold'
-        ) AS b_gold ON TRUE
-        LEFT JOIN LATERAL (
-            SELECT balance
-            FROM shop.balance
-            WHERE customer_id = c.id AND type = 'Silver'
-        ) AS b_silver ON TRUE
-        LEFT JOIN LATERAL (
-            SELECT balance
-            FROM shop.balance
-            WHERE customer_id = c.id AND type = 'Cash'
-        ) AS b_cash ON TRUE
-        WHERE
-            c.reg_id = $1 AND oc.owner_id = $2;
+			c.shop_name,
+			c.name,
+			c.gst_in,
+			c.reg_date,
+			c.phone_no,
+			c.is_active,
+			c.address,
+			c.remarks,
+			b.gold,
+			b.silver,
+			b.cash
+		FROM
+			shop.customer c
+		LEFT JOIN
+			shop.balance b 
+		ON 
+		    c.id = b.customer_id
+		WHERE
+			c.reg_id = $1 and c.owner_id = $2
     `
 	return query
 }
