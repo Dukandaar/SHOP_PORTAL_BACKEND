@@ -22,12 +22,12 @@ func PutShopOwner(ctx iris.Context) {
 	reqBody, bodyError := utils.ReadShopOwnerReqBody(ctx)
 	utils.Logger.Info(logPrefix, headers, qparams, reqBody)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.PutShopOwnerHeaders, headers, ctx)
+	headerError, errCodeStr := validator.ValidateHeader(utils.PutShopOwnerHeaders, headers, ctx, logPrefix)
 	if errCodeStr != utils.SUCCESS { // header error
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(logPrefix, headerError)
 	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.PutShopOwnerQParams, qparams)
+		QparamsError, errCodeStr := validator.ValidateQParams(utils.PutShopOwnerQParams, qparams, logPrefix)
 		if errCodeStr != utils.SUCCESS { // qparams error
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
 			utils.Logger.Error(logPrefix, QparamsError)

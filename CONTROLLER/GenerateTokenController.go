@@ -21,12 +21,12 @@ func GenerateToken(ctx iris.Context) {
 	reqBody, bodyError := utils.ReadGenerateTokenReqBody(ctx)
 	utils.Logger.Info(headers, reqBody)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.GenerateTokenHeaders, headers, ctx)
+	headerError, errCodeStr := validator.ValidateHeader(utils.GenerateTokenHeaders, headers, ctx, logPrefix)
 	if errCodeStr != utils.SUCCESS {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(headerError)
 	} else {
-		reqBodyError, errCodeStr := validator.ValidateGenerateTokenReqBody(&reqBody, bodyError)
+		reqBodyError, errCodeStr := validator.ValidateGenerateTokenReqBody(&reqBody, bodyError, logPrefix)
 		if errCodeStr != utils.SUCCESS {
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
 			utils.Logger.Error(reqBodyError)

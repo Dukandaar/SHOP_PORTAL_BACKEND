@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interface{}) (string, string) {
+func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interface{}, logPrefix string) (string, string) {
 
 	DB := database.ConnectDB()
 	defer DB.Close()
@@ -29,14 +29,14 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		err := DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 		if err != nil {
 			errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", regId)
-			utils.Logger.Error(err.Error())
+			utils.Logger.Error(logPrefix, err.Error())
 			return errMsg, "500001"
 		}
 
 		if exists {
-			utils.Logger.Info("Row with reg_id : ", regId, " exists")
+			utils.Logger.Info(logPrefix, "Row with reg_id : ", regId, " exists")
 		} else {
-			utils.Logger.Info("Row with reg_id ", regId, " does not exist")
+			utils.Logger.Info(logPrefix, "Row with reg_id ", regId, " does not exist")
 			return "Owner Registration ID does not exist", "400004"
 		}
 
@@ -60,14 +60,14 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		err := DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 		if err != nil {
 			errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", regId)
-			utils.Logger.Error(err.Error())
+			utils.Logger.Error(logPrefix, err.Error())
 			return errMsg, "500001"
 		}
 
 		if exists {
-			utils.Logger.Info("Row with reg_id : ", regId, " exists")
+			utils.Logger.Info(logPrefix, "Row with reg_id : ", regId, " exists")
 		} else {
-			utils.Logger.Info("Row with reg_id ", regId, " does not exist")
+			utils.Logger.Info(logPrefix, "Row with reg_id ", regId, " does not exist")
 			return "Customer Registration ID does not exist", "400004"
 		}
 	}

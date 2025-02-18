@@ -21,12 +21,12 @@ func GetCustomer(ctx iris.Context) {
 	qparams := utils.ReadQParams(ctx)
 	utils.Logger.Info(logPrefix, headers, qparams)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.GetCustomerHeaders, headers, ctx)
+	headerError, errCodeStr := validator.ValidateHeader(utils.GetCustomerHeaders, headers, ctx, logPrefix)
 	if errCodeStr != utils.SUCCESS {
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(logPrefix, headerError)
 	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.GetCustomerQParams, qparams)
+		QparamsError, errCodeStr := validator.ValidateQParams(utils.GetCustomerQParams, qparams, logPrefix)
 		if errCodeStr != utils.SUCCESS {
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
 			utils.Logger.Error(logPrefix, QparamsError)

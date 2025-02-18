@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) (string, string) {
+func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string, logPrefix string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
 		return bodyErr, "400008"
@@ -28,21 +28,21 @@ func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string) (
 	err := db.QueryRow(ServiceQuery, body.RegId).Scan(&exists)
 	if err != nil {
 		errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", body.RegId)
-		utils.Logger.Error(err.Error())
+		utils.Logger.Error(logPrefix, err.Error())
 		return errMsg, "500001"
 	}
 
 	if exists {
-		utils.Logger.Info("Row with reg_id : ", body.RegId, " exists")
+		utils.Logger.Info(logPrefix, "Row with reg_id : ", body.RegId, " exists")
 	} else {
-		utils.Logger.Info("Row with reg_id ", body.RegId, " does not exist")
+		utils.Logger.Info(logPrefix, "Row with reg_id ", body.RegId, " does not exist")
 		return "Owner Registration ID does not exist", "400006"
 	}
 
 	if body.Key == utils.NULL_STRING {
 		return "Missing key", "400005"
 	} else {
-		errMsg, errCodeStr := ValidateKey(body.Key, body.RegId)
+		errMsg, errCodeStr := ValidateKey(body.Key, body.RegId, logPrefix)
 		if errMsg != utils.NULL_STRING {
 			return errMsg, errCodeStr
 		}

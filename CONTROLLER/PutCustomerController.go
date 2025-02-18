@@ -22,12 +22,12 @@ func PutCustomer(ctx iris.Context) {
 	reqBody, bodyError := utils.ReadCustomerReqBody(ctx)
 	utils.Logger.Info(logPrefix, headers, qparams, reqBody)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.PutCustomerHeaders, headers, ctx)
+	headerError, errCodeStr := validator.ValidateHeader(utils.PutCustomerHeaders, headers, ctx, logPrefix)
 	if errCodeStr != utils.SUCCESS { // header error
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(logPrefix, headerError)
 	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.PutCustomerQParams, qparams)
+		QparamsError, errCodeStr := validator.ValidateQParams(utils.PutCustomerQParams, qparams, logPrefix)
 		if errCodeStr != utils.SUCCESS { // qparams error
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
 			utils.Logger.Error(logPrefix, QparamsError)
