@@ -80,6 +80,18 @@ func main() {
 		controller.GetFilteredCustomer(ctx)
 	})
 
+	// add stock
+	app.Post("shop/addStock", func(ctx iris.Context) {
+		helper.SetApiName(util.POST_STOCK, ctx)
+		controller.PostStock(ctx)
+	})
+
+	// update stock
+	app.Put("shop/updateStock", func(ctx iris.Context) {
+		helper.SetApiName(util.PUT_STOCK, ctx)
+		controller.PutStock(ctx)
+	})
+
 	// api to add customer transaction
 	app.Post("shop/addCustomerTransaction", func(ctx iris.Context) {
 		helper.SetApiName(util.PUT_CUSTOMER_TRANSACTION, ctx)

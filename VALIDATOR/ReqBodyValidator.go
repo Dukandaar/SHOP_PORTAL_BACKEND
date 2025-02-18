@@ -218,3 +218,49 @@ func ValidateFilteredCustomerReqBody(body *structs.FilteredCustomer, bodyErr str
 	return utils.NULL_STRING, utils.SUCCESS
 
 }
+
+func ValidatePostStockReqBody(body *structs.PostStock, bodyErr string) (string, string) {
+
+	if bodyErr != utils.NULL_STRING {
+		return bodyErr, "400008"
+	}
+
+	if body.ItemName == utils.NULL_STRING {
+		return "Missing item_name", "400005"
+	}
+
+	if len(body.ItemName) > utils.ITEM_NAME_MAX_LEN {
+		return "item_name length greater than 255", "400007"
+	}
+
+	if body.Type == utils.NULL_STRING {
+		return "Missing type", "400005"
+	}
+
+	if body.Type != utils.GOLD && body.Type != utils.SILVER && body.Type != utils.CASH {
+		return "Invalid type", "400006"
+	}
+
+	if body.Weight == utils.NULL_INT {
+		return "Missing quantity", "400005"
+	}
+
+	return utils.NULL_STRING, utils.SUCCESS
+}
+
+func ValidatePutStockReqBody(body *structs.PutStock, bodyErr string) (string, string) {
+
+	if bodyErr != utils.NULL_STRING {
+		return bodyErr, "400008"
+	}
+
+	if body.Weight == utils.NULL_INT {
+		return "Missing quantity", "400005"
+	}
+
+	if body.Tunch == utils.NULL_INT {
+		return "Missing tunch", "400005"
+	}
+
+	return utils.NULL_STRING, utils.SUCCESS
+}

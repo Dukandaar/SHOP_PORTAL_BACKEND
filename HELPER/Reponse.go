@@ -35,3 +35,13 @@ func CreateSuccessResponse(message string) (structs.SuccessResponse, int) {
 		},
 	}, utils.StatusOK
 }
+
+func CreateSuccessResponseWithId(message string, id int) (structs.SuccessIdResponse, int) {
+	return structs.SuccessIdResponse{
+		Stat: "OK",
+		SuccessSubResponse: structs.SuccessIdSubResponse{
+			SuccessMsg: message,
+			Id:         id,
+		},
+	}, utils.StatusOK
+}

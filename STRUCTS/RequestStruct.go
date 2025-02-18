@@ -45,3 +45,16 @@ type DateInterval struct {
 	Start string `json:"start"`
 	End   string `json:"end"`
 }
+
+type PostStock struct {
+	Type     string  `json:"type"`
+	ItemName string  `json:"item_name"`
+	Tunch    float32 `json:"tunch"`
+	Weight   float32 `json:"weight"`
+}
+
+type PutStock struct {
+	Tunch   float32 `json:"tunch"`
+	Weight  float32 `json:"weight"`
+	Remarks string  `json:"remarks"`
+}

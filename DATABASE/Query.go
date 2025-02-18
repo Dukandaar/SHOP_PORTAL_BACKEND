@@ -406,3 +406,73 @@ func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 	}
 	return query
 }
+
+func CheckValidStockId() string {
+	query := `
+		SELECT EXISTS
+		(SELECT 1 FROM shop.stock WHERE id = $1)
+	`
+	return query
+}
+
+func CheckStockPresent() string {
+	query := `
+		SELECT id
+		FROM shop.stock
+		WHERE owner_id = $1 AND type = $2 AND item_name = $3 AND tunch = $4;
+	`
+	return query
+}
+
+func InsertStockData() string {
+	query := `
+		INSERT INTO
+			shop.stock (owner_id, type, item_name, tunch, weight, created_at, updated_at)
+		VALUES
+			($1, $2, $3, $4, $5, $6, $7)
+		RETURNING id;
+	`
+	return query
+}
+
+func InsertStockHistoryData() string {
+	query := `
+		INSERT INTO
+			shop.stock_history (stock_id, prev_balance, new_balance, reason, remarks, created_at)
+		VALUES
+			($1, $2, $3, $4, $5, $6);
+	`
+	return query
+}
+
+func UpdateStockData() string {
+	query := `
+		UPDATE
+			shop.stock
+		SET
+			tunch = $1,
+			weight = $2,
+			updated_at = $3
+		WHERE
+			id = $4 and owner_id = $5;
+	`
+	return query
+}
+
+func GetStockData() string {
+	query := `
+		SELECT
+			s.id,
+			s.name,
+			s.description,
+			s.price,
+			s.is_active,
+			s.created_at,
+			s.updated_at
+		FROM
+			shop.stock s
+		WHERE
+			s.id = $1;
+	`
+	return query
+}

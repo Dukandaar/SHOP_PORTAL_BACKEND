@@ -72,5 +72,34 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		}
 	}
 
+	// stock_id
+	if reqApiQParams[utils.STOCK_ID] {
+
+		if apiQParams[utils.STOCK_ID] == utils.NULL_INT {
+			return "Missing stock_id", "400003"
+		}
+
+		stockId, _ := apiQParams[utils.STOCK_ID].(string)
+
+		DB := database.ConnectDB()
+		defer DB.Close()
+
+		ServiceQuery := database.CheckValidStockId()
+		var exists bool
+		err := DB.QueryRow(ServiceQuery, stockId).Scan(&exists)
+		if err != nil {
+			errMsg := fmt.Sprintf("Error in checking if row with stock_id %s exists", stockId)
+			utils.Logger.Error(logPrefix, err.Error())
+			return errMsg, "500001"
+		}
+
+		if exists {
+			utils.Logger.Info(logPrefix, "Row with stock_id : ", stockId, " exists")
+		} else {
+			utils.Logger.Info(logPrefix, "Row with stock_id ", stockId, " does not exist")
+			return "Stock ID does not exist", "400004"
+		}
+	}
+
 	return utils.NULL_STRING, utils.SUCCESS
 }

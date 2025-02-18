@@ -117,7 +117,7 @@ CREATE TABLE shop.stock_history(
     new_balance FLOAT NOT NULL,
     reason reason NOT NULL,
     transaction_id BIGINT,
-    remark TEXT,
+    remarks TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
