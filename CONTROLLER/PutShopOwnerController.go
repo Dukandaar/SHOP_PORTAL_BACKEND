@@ -46,5 +46,5 @@ func PutShopOwner(ctx iris.Context) {
 
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
-	utils.Logger.Info(logPrefix + " Request Completed.")
+	utils.Logger.Info(logPrefix + "Request Completed.")
 }
