@@ -13,6 +13,11 @@ const (
 	GET_CUSTOMER                      = "GET_CUSTOMER"
 	GET_ALL_CUSTOMER                  = "GET_ALL_CUSTOMER"
 	GET_FILTERED_CUSTOMER             = "GET_FILTERED_CUSTOMER"
+	POST_STOCK                        = "POST_STOCK"
+	PUT_STOCK                         = "PUT_STOCK"
+	GET_STOCK                         = "GET_STOCK"
+	GET_ALL_STOCK                     = "GET_ALL_STOCK"
+	GET_PREVIOUS_BALANCE              = "GET_PREVIOUS_BALANCE"
 	PUT_CUSTOMER_TRANSACTION          = "PUT_CUSTOMER_TRANSACTION"
 	GET_CUSTOMER_TRANSACTION          = "GET_CUSTOMER_TRANSACTION"
 	GET_ALL_CUSTOMER_TRANSACTION      = "GET_ALL_CUSTOMER_TRANSACTION"
@@ -41,6 +46,8 @@ const (
 	MONTH       = "Month"
 	YEAR        = "Year"
 	CUSTOM      = "Custom"
+	BUY         = "Buy"
+	SELL        = "Sell"
 
 	// MAX FIELD LENGTH
 	SHOP_NAME_MAX_LEN       = 255
@@ -52,6 +59,7 @@ const (
 	shop_name_MAX_LEN       = 255
 	CUSTOMER_REG_ID_MAX_LEN = 15
 	ADDRESS_MAX_LEN         = 255
+	ITEM_NAME_MAX_LEN       = 255
 
 	// HEADER NAMES
 	ACCEPT_ENCODING = "Accept-Encoding"
@@ -60,11 +68,9 @@ const (
 	TOKEN           = "Token"
 
 	// QPARAMS NAMES
-	OWNER_REG_ID      = "owner_reg_id"
-	CUSTOMER_REG_ID   = "customer_reg_id"
-	CUSTOMER_TRASC_ID = "customer_trasc_id"
-
-	JwtSecret = "YourStrongJwtSecretKeyHere"
+	OWNER_REG_ID    = "owner_reg_id"
+	CUSTOMER_REG_ID = "customer_reg_id"
+	STOCK_ID        = "stock_id"
 
 	PrivateKeyPEM = `-----BEGIN RSA PRIVATE KEY-----
 MIICWwIBAAKBgGhM3rfXDjV0hTJIrq5bvt+e+EqPVF8S0EHUGSVJpRagyZyBMlNd
@@ -102,6 +108,11 @@ var PutCustomerHeaders map[string]bool
 var GetCustomerHeaders map[string]bool
 var GetAllCustomerHeaders map[string]bool
 var GetFilteredCustomerHeaders map[string]bool
+var PostStockHeaders map[string]bool
+var PutStockHeaders map[string]bool
+var GetStockHeaders map[string]bool
+var GetAllStockHeaders map[string]bool
+var GetPreviousBalanceHeaders map[string]bool
 var PutCustomerTransactionHeaders map[string]bool
 var GetCustomerTransactionHeaders map[string]bool
 var GetAllCustomerTransactionHeaders map[string]bool
@@ -115,6 +126,11 @@ var PutCustomerQParams map[string]bool
 var GetCustomerQParams map[string]bool
 var GetAllCustomerQParams map[string]bool
 var GetFilteredCustomerQParams map[string]bool
+var PostStockQParams map[string]bool
+var PutStockQParams map[string]bool
+var GetStockQParams map[string]bool
+var GetAllStockQParams map[string]bool
+var GetPreviousBalanceQParams map[string]bool
 var PutCustomerTransactionQParams map[string]bool
 var GetCustomerTransactionQParams map[string]bool
 var GetAllCustomerTransactionQParams map[string]bool
@@ -131,6 +147,11 @@ func SetApiHeaders() {
 	GetCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetAllCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetFilteredCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	PostStockHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	PutStockHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetStockHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetAllStockHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetPreviousBalanceHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PutCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetCustomerTransactionHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetAllCustomerTransactionHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
@@ -145,6 +166,12 @@ func SetApiQParams() {
 	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetAllCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 	GetFilteredCustomerQParams = map[string]bool{OWNER_REG_ID: true}
+	PostStockQParams = map[string]bool{OWNER_REG_ID: true}
+	PutStockQParams = map[string]bool{OWNER_REG_ID: true, STOCK_ID: true}
+	GetStockQParams = map[string]bool{OWNER_REG_ID: true, STOCK_ID: true}
+	GetAllStockQParams = map[string]bool{OWNER_REG_ID: true}
+	GetAllStockQParams = map[string]bool{OWNER_REG_ID: true}
+	GetPreviousBalanceQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	PutCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
 	GetAllCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}

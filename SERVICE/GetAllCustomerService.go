@@ -29,8 +29,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 
 	rsp := make([]structs.CustomerDetailsSubResponse, 0)
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
 	var ownerRowId int

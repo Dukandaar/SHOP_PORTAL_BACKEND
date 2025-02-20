@@ -31,7 +31,7 @@ func GenerateToken(ctx iris.Context) {
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
 			utils.Logger.Error(reqBodyError)
 		} else {
-			response, rspCode = service.GenerateToken(reqBody)
+			response, rspCode = service.GenerateToken(reqBody, logPrefix)
 		}
 	}
 
@@ -39,5 +39,5 @@ func GenerateToken(ctx iris.Context) {
 
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
-	utils.Logger.Info(logPrefix + " Request Completed.")
+	utils.Logger.Info(logPrefix + "Request Completed.")
 }

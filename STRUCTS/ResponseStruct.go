@@ -20,6 +20,16 @@ type SuccessSubResponse struct {
 	SuccessMsg string `json:"msg"`
 }
 
+type SuccessIdResponse struct {
+	Stat               string               `json:"stat"`
+	SuccessSubResponse SuccessIdSubResponse `json:"rsp"`
+}
+
+type SuccessIdSubResponse struct {
+	SuccessMsg string `json:"msg"`
+	Id         int    `json:"id"`
+}
+
 type TokenResponse struct {
 	Stat             string           `json:"stat"`
 	TokenSubResponse TokenSubResponse `json:"rsp"`
@@ -79,4 +89,16 @@ type CustomerDetailsSubResponse struct {
 	Silver   float32 `json:"silver"`
 	Cash     float32 `json:"cash"`
 	IsActive string  `json:"isActive"`
+}
+
+type CustomerPreviousBalanceResponse struct {
+	Stat                               string                               `json:"stat"`
+	CustomerPreviousBalanceSubResponse []CustomerPreviousBalanceSubResponse `json:"rsp"`
+}
+
+type CustomerPreviousBalanceSubResponse struct {
+	RowId  int     `json:"row_id"`
+	Gold   float32 `json:"gold"`
+	Silver float32 `json:"silver"`
+	Cash   float32 `json:"cash"`
 }

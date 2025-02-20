@@ -13,8 +13,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 	var response interface{}
 	rspCode := utils.StatusOK
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	tx, err := DB.Begin() // Start transaction
 	if err != nil {

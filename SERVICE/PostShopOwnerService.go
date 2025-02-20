@@ -17,8 +17,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 	var response interface{}
 	rspCode := utils.StatusOK
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	tx, err := DB.Begin()
 	if err != nil {

@@ -14,7 +14,8 @@ func ConnectDB() *sql.DB {
 	logPrefix := ("[" + time.Now().Format("2006-01-02 15:04:05") + "] ")
 	driverName := "postgres"
 	dsn := "user=postgres password=Post321 host=127.0.0.1 port=5432 dbname=postgres sslmode=disable"
-	DB, err := sql.Open(driverName, dsn)
+	var err error
+	DB, err = sql.Open(driverName, dsn)
 	if err != nil {
 		utils.Logger.Error(logPrefix + "Connection unsuccessful..!!!")
 		return DB

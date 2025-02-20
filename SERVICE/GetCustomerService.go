@@ -25,8 +25,7 @@ func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) 
 	var cash float32
 	var isActive string
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
 	var ownerRowId int

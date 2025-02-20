@@ -26,8 +26,7 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	var cash float32
 	var isActive string
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	tx, err := DB.Begin()
 	if err != nil {

@@ -6,17 +6,17 @@ import (
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 )
 
-func GenerateToken(reqBody structs.GenerateToken) (interface{}, int) {
+func GenerateToken(reqBody structs.GenerateToken, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCode := utils.StatusOK
 
 	token, err := helper.GenerateJWT(reqBody.Key)
 	if err != nil {
-		utils.Logger.Error(err.Error())
+		utils.Logger.Error(logPrefix, err.Error())
 		response, rspCode = helper.CreateErrorResponse("500001", "Error in generating Token")
 	} else {
-		utils.Logger.Info("Generated JWT:", token)
+		utils.Logger.Info(logPrefix, "Generated JWT:", token)
 		response, rspCode = helper.CreateSuccessResponse(token)
 	}
 
