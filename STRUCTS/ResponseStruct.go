@@ -90,3 +90,15 @@ type CustomerDetailsSubResponse struct {
 	Cash     float32 `json:"cash"`
 	IsActive string  `json:"isActive"`
 }
+
+type CustomerPreviousBalanceResponse struct {
+	Stat                               string                               `json:"stat"`
+	CustomerPreviousBalanceSubResponse []CustomerPreviousBalanceSubResponse `json:"rsp"`
+}
+
+type CustomerPreviousBalanceSubResponse struct {
+	RowId  int     `json:"row_id"`
+	Gold   float32 `json:"gold"`
+	Silver float32 `json:"silver"`
+	Cash   float32 `json:"cash"`
+}

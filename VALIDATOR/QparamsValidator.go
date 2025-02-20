@@ -8,8 +8,7 @@ import (
 
 func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interface{}, logPrefix string) (string, string) {
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	// owner_reg_id
 	if reqApiQParams[utils.OWNER_REG_ID] {
@@ -80,9 +79,6 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		}
 
 		stockId, _ := apiQParams[utils.STOCK_ID].(string)
-
-		DB := database.ConnectDB()
-		defer DB.Close()
 
 		ServiceQuery := database.CheckValidStockId()
 		var exists bool

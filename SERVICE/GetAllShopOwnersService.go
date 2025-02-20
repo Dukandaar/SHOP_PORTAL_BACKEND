@@ -28,8 +28,7 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 
 	rsp := make([]structs.ShopOwnerDetailsSubResponse, 0)
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	tx, err := DB.Begin()
 	if err != nil {

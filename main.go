@@ -92,6 +92,12 @@ func main() {
 		controller.PutStock(ctx)
 	})
 
+	// get previous balance
+	app.Get("shop/getPreviousBalance", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_PREVIOUS_BALANCE, ctx)
+		controller.GetPreviousBalance(ctx)
+	})
+
 	// api to add customer transaction
 	app.Post("shop/addCustomerTransaction", func(ctx iris.Context) {
 		helper.SetApiName(util.PUT_CUSTOMER_TRANSACTION, ctx)

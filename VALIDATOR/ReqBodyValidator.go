@@ -24,7 +24,7 @@ func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string, l
 
 	var exists bool
 	ServiceQuery := database.CheckValidOwnerRegId()
-	db := database.ConnectDB()
+	db := database.DB
 	err := db.QueryRow(ServiceQuery, body.RegId).Scan(&exists)
 	if err != nil {
 		errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", body.RegId)

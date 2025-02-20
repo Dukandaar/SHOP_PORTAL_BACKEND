@@ -476,3 +476,29 @@ func GetStockData() string {
 	`
 	return query
 }
+
+func GetCustomerPreviousBalance() string {
+	query := `
+		SELECT
+			b.gold,
+			b.silver,
+			b.cash
+		FROM
+			shop.balance b
+		WHERE
+			b.customer_id = $1;
+	`
+	return query
+}
+
+func GetCustomerId() string {
+	query := `
+		SELECT
+			c.id
+		FROM
+			shop.customer c
+		WHERE
+			c.reg_id = $1 and c.owner_id = $2;
+	`
+	return query
+}

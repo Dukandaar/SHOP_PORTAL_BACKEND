@@ -15,8 +15,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 	var response interface{}
 	rspCode := utils.StatusOK
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	tx, err := DB.Begin()
 	if err != nil {

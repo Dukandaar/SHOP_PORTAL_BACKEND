@@ -12,8 +12,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	var response interface{}
 	rspCode := utils.StatusOK
 
-	DB := database.ConnectDB()
-	defer DB.Close()
+	DB := database.DB
 
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
 	var ownerRowId string

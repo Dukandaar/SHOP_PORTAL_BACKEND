@@ -147,5 +147,5 @@ func ParseAndDecryptJWT(tokenString string) (string, error) {
 		return decryptedID, nil
 	}
 
-	return "", fmt.Errorf("invalid token claims")
+	return utils.NULL_STRING, fmt.Errorf("invalid token claims")
 }

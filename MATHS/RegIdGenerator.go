@@ -56,7 +56,7 @@ func GenerateCustomerRegID() string {
 
 	ServiceQuery := database.CheckRegIdPresent()
 	var exists bool
-	err := database.ConnectDB().QueryRow(ServiceQuery, regId).Scan(&exists)
+	err := database.DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 	if err != nil {
 		utils.Logger.Error(err.Error())
 		return utils.NULL_STRING
