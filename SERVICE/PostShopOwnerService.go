@@ -7,7 +7,6 @@ import (
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"database/sql"
-	"fmt"
 	"time"
 )
 
@@ -27,14 +26,13 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 	defer func() {
 		if r := recover(); r != nil || err != nil {
 			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-		}
-		if rspCode != utils.StatusOK {
 			tx.Rollback()
 		}
 	}()
 
 	ServiceQuery := database.CheckOwnerPresent()
 	var rowId int
+	var key string
 	var reg_id string
 	var isActive string
 
@@ -62,8 +60,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 				if err != nil {
 					return helper.Set500ErrorResponse("Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
 				}
-				msg := fmt.Sprintf("Shop Owner Added Successfully with regId: %s, key: %s", regId, key)
-				response, rspCode = helper.CreateSuccessResponse(msg)
+				response, rspCode = helper.CreateOwnerSuccessResponseWithIdKey("Shop Owner Added Successfully", regId, key)
 			}
 		}
 	} else if err != nil { // Error checking if owner exists
@@ -79,7 +76,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 			if err != nil {
 				return helper.Set500ErrorResponse("Error activating Shop Owner", "Error activating Shop Owner: "+err.Error(), logPrefix)
 			} else {
-				response, rspCode = helper.CreateSuccessResponse("Shop Owner Activated Successfully with regId: " + reg_id)
+				response, rspCode = helper.CreateOwnerSuccessResponseWithIdKey("Shop Owner Activated Successfully", reg_id, key)
 			}
 		}
 	}

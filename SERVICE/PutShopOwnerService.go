@@ -24,8 +24,6 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 	defer func() {
 		if r := recover(); r != nil || err != nil {
 			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-		}
-		if rspCode != utils.StatusOK {
 			tx.Rollback()
 		}
 	}()
@@ -48,7 +46,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 
 	if isActive != utils.NULL_STRING {
 		if reg_id == OwnerRegId {
-			utils.Logger.Info(logPrefix, "Row with reg_id ", OwnerRegId, " exists") // update row
+			utils.Logger.Info(logPrefix, "Data with reg_id ", OwnerRegId, " exists") // update row
 		} else {
 			utils.Logger.Info(logPrefix, "Same data with reg_id ", OwnerRegId, " exists")
 			response, rspCode = helper.CreateErrorResponse("400009", "Same data with reg_id "+OwnerRegId+" exists")
@@ -62,7 +60,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 	if err != nil {
 		response, rspCode = helper.Set500ErrorResponse("Error in updating row", "Error in updating row:"+err.Error(), logPrefix)
 	} else {
-		response, rspCode = helper.CreateSuccessResponse("Updated row with reg_id : " + OwnerRegId)
+		response, rspCode = helper.CreateSuccessResponse("Updated owner with reg_id : " + OwnerRegId)
 	}
 
 	if rspCode == utils.StatusOK {

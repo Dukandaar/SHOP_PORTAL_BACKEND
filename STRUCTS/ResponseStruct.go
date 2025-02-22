@@ -20,6 +20,11 @@ type SuccessSubResponse struct {
 	SuccessMsg string `json:"msg"`
 }
 
+type SuccessRegIdResponse struct {
+	Stat               string                  `json:"stat"`
+	SuccessSubResponse SuccessRegIdSubResponse `json:"rsp"`
+}
+
 type SuccessIdResponse struct {
 	Stat               string               `json:"stat"`
 	SuccessSubResponse SuccessIdSubResponse `json:"rsp"`
@@ -28,6 +33,22 @@ type SuccessIdResponse struct {
 type SuccessIdSubResponse struct {
 	SuccessMsg string `json:"msg"`
 	Id         int    `json:"id"`
+}
+
+type CreateOwnerSuccessResponseWithIdKey struct {
+	Stat               string                                 `json:"stat"`
+	SuccessSubResponse CreateOwnerSuccessSubResponseWithIdKey `json:"rsp"`
+}
+
+type CreateOwnerSuccessSubResponseWithIdKey struct {
+	SuccessMsg string `json:"msg"`
+	RegId      string `json:"reg_id"`
+	Key        string `json:"key"`
+}
+
+type SuccessRegIdSubResponse struct {
+	SuccessMsg string `json:"msg"`
+	RegId      string `json:"reg_id"`
 }
 
 type TokenResponse struct {
@@ -52,9 +73,9 @@ type ShopOwnerDetailsSubResponse struct {
 	RegDate   string  `json:"reg_date"`
 	Address   string  `json:"address"`
 	Remarks   string  `json:"remarks"`
-	Gold      float32 `json:"gold"`
-	Silver    float32 `json:"silver"`
-	Cash      float32 `json:"cash"`
+	Gold      float64 `json:"gold"`
+	Silver    float64 `json:"silver"`
+	Cash      float64 `json:"cash"`
 	IsActive  string  `json:"is_active"`
 }
 
@@ -85,9 +106,9 @@ type CustomerDetailsSubResponse struct {
 	RegDate  string  `json:"reg_date"`
 	Address  string  `json:"address"`
 	Remarks  string  `json:"remarks"`
-	Gold     float32 `json:"gold"`
-	Silver   float32 `json:"silver"`
-	Cash     float32 `json:"cash"`
+	Gold     float64 `json:"gold"`
+	Silver   float64 `json:"silver"`
+	Cash     float64 `json:"cash"`
 	IsActive string  `json:"isActive"`
 }
 
@@ -98,7 +119,7 @@ type CustomerPreviousBalanceResponse struct {
 
 type CustomerPreviousBalanceSubResponse struct {
 	RowId  int     `json:"row_id"`
-	Gold   float32 `json:"gold"`
-	Silver float32 `json:"silver"`
-	Cash   float32 `json:"cash"`
+	Gold   float64 `json:"gold"`
+	Silver float64 `json:"silver"`
+	Cash   float64 `json:"cash"`
 }

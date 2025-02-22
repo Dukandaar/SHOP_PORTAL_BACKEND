@@ -101,7 +101,7 @@ func main() {
 	// api to add customer transaction
 	app.Post("shop/addCustomerTransaction", func(ctx iris.Context) {
 		helper.SetApiName(util.PUT_CUSTOMER_TRANSACTION, ctx)
-		controller.PutCustomerTransaction(ctx)
+		controller.PostCustomerTransaction(ctx)
 	})
 
 	// Start the server on port 8000

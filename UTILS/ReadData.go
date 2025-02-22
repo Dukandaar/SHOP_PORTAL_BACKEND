@@ -91,3 +91,12 @@ func ReadPutStockReqBody(ctx iris.Context) (structs.PutStock, string) {
 	}
 	return body, NULL_STRING
 }
+
+func ReadPutCustomerTransactionReqBody(ctx iris.Context) (structs.CustomerBill, string) {
+	body := structs.CustomerBill{}
+	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
+	if err != nil {
+		return body, "Error in decoding request body"
+	}
+	return body, NULL_STRING
+}

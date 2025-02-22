@@ -22,24 +22,35 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 	var regDate string
 	var address string
 	var remarks string
-	var gold float32
-	var silver float32
-	var cash float32
+	var gold float64
+	var silver float64
+	var cash float64
 	var isActive string
 
 	rsp := make([]structs.CustomerDetailsSubResponse, 0)
 
 	DB := database.DB
 
+	tx, err := DB.Begin()
+	if err != nil {
+		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+	}
+	defer func() {
+		if r := recover(); r != nil || rspCode != utils.StatusOK {
+			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r)
+			tx.Rollback()
+		}
+	}()
+
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
 	var ownerRowId int
-	err := DB.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
+	err = tx.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
 	if err != nil {
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetAllCustomerData()
-	rows, err := DB.Query(ServiceQuery, ownerRowId)
+	rows, err := tx.Query(ServiceQuery, ownerRowId)
 	if err == nil {
 		for rows.Next() {
 
