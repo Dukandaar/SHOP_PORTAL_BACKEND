@@ -36,6 +36,27 @@ func CreateSuccessResponse(message string) (structs.SuccessResponse, int) {
 	}, utils.StatusOK
 }
 
+func CreateSuccessResponseWithRegId(message string, regIg string) (structs.SuccessRegIdResponse, int) {
+	return structs.SuccessRegIdResponse{
+		Stat: "OK",
+		SuccessSubResponse: structs.SuccessRegIdSubResponse{
+			SuccessMsg: message,
+			RegId:      regIg,
+		},
+	}, utils.StatusOK
+}
+
+func CreateOwnerSuccessResponseWithIdKey(message string, regId string, key string) (structs.CreateOwnerSuccessResponseWithIdKey, int) {
+	return structs.CreateOwnerSuccessResponseWithIdKey{
+		Stat: "OK",
+		SuccessSubResponse: structs.CreateOwnerSuccessSubResponseWithIdKey{
+			SuccessMsg: message,
+			RegId:      regId,
+			Key:        key,
+		},
+	}, utils.StatusOK
+}
+
 func CreateSuccessResponseWithId(message string, id int) (structs.SuccessIdResponse, int) {
 	return structs.SuccessIdResponse{
 		Stat: "OK",

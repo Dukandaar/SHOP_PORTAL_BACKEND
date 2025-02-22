@@ -78,6 +78,7 @@ type Payment struct {
 	Paid        float64 `json:"paid"`
 	Rem         float64 `json:"rem"`
 	PaymentType string  `json:"payment_type"`
+	Remarks     string  `json:"remarks"`
 }
 
 type CustomerBill struct {

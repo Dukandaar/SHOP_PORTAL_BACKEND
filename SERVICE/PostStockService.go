@@ -23,8 +23,6 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 	defer func() {
 		if r := recover(); r != nil || err != nil {
 			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-		}
-		if rspCode != utils.StatusOK {
 			tx.Rollback()
 		}
 	}()
@@ -64,7 +62,7 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 
 	// insert data in stock history
 	ServiceQuery = database.InsertStockHistoryData()
-	_, err = tx.Exec(ServiceQuery, id, utils.NULL_FLOAT, reqBody.Weight, utils.BUY, "Intial Stock", time.Now())
+	_, err = tx.Exec(ServiceQuery, id, utils.NULL_FLOAT, reqBody.Weight, utils.BUY, "Initial Stock", time.Now())
 	if err != nil {
 		return helper.Set500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
 	} else {

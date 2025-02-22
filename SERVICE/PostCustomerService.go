@@ -7,7 +7,6 @@ import (
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"database/sql"
-	"fmt"
 	"time"
 )
 
@@ -25,8 +24,6 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 	defer func() {
 		if r := recover(); r != nil || err != nil {
 			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-		}
-		if rspCode != utils.StatusOK { // Rollback only if there was an error
 			tx.Rollback()
 		}
 	}()
@@ -64,9 +61,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 			if err != nil {
 				return helper.Set500ErrorResponse("Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
 			}
-			msg := fmt.Sprintf("Customer Added Successfully with reg_id:%s", regId)
-			response, rspCode = helper.CreateSuccessResponse(msg)
-
+			response, rspCode = helper.CreateSuccessResponseWithRegId("Customer Added Successfully", regId)
 		}
 	} else if err != nil { // Database error checking for existing customer
 		return helper.Set500ErrorResponse("Error in checking row", "Error checking for existing customer:"+err.Error(), logPrefix)

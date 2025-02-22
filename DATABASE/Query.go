@@ -563,9 +563,9 @@ func AddStockHistory() string {
 func BillPayment() string {
 	query := `
 		INSERT INTO
-			shop.payment (bill_id, customer_id, factor, new, prev, total, paid, rem, type, date, created_at, updated_at)
+			shop.payment (bill_id, customer_id, factor, new, prev, total, paid, rem, type, date, remarks, created_at, updated_at)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13);
 	`
 	return query
 }

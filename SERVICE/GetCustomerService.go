@@ -27,15 +27,26 @@ func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) 
 
 	DB := database.DB
 
+	tx, err := DB.Begin()
+	if err != nil {
+		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+	}
+	defer func() {
+		if r := recover(); r != nil || rspCode != utils.StatusOK {
+			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r)
+			tx.Rollback()
+		}
+	}()
+
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
 	var ownerRowId int
-	err := DB.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
+	err = tx.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
 	if err != nil {
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetCustomerData()
-	err = DB.QueryRow(ServiceQuery, customer_reg_id, ownerRowId).Scan(&shopName, &name, &GstIN, &regDate, &phoneNo, &isActive, &address, &remarks, &gold, &silver, &cash)
+	err = tx.QueryRow(ServiceQuery, customer_reg_id, ownerRowId).Scan(&shopName, &name, &GstIN, &regDate, &phoneNo, &isActive, &address, &remarks, &gold, &silver, &cash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info(logPrefix, "Data for reg_id ", customer_reg_id, " does not exist")

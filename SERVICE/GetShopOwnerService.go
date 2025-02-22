@@ -36,8 +36,6 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	defer func() {
 		if r := recover(); r != nil || err != nil {
 			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-		}
-		if rspCode != utils.StatusOK {
 			tx.Rollback()
 		}
 	}()

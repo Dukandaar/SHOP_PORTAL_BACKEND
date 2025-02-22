@@ -25,9 +25,6 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 			utils.Logger.Error("Panic occurred during transaction:", r, err)
 			tx.Rollback()
 		}
-		if rspCode != utils.StatusOK {
-			tx.Rollback()
-		}
 	}()
 
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID

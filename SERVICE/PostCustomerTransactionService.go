@@ -118,7 +118,7 @@ func PostCustomerTransactionService(reqBody structs.CustomerBill, ownerRegId str
 		if err != nil {
 			return helper.Set500ErrorResponse("Error in decreasing stock", "Error in decreasing stock:"+err.Error(), logPrefix)
 		}
-		utils.Logger.Info(logPrefix, "Stock decreased by:", reqBody.TransactionDetails[i].Weight)
+		utils.Logger.Info(logPrefix, "Stock decreased by:", reqBody.TransactionDetails[i].NetWeight)
 
 		// update stock histroy table
 		ServiceQuery = database.AddStockHistory()
@@ -132,7 +132,7 @@ func PostCustomerTransactionService(reqBody structs.CustomerBill, ownerRegId str
 
 	// Add payment
 	ServiceQuery = database.BillPayment()
-	_, err = tx.Exec(ServiceQuery, billId, customerRowId, reqBody.PaymentDetails.Factor, reqBody.PaymentDetails.New, reqBody.PaymentDetails.Prev, reqBody.PaymentDetails.Total, reqBody.PaymentDetails.Paid, reqBody.PaymentDetails.Rem, reqBody.PaymentDetails.PaymentType, reqBody.Date, time.Now(), time.Now())
+	_, err = tx.Exec(ServiceQuery, billId, customerRowId, reqBody.PaymentDetails.Factor, reqBody.PaymentDetails.New, reqBody.PaymentDetails.Prev, reqBody.PaymentDetails.Total, reqBody.PaymentDetails.Paid, reqBody.PaymentDetails.Rem, reqBody.PaymentDetails.PaymentType, reqBody.Date, reqBody.PaymentDetails.Remarks, time.Now(), time.Now())
 	if err != nil {
 		return helper.Set500ErrorResponse("Error in adding payment", "Error in adding payment:"+err.Error(), logPrefix)
 	}

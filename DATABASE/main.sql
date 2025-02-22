@@ -89,8 +89,6 @@ CREATE TABLE shop.transaction (
     fine FLOAT NOT NULL,
     discount FLOAT DEFAULT 0.0,
     amount FLOAT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE shop.payment (
@@ -145,9 +143,42 @@ ALTER TABLE shop.payment ADD CONSTRAINT fk_payment_customer_id FOREIGN KEY (cust
 ALTER TABLE shop.stock_history ADD CONSTRAINT fk_stock_history_stock FOREIGN KEY (stock_id) REFERENCES shop.stock(id);
 ALTER TABLE shop.stock_history ADD CONSTRAINT fk_stock_history_transaction_id FOREIGN KEY (transaction_id) REFERENCES shop.transaction(id);
 
+-- Sequences
+CREATE SEQUENCE shop.owner_id_seq;
+ALTER TABLE shop.owner ALTER COLUMN id SET DEFAULT nextval('shop.owner_id_seq');
+ALTER SEQUENCE shop.owner_id_seq OWNED BY shop.owner.id;
+
+CREATE SEQUENCE shop.stock_id_seq;
+ALTER TABLE shop.stock ALTER COLUMN id SET DEFAULT nextval('shop.stock_id_seq');
+ALTER SEQUENCE shop.stock_id_seq OWNED BY shop.stock.id;
+
+CREATE SEQUENCE shop.customer_id_seq;
+ALTER TABLE shop.customer ALTER COLUMN id SET DEFAULT nextval('shop.customer_id_seq');
+ALTER SEQUENCE shop.customer_id_seq OWNED BY shop.customer.id;
+
+CREATE SEQUENCE shop.balance_id_seq;
+ALTER TABLE shop.balance ALTER COLUMN id SET DEFAULT nextval('shop.balance_id_seq');
+ALTER SEQUENCE shop.balance_id_seq OWNED BY shop.balance.id;
+
+CREATE SEQUENCE shop.bill_id_seq;
+ALTER TABLE shop.bill ALTER COLUMN id SET DEFAULT nextval('shop.bill_id_seq');
+ALTER SEQUENCE shop.bill_id_seq OWNED BY shop.bill.id;
+
+CREATE SEQUENCE shop.transaction_id_seq;
+ALTER TABLE shop.transaction ALTER COLUMN id SET DEFAULT nextval('shop.transaction_id_seq');
+ALTER SEQUENCE shop.transaction_id_seq OWNED BY shop.transaction.id;
+
+CREATE SEQUENCE shop.payment_id_seq;
+ALTER TABLE shop.payment ALTER COLUMN id SET DEFAULT nextval('shop.payment_id_seq');
+ALTER SEQUENCE shop.payment_id_seq OWNED BY shop.payment.id;
+
+CREATE SEQUENCE shop.stock_history_id_seq;
+ALTER TABLE shop.stock_history ALTER COLUMN id SET DEFAULT nextval('shop.stock_history_id_seq');
+ALTER SEQUENCE shop.stock_history_id_seq OWNED BY shop.stock_history.id;
+
 -- Indexes
-CREATE INDEX idx_owner_reg_id ON shop.owner (reg_id); -- For faster lookups by reg_id
-CREATE INDEX idx_owner_phone_no ON shop.owner (phone_no); -- For faster lookups by phone_no
+CREATE INDEX idx_owner_reg_id ON shop.owner (reg_id);
+CREATE INDEX idx_owner_phone_no ON shop.owner (phone_no);
 CREATE INDEX idx_stock_owner_id ON shop.stock (owner_id);
 CREATE INDEX idx_customer_owner_id ON shop.customer (owner_id);
 CREATE INDEX idx_customer_reg_id ON shop.customer (reg_id);
@@ -162,11 +193,11 @@ CREATE INDEX idx_stock_history_transaction_id ON shop.stock_history (transaction
 
 -- Constraint
 ALTER TABLE shop.owner ADD CONSTRAINT owner_reg_id UNIQUE (reg_id);
-ALTER TABLE shop.owner ADD CONSTRAINT unique_phone_no UNIQUE (phone_no);
-ALTER TABLE shop.owner ADD CONSTRAINT unique_name_phone_no UNIQUE (shop_name, owner_name, phone_no);
+ALTER TABLE shop.owner ADD CONSTRAINT unique_ph_no UNIQUE (phone_no);
+ALTER TABLE shop.owner ADD CONSTRAINT unique_name_ph_no UNIQUE (shop_name, owner_name, phone_no);
 ALTER TABLE shop.stock ADD CONSTRAINT unique_type_item_tunch UNIQUE (type, item_name, tunch);
 ALTER TABLE shop.customer ADD CONSTRAINT unique_reg_id UNIQUE (reg_id);
-ALTER TABLE shop.customer ADD CONSTRAINT unique_name_phone_no_oId UNIQUE (shop_name, name, phone_no, owner_id);
+ALTER TABLE shop.customer ADD CONSTRAINT unique_name_ph_no_oId UNIQUE (shop_name, name, phone_no, owner_id);
 ALTER TABLE shop.balance ADD CONSTRAINT check_either_owner_or_customer CHECK ((owner_id IS NULL AND customer_id IS NOT NULL) OR (owner_id IS NOT NULL AND customer_id IS NULL));
 
 

@@ -14,15 +14,28 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 
 	DB := database.DB
 
+	// Start transaction
+	tx, err := DB.Begin()
+	if err != nil {
+		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+	}
+
+	defer func() {
+		if r := recover(); r != nil || err != nil {
+			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
+			tx.Rollback()
+		}
+	}()
+
 	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
 	var ownerRowId string
-	err := DB.QueryRow(ServiceQuery, ownerRegID).Scan(&ownerRowId)
+	err = tx.QueryRow(ServiceQuery, ownerRegID).Scan(&ownerRowId)
 	if err != nil {
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetFilteredCustomerData(reqBody)
-	rows, err := DB.Query(ServiceQuery, ownerRowId)
+	rows, err := tx.Query(ServiceQuery, ownerRowId)
 	if err != nil {
 		utils.Logger.Error(err.Error())
 		response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows")
