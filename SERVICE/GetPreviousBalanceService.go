@@ -42,9 +42,9 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
-	var gold float32
-	var silver float32
-	var cash float32
+	var gold float64
+	var silver float64
+	var cash float64
 
 	ServiceQuery = database.GetCustomerPreviousBalance()
 	err = tx.QueryRow(ServiceQuery, customerId).Scan(&gold, &silver, &cash)

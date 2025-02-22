@@ -20,9 +20,9 @@ func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) 
 	var regDate string
 	var address string
 	var remarks string
-	var gold float32
-	var silver float32
-	var cash float32
+	var gold float64
+	var silver float64
+	var cash float64
 	var isActive string
 
 	DB := database.DB

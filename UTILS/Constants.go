@@ -172,7 +172,7 @@ func SetApiQParams() {
 	GetAllStockQParams = map[string]bool{OWNER_REG_ID: true}
 	GetAllStockQParams = map[string]bool{OWNER_REG_ID: true}
 	GetPreviousBalanceQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
-	PutCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
+	PutCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
 	GetCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
 	GetAllCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
 	GetFilteredCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}

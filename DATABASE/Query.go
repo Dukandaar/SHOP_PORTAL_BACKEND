@@ -502,3 +502,91 @@ func GetCustomerId() string {
 	`
 	return query
 }
+
+func CreateBill() string {
+	query := `
+		INSERT INTO
+			shop.bill (customer_id, type, metal, metal_rate, date, created_at, updated_at)
+		VALUES
+			($1, $2, $3, $4, $5, $6, $7)
+		RETURNING id;
+	`
+	return query
+}
+
+func AddTransaction() string {
+	query := `
+		INSERT INTO
+			shop.transaction (bill_id, item_name, weight, less, net_weight, tunch, fine, discount, amount)
+		VALUES
+			($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		RETURNING id;
+	`
+	return query
+}
+
+func GetStockId() string {
+	query := `
+		SELECT
+			id,
+			weight
+		FROM
+			shop.stock
+		WHERE
+			item_name = $1;
+	`
+	return query
+}
+
+func DecreaseStock() string {
+	query := `
+		UPDATE
+			shop.stock
+		SET
+			weight =  $1
+		WHERE
+			id = $2;
+	`
+	return query
+}
+
+func AddStockHistory() string {
+	query := `
+		INSERT INTO
+			shop.stock_history (stock_id, prev_balance, new_balance, reason, transaction_id, remarks, created_at)
+		VALUES
+			($1, $2, $3, $4, $5, $6, $7);
+	`
+	return query
+}
+
+func BillPayment() string {
+	query := `
+		INSERT INTO
+			shop.payment (bill_id, customer_id, factor, new, prev, total, paid, rem, type, date, created_at, updated_at)
+		VALUES
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12);
+	`
+	return query
+}
+
+func UpdateCustomerBalance(Type string) string {
+	query := `
+		UPDATE
+			shop.balance
+		SET `
+
+	if Type == utils.GOLD {
+		query += `gold = $1,`
+	} else if Type == utils.SILVER {
+		query += `silver = $1,`
+	} else if Type == utils.CASH {
+		query += `cash = $1,`
+	}
+
+	query += `
+			updated_at = $2
+		WHERE
+			customer_id = $3;`
+	return query
+}

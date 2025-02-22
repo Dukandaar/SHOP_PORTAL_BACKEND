@@ -39,9 +39,9 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 		var regDate string
 		var address string
 		var remarks string
-		var gold float32
-		var silver float32
-		var cash float32
+		var gold float64
+		var silver float64
+		var cash float64
 		var isActive string
 		err = rows.Scan(&shopName, &name, &GstIN, &regId, &regDate, &phoneNo, &isActive, &address, &remarks, &gold, &silver, &cash)
 		if err != nil {

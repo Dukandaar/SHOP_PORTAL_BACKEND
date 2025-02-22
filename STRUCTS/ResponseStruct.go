@@ -52,9 +52,9 @@ type ShopOwnerDetailsSubResponse struct {
 	RegDate   string  `json:"reg_date"`
 	Address   string  `json:"address"`
 	Remarks   string  `json:"remarks"`
-	Gold      float32 `json:"gold"`
-	Silver    float32 `json:"silver"`
-	Cash      float32 `json:"cash"`
+	Gold      float64 `json:"gold"`
+	Silver    float64 `json:"silver"`
+	Cash      float64 `json:"cash"`
 	IsActive  string  `json:"is_active"`
 }
 
@@ -85,9 +85,9 @@ type CustomerDetailsSubResponse struct {
 	RegDate  string  `json:"reg_date"`
 	Address  string  `json:"address"`
 	Remarks  string  `json:"remarks"`
-	Gold     float32 `json:"gold"`
-	Silver   float32 `json:"silver"`
-	Cash     float32 `json:"cash"`
+	Gold     float64 `json:"gold"`
+	Silver   float64 `json:"silver"`
+	Cash     float64 `json:"cash"`
 	IsActive string  `json:"isActive"`
 }
 
@@ -98,7 +98,7 @@ type CustomerPreviousBalanceResponse struct {
 
 type CustomerPreviousBalanceSubResponse struct {
 	RowId  int     `json:"row_id"`
-	Gold   float32 `json:"gold"`
-	Silver float32 `json:"silver"`
-	Cash   float32 `json:"cash"`
+	Gold   float64 `json:"gold"`
+	Silver float64 `json:"silver"`
+	Cash   float64 `json:"cash"`
 }

@@ -248,18 +248,10 @@ func ValidatePostStockReqBody(body *structs.PostStock, bodyErr string) (string, 
 	return utils.NULL_STRING, utils.SUCCESS
 }
 
-func ValidatePutStockReqBody(body *structs.PutStock, bodyErr string) (string, string) {
+func ValidatePutCustomerTransactionReqBody(body *structs.CustomerBill, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
 		return bodyErr, "400008"
-	}
-
-	if body.Weight == utils.NULL_INT {
-		return "Missing quantity", "400005"
-	}
-
-	if body.Tunch == utils.NULL_INT {
-		return "Missing tunch", "400005"
 	}
 
 	return utils.NULL_STRING, utils.SUCCESS

@@ -22,9 +22,9 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 	var regDate string
 	var address string
 	var remarks string
-	var gold float32
-	var silver float32
-	var cash float32
+	var gold float64
+	var silver float64
+	var cash float64
 	var isActive string
 
 	rsp := make([]structs.CustomerDetailsSubResponse, 0)
