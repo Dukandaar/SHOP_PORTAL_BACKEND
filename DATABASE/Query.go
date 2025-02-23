@@ -19,6 +19,41 @@ func InsertShopOwnerData() string {
 	return query
 }
 
+func InsertOwnerBillCount() string {
+	query := `
+		INSERT INTO
+			shop.owner_bill_count (owner_id, bill_cnt, updated_at)
+		VALUES
+			($1, $2, $3);
+	`
+	return query
+}
+
+func GetOwnerBillCount() string {
+	query := `
+		SELECT
+			bill_cnt
+		FROM
+			shop.owner_bill_count
+		WHERE
+			owner_id = $1;
+	`
+	return query
+}
+
+func UpdateOwnerBillCount() string {
+	query := `
+		UPDATE
+			shop.owner_bill_count
+		SET
+			bill_cnt = bill_cnt + 1,
+			updated_at = now()
+		WHERE
+			owner_id = $1;
+	`
+	return query
+}
+
 func InsertOwnerBalanceData() string {
 	query := `
 		INSERT INTO
@@ -107,6 +142,7 @@ func UpdateShopOwnerData() string {
 func GetShopOwnerData() string {
 	query := `
 		SELECT
+			o.id,
 			o.shop_name,
 			o.owner_name,
 			o.gst_in,
@@ -142,13 +178,19 @@ func GetAllShopOwnerData(isActiveStates string) string {
 			o.is_active,
 			b.gold,
 			b.silver,
-			b.cash
+			b.cash,
+			obc.bill_cnt
 		FROM
 			shop.owner o
 		LEFT JOIN 
 			shop.balance b 
 		ON 
-			o.id = b.owner_id`
+			o.id = b.owner_id
+		LEFT JOIN
+			shop.owner_bill_count obc
+		ON
+			o.id = obc.owner_id
+	`
 
 	if isActiveStates == utils.ACTIVE_YES {
 		query += " WHERE o.is_active = 'Y'"
@@ -347,6 +389,7 @@ func GetFilteredCustomerData(filter structs.FilteredCustomer) string {
 			b.gold,
 			b.silver,
 			b.cash
+
 		FROM
 			shop.customer c
 		LEFT JOIN
@@ -506,9 +549,9 @@ func GetCustomerId() string {
 func CreateBill() string {
 	query := `
 		INSERT INTO
-			shop.bill (customer_id, type, metal, metal_rate, date, created_at, updated_at)
+			shop.bill (bill_no, customer_id, type, metal, metal_rate, date, created_at, updated_at)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7)
+			($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING id;
 	`
 	return query
@@ -588,5 +631,55 @@ func UpdateCustomerBalance(Type string) string {
 			updated_at = $2
 		WHERE
 			customer_id = $3;`
+	return query
+}
+
+func CheckValidBillId() string {
+	query := `
+		SELECT EXISTS
+		(
+			SELECT
+				1
+			FROM
+				shop.bill
+			WHERE
+				id = $1
+		)`
+	return query
+}
+
+func UpdateBill() string {
+	query := `
+		UPDATE
+			shop.bill
+		SET
+			type = $1,
+			metal = $2,
+			metal_rate = $3,
+			date = $4,
+			updated_at = $5
+		WHERE
+			id = $6;
+	`
+	return query
+}
+
+func GetBillTransactions() string {
+	query := `
+		SELECT
+			id,
+			item_name,
+			weight,
+			less,
+			net_weight,
+			tunch,
+			fine,
+			discount,
+			amount
+		FROM
+			shop.transaction
+		WHERE
+			bill_id = $1;
+	`
 	return query
 }

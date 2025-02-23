@@ -100,9 +100,39 @@ func main() {
 
 	// api to add customer transaction
 	app.Post("shop/addCustomerTransaction", func(ctx iris.Context) {
-		helper.SetApiName(util.PUT_CUSTOMER_TRANSACTION, ctx)
+		helper.SetApiName(util.POST_CUSTOMER_TRANSACTION, ctx)
 		controller.PostCustomerTransaction(ctx)
 	})
+
+	// api to update customer transaction
+	app.Put("shop/updateCustomerTransaction", func(ctx iris.Context) {
+		helper.SetApiName(util.PUT_CUSTOMER_TRANSACTION, ctx)
+		controller.PutCustomerTransaction(ctx)
+	})
+
+	// // api to get customer transaction
+	// app.Get("shop/getCustomerTransaction", func(ctx iris.Context) {
+	// 	helper.SetApiName(util.GET_CUSTOMER_TRANSACTION, ctx)
+	// 	controller.GetCustomerTransaction(ctx)
+	// })
+
+	// // api to get all customer transaction
+	// app.Get("shop/getAllCustomerTransaction", func(ctx iris.Context) {
+	// 	helper.SetApiName(util.GET_ALL_CUSTOMER_TRANSACTION, ctx)
+	// 	controller.GetAllCustomerTransaction(ctx)
+	// })
+
+	// // api to get filtered customer transaction
+	// app.Get("shop/getFilteredCustomerTransaction", func(ctx iris.Context) {
+	// 	helper.SetApiName(util.GET_FILTERED_CUSTOMER_TRANSACTION, ctx)
+	// 	controller.GetFilteredCustomerTransaction(ctx)
+	// })
+
+	// // api to get filtered owner transaction
+	// app.Get("shop/getFilteredOwnerTransaction", func(ctx iris.Context) {
+	// 	helper.SetApiName(util.GET_FILTERED_OWNER_TRANSACTION, ctx)
+	// 	controller.GetFilteredOwnerTransaction(ctx)
+	// })
 
 	// Start the server on port 8000
 	err := app.Listen(":8000")

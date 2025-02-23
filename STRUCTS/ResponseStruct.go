@@ -77,6 +77,7 @@ type ShopOwnerDetailsSubResponse struct {
 	Silver    float64 `json:"silver"`
 	Cash      float64 `json:"cash"`
 	IsActive  string  `json:"is_active"`
+	BillCount int     `json:"bill_count"`
 }
 
 type AllShopOwnerDetailsResponse struct {
@@ -98,18 +99,19 @@ type AllCustomerDetailsResponse struct {
 }
 
 type CustomerDetailsSubResponse struct {
-	Name     string  `json:"name"`
-	ShopName string  `json:"shop_name"`
-	GstIN    string  `json:"gst_in"`
-	RegId    string  `json:"reg_id"`
-	PhoneNo  string  `json:"phone_no"`
-	RegDate  string  `json:"reg_date"`
-	Address  string  `json:"address"`
-	Remarks  string  `json:"remarks"`
-	Gold     float64 `json:"gold"`
-	Silver   float64 `json:"silver"`
-	Cash     float64 `json:"cash"`
-	IsActive string  `json:"isActive"`
+	Name      string  `json:"name"`
+	ShopName  string  `json:"shop_name"`
+	GstIN     string  `json:"gst_in"`
+	RegId     string  `json:"reg_id"`
+	PhoneNo   string  `json:"phone_no"`
+	RegDate   string  `json:"reg_date"`
+	Address   string  `json:"address"`
+	Remarks   string  `json:"remarks"`
+	Gold      float64 `json:"gold"`
+	Silver    float64 `json:"silver"`
+	Cash      float64 `json:"cash"`
+	IsActive  string  `json:"isActive"`
+	BillCount int     `json:"bill_count"`
 }
 
 type CustomerPreviousBalanceResponse struct {

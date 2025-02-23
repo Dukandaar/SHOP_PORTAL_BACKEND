@@ -69,12 +69,20 @@ CREATE TABLE shop.balance (
 
 CREATE TABLE shop.bill (
     id SERIAL,
+    bill_no BIGINT NOT NULL,
     customer_id BIGINT NOT NULL,
     type bill_type NOT NULL,
     metal metal_type NOT NULL,
     metal_rate FLOAT NOT NULL,
     date DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE owner_bill_count (
+    id SERIAL,
+    owner_id BIGINT NOT NULL,
+    bill_cnt INT DEFAULT 0,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -128,6 +136,7 @@ ALTER TABLE shop.bill ADD CONSTRAINT bill_pkey PRIMARY KEY (id);
 ALTER TABLE shop.transaction ADD CONSTRAINT transaction_pkey PRIMARY KEY (id);
 ALTER TABLE shop.payment ADD CONSTRAINT payment_pkey PRIMARY KEY (id);
 ALTER TABLE shop.stock_history ADD CONSTRAINT stock_history_pkey PRIMARY KEY (id);
+ALTER TABLE owner_bill_count ADD CONSTRAINT owner_bill_count_pkey PRIMARY KEY (id);
 
 
 
@@ -142,6 +151,8 @@ ALTER TABLE shop.payment ADD CONSTRAINT fk_payment_bill FOREIGN KEY (bill_id) RE
 ALTER TABLE shop.payment ADD CONSTRAINT fk_payment_customer_id FOREIGN KEY (customer_id) REFERENCES shop.customer(id); 
 ALTER TABLE shop.stock_history ADD CONSTRAINT fk_stock_history_stock FOREIGN KEY (stock_id) REFERENCES shop.stock(id);
 ALTER TABLE shop.stock_history ADD CONSTRAINT fk_stock_history_transaction_id FOREIGN KEY (transaction_id) REFERENCES shop.transaction(id);
+ALTER TABLE shop.owner_bill_count ADD CONSTRAINT fk_owner_bill_count FOREIGN KEY (owner_id) REFERENCES shop.owner(id);
+ALTER TABLE shop.bill ADD CONSTRAINT fk_bill_no FOREIGN KEY (bill_no) REFERENCES shop.owner_bill_count(bill_cnt);
 
 -- Sequences
 CREATE SEQUENCE shop.owner_id_seq;
@@ -176,6 +187,10 @@ CREATE SEQUENCE shop.stock_history_id_seq;
 ALTER TABLE shop.stock_history ALTER COLUMN id SET DEFAULT nextval('shop.stock_history_id_seq');
 ALTER SEQUENCE shop.stock_history_id_seq OWNED BY shop.stock_history.id;
 
+CREATE SEQUENCE owner_bill_count_id_seq;
+ALTER TABLE owner_bill_count ALTER COLUMN id SET DEFAULT nextval('owner_bill_count_id_seq');
+ALTER SEQUENCE owner_bill_count_id_seq OWNED BY owner_bill_count.id;
+
 -- Indexes
 CREATE INDEX idx_owner_reg_id ON shop.owner (reg_id);
 CREATE INDEX idx_owner_phone_no ON shop.owner (phone_no);
@@ -190,6 +205,7 @@ CREATE INDEX idx_payment_bill_id ON shop.payment (bill_id);
 CREATE INDEX idx_payment_customer_id ON shop.payment (customer_id);
 CREATE INDEX idx_stock_history_stock_id ON shop.stock_history (stock_id);
 CREATE INDEX idx_stock_history_transaction_id ON shop.stock_history (transaction_id);
+CREATE INDEX idx_owner_bill_count_owner_id ON owner_bill_count (owner_id);
 
 -- Constraint
 ALTER TABLE shop.owner ADD CONSTRAINT owner_reg_id UNIQUE (reg_id);
@@ -199,6 +215,7 @@ ALTER TABLE shop.stock ADD CONSTRAINT unique_type_item_tunch UNIQUE (type, item_
 ALTER TABLE shop.customer ADD CONSTRAINT unique_reg_id UNIQUE (reg_id);
 ALTER TABLE shop.customer ADD CONSTRAINT unique_name_ph_no_oId UNIQUE (shop_name, name, phone_no, owner_id);
 ALTER TABLE shop.balance ADD CONSTRAINT check_either_owner_or_customer CHECK ((owner_id IS NULL AND customer_id IS NOT NULL) OR (owner_id IS NOT NULL AND customer_id IS NULL));
+
 
 
 --Trigger function
@@ -217,3 +234,4 @@ CREATE TRIGGER update_balance_updated_at BEFORE UPDATE ON shop.balance FOR EACH 
 CREATE TRIGGER update_bill_updated_at BEFORE UPDATE ON shop.bill FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_transaction_updated_at BEFORE UPDATE ON shop.transaction FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE TRIGGER update_payment_updated_at BEFORE UPDATE ON shop.payment FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+CREATE TRIGGER update_owner_bill_count_updated_at BEFORE UPDATE ON owner_bill_count FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();

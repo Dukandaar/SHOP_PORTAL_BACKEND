@@ -81,7 +81,7 @@ func PostCustomerTransactionService(reqBody structs.CustomerBill, ownerRegId str
 	// Create bill and return bill id
 	ServiceQuery = database.CreateBill()
 	var billId int
-	err = tx.QueryRow(ServiceQuery, customerRowId, reqBody.Type, reqBody.Metal, reqBody.Rate, reqBody.Date, time.Now(), time.Now()).Scan(&billId)
+	err = tx.QueryRow(ServiceQuery, reqBody.BillNo, customerRowId, reqBody.Type, reqBody.Metal, reqBody.Rate, reqBody.Date, time.Now(), time.Now()).Scan(&billId)
 	if err != nil {
 		return helper.Set500ErrorResponse("Error in creating bill", "Error in creating bill:"+err.Error(), logPrefix)
 	} else {
@@ -145,6 +145,14 @@ func PostCustomerTransactionService(reqBody structs.CustomerBill, ownerRegId str
 		return helper.Set500ErrorResponse("Error in updating customer balance", "Error in updating customer balance:"+err.Error(), logPrefix)
 	}
 	utils.Logger.Info(logPrefix, "Customer balance updated for customer id:", customerRowId)
+
+	// update owner bill count
+	ServiceQuery = database.UpdateOwnerBillCount()
+	_, err = tx.Exec(ServiceQuery, ownerRowId)
+	if err != nil {
+		return helper.Set500ErrorResponse("Error in updating owner bill count", "Error in updating owner bill count:"+err.Error(), logPrefix)
+	}
+	utils.Logger.Info(logPrefix, "Owner bill count updated for owner id:", ownerRowId)
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()

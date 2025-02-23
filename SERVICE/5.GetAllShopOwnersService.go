@@ -25,6 +25,7 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 	var silver float64
 	var cash float64
 	var isActive string
+	var billCount int
 
 	rsp := make([]structs.ShopOwnerDetailsSubResponse, 0)
 
@@ -47,8 +48,13 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 	if err == nil {
 		for rows.Next() {
 
-			err = rows.Scan(&shopName, &ownerName, &gst_in, &phoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash)
+			err = rows.Scan(&shopName, &ownerName, &gst_in, &phoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash, &billCount)
 			if err != nil {
+				if err == sql.ErrNoRows {
+					utils.Logger.Info(logPrefix, "No rows found")
+					response, rspCode = helper.CreateSuccessResponse("No any owner found")
+					return response, rspCode
+				}
 				response, rspCode = helper.Set500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 				return response, rspCode
 			} else {
@@ -64,6 +70,7 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 					Silver:    silver,
 					Cash:      cash,
 					IsActive:  isActive,
+					BillCount: billCount,
 				})
 				rspCount++
 			}
