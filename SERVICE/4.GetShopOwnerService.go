@@ -14,6 +14,7 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	var response interface{}
 	rspCode := utils.StatusOK
 
+	var rowId int
 	var shopName string
 	var ownerName string
 	var GstIN string
@@ -25,6 +26,7 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	var silver float64
 	var cash float64
 	var isActive string
+	var billCount int
 
 	DB := database.DB
 
@@ -41,11 +43,23 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	}()
 
 	ServiceQuery := database.GetShopOwnerData()
-	err = tx.QueryRow(ServiceQuery, regId).Scan(&shopName, &ownerName, &GstIN, &PhoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash)
+	err = tx.QueryRow(ServiceQuery, regId).Scan(&rowId, &shopName, &ownerName, &GstIN, &PhoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info("Data for reg_id", regId, "does not exist")
 			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+regId+" does not exist")
+		} else {
+			utils.Logger.Error(err.Error())
+			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row")
+		}
+	}
+
+	ServiceQuery = database.GetOwnerBillCount()
+	err = tx.QueryRow(ServiceQuery, rowId).Scan(&billCount)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			utils.Logger.Info("Bill count data for reg_id", regId, "does not exist")
+			response, rspCode = helper.CreateErrorResponse("404001", "Bill count data for reg_id "+regId+" does not exist")
 		} else {
 			utils.Logger.Error(err.Error())
 			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row")
@@ -71,6 +85,7 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 			Silver:    silver,
 			Cash:      cash,
 			IsActive:  isActive,
+			BillCount: billCount,
 		}
 	}
 

@@ -97,5 +97,31 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		}
 	}
 
+	// bill_id
+	if reqApiQParams[utils.BILL_ID] {
+
+		if apiQParams[utils.BILL_ID] == utils.NULL_INT {
+			return "Missing bill_id", "400003"
+		}
+
+		billId, _ := apiQParams[utils.BILL_ID].(string)
+
+		ServiceQuery := database.CheckValidBillId()
+		var exists bool
+		err := DB.QueryRow(ServiceQuery, billId).Scan(&exists)
+		if err != nil {
+			errMsg := fmt.Sprintf("Error in checking if row with bill_id %s exists", billId)
+			utils.Logger.Error(logPrefix, err.Error())
+			return errMsg, "500001"
+		}
+
+		if exists {
+			utils.Logger.Info(logPrefix, "Row with bill_id : ", billId, " exists")
+		} else {
+			utils.Logger.Info(logPrefix, "Row with bill_id ", billId, " does not exist")
+			return "Bill ID does not exist", "400004"
+		}
+	}
+
 	return utils.NULL_STRING, utils.SUCCESS
 }
