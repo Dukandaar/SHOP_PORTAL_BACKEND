@@ -100,3 +100,12 @@ func ReadPutCustomerTransactionReqBody(ctx iris.Context) (structs.CustomerBill, 
 	}
 	return body, NULL_STRING
 }
+
+func ReadAllStockBody(ctx iris.Context) (structs.AllStock, string) {
+	body := structs.AllStock{}
+	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
+	if err != nil {
+		return body, "Error in decoding request body"
+	}
+	return body, NULL_STRING
+}

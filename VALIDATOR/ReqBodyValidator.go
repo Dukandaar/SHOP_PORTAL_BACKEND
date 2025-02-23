@@ -256,3 +256,20 @@ func ValidatePostCustomerTransactionReqBody(body *structs.CustomerBill, bodyErr 
 
 	return utils.NULL_STRING, utils.SUCCESS
 }
+
+func ValidateAllStockBody(body *structs.AllStock, bodyErr string) (string, string) {
+
+	if bodyErr != utils.NULL_STRING {
+		return bodyErr, "400008"
+	}
+
+	if body.Type == utils.NULL_STRING {
+		return "Missing type", "400005"
+	}
+
+	if body.Type != utils.GOLD && body.Type != utils.SILVER && body.Type != utils.ALL {
+		return "Invalid type", "400006"
+	}
+
+	return utils.NULL_STRING, utils.SUCCESS
+}

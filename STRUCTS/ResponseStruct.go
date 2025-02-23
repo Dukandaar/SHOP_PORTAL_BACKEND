@@ -125,3 +125,21 @@ type CustomerPreviousBalanceSubResponse struct {
 	Silver float64 `json:"silver"`
 	Cash   float64 `json:"cash"`
 }
+
+type OwnerStockResponse struct {
+	Stat                  string                `json:"stat"`
+	OwnerStockSubResponse OwnerStockSubResponse `json:"rsp"`
+}
+
+type OwnerStockSubResponse struct {
+	ItemName  string  `json:"item_name"`
+	Tunch     float64 `json:"tunch"`
+	Weight    float64 `json:"weight"`
+	UpdatedAt string  `json:"updated_at"`
+}
+
+type OwnerAllStockResponse struct {
+	Stat                  string                  `json:"stat"`
+	Count                 int                     `json:"count"`
+	OwnerStockSubResponse []OwnerStockSubResponse `json:"rsp"`
+}

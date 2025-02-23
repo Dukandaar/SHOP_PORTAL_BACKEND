@@ -683,3 +683,33 @@ func GetBillTransactions() string {
 	`
 	return query
 }
+
+func GetStock() string {
+	query := `
+		SELECT
+			item_name,
+			tunch,
+			weight,
+			updated_at
+		FROM
+			shop.stock
+		WHERE
+			id = $1 and owner_id = $2;
+	`
+	return query
+}
+
+func GetAllStock() string {
+	query := `
+		SELECT
+			item_name,
+			tunch,
+			weight,
+			updated_at
+		FROM
+			shop.stock
+		WHERE
+			owner_id = $1;
+	`
+	return query
+}
