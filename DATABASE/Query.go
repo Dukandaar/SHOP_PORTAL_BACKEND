@@ -225,6 +225,18 @@ func CheckCustomerPresent() string {
 	return query
 }
 
+func CheckCustomerOwnerPresent() string {
+	query := `
+		SELECT 
+			is_active
+		FROM 
+			shop.customer
+		WHERE 
+			owner_id = $1 AND id = $2;
+	`
+	return query
+}
+
 func CheckValidCustomerRegId() string {
 	query := `
             SELECT EXISTS 
@@ -287,6 +299,25 @@ func GetCustomerData() string {
 		    c.id = b.customer_id
 		WHERE
 			c.reg_id = $1 and c.owner_id = $2
+    `
+	return query
+}
+
+func GetCustomerDataById() string {
+	query := `
+        SELECT
+			c.shop_name,
+			c.name,
+			c.gst_in,
+			c.reg_date,
+			c.phone_no,
+			c.is_active,
+			c.address,
+			c.remarks
+		FROM
+			shop.customer c
+		WHERE
+			c.id = $1 and c.owner_id = $2
     `
 	return query
 }
@@ -761,34 +792,71 @@ func GetDetailedStockHistory() string {
 	return query
 }
 
-// func GetTransactionDetails() string {
-// 	query := `
-// 		SELECT
-// 			bill_id,
-// 			item_name,
-// 			weight,
-// 			less,
-// 			net_weight,
-// 			tunch,
-// 			fine,
-// 			discount,
-// 			amount
-// 		FROM
-// 			shop.transaction
-// 		WHERE
-// 			id = 1;
-// 	`
-// 	return query
-// }
-
-func GetTransactionDetails() string {
+func GetCustomerIdFromBill() string {
 	query := `
 		SELECT
-			item_name
+			customer_id
+		FROM
+			shop.bill
+		WHERE
+			id = $1;
+	`
+	return query
+}
+
+func GetBill() string {
+	query := `
+		SELECT
+			bill_no,
+			type,
+			metal,
+			metal_rate,
+			date,
+			created_at,
+			updated_at
+		FROM
+			shop.bill
+		WHERE
+			id = $1;
+	`
+	return query
+}
+
+func GetTransactoins() string {
+	query := `
+		SELECT
+			id,
+			item_name,
+			weight,
+			less,
+			net_weight,
+			tunch,
+			fine,
+			discount,
+			amount
 		FROM
 			shop.transaction
 		WHERE
-			id = $1;
+			bill_id = $1;
+	`
+	return query
+}
+
+func GetBillPayment() string {
+	query := `
+		SELECT
+			factor,
+			new,
+			prev,
+			total,
+			paid,
+			rem,
+			type,
+			remarks
+		FROM
+			shop.payment
+		WHERE
+			bill_id = $1;
 	`
 	return query
 }

@@ -171,3 +171,22 @@ type TransactionResponse struct {
 	Discount  float64 `json:"discount"`
 	Amount    float64 `json:"amount"`
 }
+
+type CustomerBillResponse struct {
+	Stat                    string                  `json:"stat"`
+	CustomerBillSubResponse CustomerBillSubResponse `json:"rsp"`
+}
+
+type CustomerBillSubResponse struct {
+	BillNo             int           `json:"bill_no"`
+	Type               string        `json:"type"`
+	Metal              string        `json:"metal"`
+	Rate               float64       `json:"rate"`
+	Date               string        `json:"date"`
+	Remarks            string        `json:"remarks"`
+	CustomerDetails    Customer      `json:"customer_details"`
+	TransactionDetails []Transaction `json:"transaction_details"`
+	PaymentDetails     Payment       `json:"payment_details"`
+	CreatedAt          string        `json:"created_at"`
+	UpdatedAt          string        `json:"updated_at"`
+}

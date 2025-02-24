@@ -5,6 +5,7 @@ import (
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"database/sql"
 )
 
 func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, int) {
@@ -28,6 +29,9 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 	// Get owner row id
 	ownerRowId, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner Not Found")
+		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
@@ -39,6 +43,9 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 
 	err = tx.QueryRow(ServiceQuery, stockId, ownerRowId).Scan(&itemName, &tunch, &weight, &updatedAt)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Stock not found")
+		}
 		return helper.Set500ErrorResponse("Error in getting stock", "Error getting stock:"+err.Error(), logPrefix)
 	}
 

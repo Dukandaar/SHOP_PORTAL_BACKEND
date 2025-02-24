@@ -67,7 +67,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 			utils.Logger.Info(logPrefix, "Row with reg_id : ", regId, " exists")
 		} else {
 			utils.Logger.Info(logPrefix, "Row with reg_id ", regId, " does not exist")
-			return "Customer Registration ID does not exist", "400004"
+			return "Customer Registration ID does not exist", "404001"
 		}
 	}
 
@@ -93,7 +93,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 			utils.Logger.Info(logPrefix, "Row with stock_id : ", stockId, " exists")
 		} else {
 			utils.Logger.Info(logPrefix, "Row with stock_id ", stockId, " does not exist")
-			return "Stock ID does not exist", "400004"
+			return "Stock ID does not exist", "404001"
 		}
 	}
 
@@ -119,7 +119,7 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 			utils.Logger.Info(logPrefix, "Row with bill_id : ", billId, " exists")
 		} else {
 			utils.Logger.Info(logPrefix, "Row with bill_id ", billId, " does not exist")
-			return "Bill ID does not exist", "400004"
+			return "Bill ID does not exist", "404001"
 		}
 	}
 

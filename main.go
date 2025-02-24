@@ -110,7 +110,7 @@ func main() {
 		controller.GetPreviousBalance(ctx)
 	})
 
-	// api to add customer transaction
+	// api to add customer bill
 	app.Post("shop/addCustomerBill", func(ctx iris.Context) {
 		helper.SetApiName(util.POST_CUSTOMER_BILL, ctx)
 		controller.PostCustomerBill(ctx)
@@ -128,11 +128,11 @@ func main() {
 		controller.GetStockHistory(ctx)
 	})
 
-	// // api to get customer transaction
-	// app.Get("shop/getCustomerTransaction", func(ctx iris.Context) {
-	// 	helper.SetApiName(util.GET_CUSTOMER_TRANSACTION, ctx)
-	// 	controller.GetCustomerTransaction(ctx)
-	// })
+	// // api to get customer bill
+	app.Get("shop/getCustomerBill", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_CUSTOMER_BILL, ctx)
+		controller.GetCustomerBill(ctx)
+	})
 
 	// // api to get all customer transaction
 	// app.Get("shop/getAllCustomerTransaction", func(ctx iris.Context) {

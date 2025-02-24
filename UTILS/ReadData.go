@@ -14,6 +14,7 @@ func ReadHeader(ctx iris.Context) map[string]interface{} {
 	headers[ACCEPT] = ctx.Request().Header.Get(ACCEPT)
 	headers[ACCEPT_ENCODING] = ctx.Request().Header.Get(ACCEPT_ENCODING)
 	headers[TOKEN] = ctx.Request().Header.Get(TOKEN)
+	headers[SKIP_TOKEN] = ctx.Request().Header.Get(SKIP_TOKEN)
 
 	return headers
 }

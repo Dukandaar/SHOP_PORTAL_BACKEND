@@ -46,6 +46,11 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 	var ownerRowId int
 	err = tx.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			utils.Logger.Info(logPrefix, "Data for reg_id ", owner_reg_id, " does not exist")
+			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+owner_reg_id+" does not exist")
+			return response, rspCode
+		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
@@ -80,7 +85,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 	} else {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info("No rows found")
-			response, rspCode = helper.CreateSuccessResponse("No any owner found")
+			response, rspCode = helper.CreateSuccessResponse("No any customer found")
 			return response, rspCode
 		} else {
 			utils.Logger.Error(err.Error())

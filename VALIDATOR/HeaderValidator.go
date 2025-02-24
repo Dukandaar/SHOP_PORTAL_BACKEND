@@ -9,7 +9,8 @@ import (
 func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface{}, ctx iris.Context, logPrefix string) (string, string) {
 
 	// Token validation
-	if reqApiHeader[utils.TOKEN] {
+	skipToken, _ := apiHeader[utils.SKIP_TOKEN].(string)
+	if reqApiHeader[utils.TOKEN] && skipToken != utils.TRUE {
 		if apiHeader[utils.TOKEN] == utils.NULL_STRING {
 			return "Missing Token header", "400001"
 		}

@@ -21,7 +21,7 @@ const (
 	GET_PREVIOUS_BALANCE              = "GET_PREVIOUS_BALANCE"
 	POST_CUSTOMER_BILL                = "POST_CUSTOMER_BILL"
 	PUT_CUSTOMER_TRANSACTION          = "PUT_CUSTOMER_TRANSACTION"
-	GET_CUSTOMER_TRANSACTION          = "GET_CUSTOMER_TRANSACTION"
+	GET_CUSTOMER_BILL                 = "GET_CUSTOMER_BILL"
 	GET_ALL_CUSTOMER_TRANSACTION      = "GET_ALL_CUSTOMER_TRANSACTION"
 	GET_FILTERED_CUSTOMER_TRANSACTION = "GET_FILTERED_CUSTOMER_TRANS"
 	GET_FILTERED_OWNER_TRANSACTION    = "GET_FILTERED_OWNER_TRANS"
@@ -51,6 +51,8 @@ const (
 	CUSTOM      = "Custom"
 	BUY         = "Buy"
 	SELL        = "Sell"
+	TRUE        = "True"
+	FALSE       = "False"
 
 	// MAX FIELD LENGTH
 	SHOP_NAME_MAX_LEN       = 255
@@ -69,6 +71,7 @@ const (
 	CONTENT_TYPE    = "Content-Type"
 	ACCEPT          = "Accept"
 	TOKEN           = "Token"
+	SKIP_TOKEN      = "Skip-Token"
 
 	// QPARAMS NAMES
 	OWNER_REG_ID    = "owner_reg_id"
@@ -120,7 +123,7 @@ var GetStockHistoryHeaders map[string]bool
 var GetPreviousBalanceHeaders map[string]bool
 var PostCustomerBillHeaders map[string]bool
 var PutCustomerTransactionHeaders map[string]bool
-var GetCustomerTransactionHeaders map[string]bool
+var GetCustomerBillHeaders map[string]bool
 var GetAllCustomerTransactionHeaders map[string]bool
 var GetFilteredCustomerTransactionHeaders map[string]bool
 var GetFilteredOwnerTransactionHeaders map[string]bool
@@ -141,7 +144,7 @@ var GetStockHistoryQParams map[string]bool
 var GetPreviousBalanceQParams map[string]bool
 var PostCustomerBillQParams map[string]bool
 var PutCustomerTransactionQParams map[string]bool
-var GetCustomerTransactionQParams map[string]bool
+var GetCustomerBillQParams map[string]bool
 var GetAllCustomerTransactionQParams map[string]bool
 var GetFilteredCustomerTransactionQParams map[string]bool
 var GetFilteredOwnerTransactionQParams map[string]bool
@@ -165,7 +168,7 @@ func SetApiHeaders() {
 	GetPreviousBalanceHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PostCustomerBillHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PutCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetCustomerTransactionHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetCustomerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetAllCustomerTransactionHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetFilteredCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetFilteredOwnerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
@@ -187,7 +190,7 @@ func SetApiQParams() {
 	GetPreviousBalanceQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	PostCustomerBillQParams = map[string]bool{OWNER_REG_ID: true}
 	PutCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true, BILL_ID: true}
-	GetCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true, BILL_ID: true}
+	GetCustomerBillQParams = map[string]bool{OWNER_REG_ID: true, BILL_ID: true}
 	GetAllCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetFilteredCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
 }
