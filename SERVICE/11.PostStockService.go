@@ -34,11 +34,11 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 		return helper.Set500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
-	// check stock with same item_name and tunch present
+	// check stock with same item_name
 
 	ServiceQuery = database.CheckStockPresent()
 	var rowId int
-	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Type, reqBody.ItemName, reqBody.Tunch).Scan(&rowId)
+	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Type, reqBody.ItemName).Scan(&rowId)
 	if err != nil {
 		if err == sql.ErrNoRows { // Stock NOT found
 			utils.Logger.Info(logPrefix, "Stock NOT found")
@@ -49,7 +49,7 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 
 	if rowId > 0 { // Stock found
 		utils.Logger.Info(logPrefix, "Stock found")
-		return helper.CreateErrorResponse("400009", "Stock with same item name, tunch and type already present")
+		return helper.CreateErrorResponse("400009", "Stock with same item name, type already present")
 	}
 
 	// insert stock

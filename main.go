@@ -110,10 +110,10 @@ func main() {
 		controller.GetPreviousBalance(ctx)
 	})
 
-	// api to add customer transaction
-	app.Post("shop/addCustomerTransaction", func(ctx iris.Context) {
-		helper.SetApiName(util.POST_CUSTOMER_TRANSACTION, ctx)
-		controller.PostCustomerTransaction(ctx)
+	// api to add customer bill
+	app.Post("shop/addCustomerBill", func(ctx iris.Context) {
+		helper.SetApiName(util.POST_CUSTOMER_BILL, ctx)
+		controller.PostCustomerBill(ctx)
 	})
 
 	// api to update customer transaction
@@ -128,17 +128,17 @@ func main() {
 		controller.GetStockHistory(ctx)
 	})
 
-	// // api to get customer transaction
-	// app.Get("shop/getCustomerTransaction", func(ctx iris.Context) {
-	// 	helper.SetApiName(util.GET_CUSTOMER_TRANSACTION, ctx)
-	// 	controller.GetCustomerTransaction(ctx)
-	// })
+	// // api to get customer bill
+	app.Get("shop/getCustomerBill", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_CUSTOMER_BILL, ctx)
+		controller.GetCustomerBill(ctx)
+	})
 
-	// // api to get all customer transaction
-	// app.Get("shop/getAllCustomerTransaction", func(ctx iris.Context) {
-	// 	helper.SetApiName(util.GET_ALL_CUSTOMER_TRANSACTION, ctx)
-	// 	controller.GetAllCustomerTransaction(ctx)
-	// })
+	// api to get all customer bill
+	app.Get("shop/getAllCustomerBill", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_ALL_CUSTOMER_BILL, ctx)
+		controller.GetAllCustomerBill(ctx)
+	})
 
 	// // api to get filtered customer transaction
 	// app.Get("shop/getFilteredCustomerTransaction", func(ctx iris.Context) {

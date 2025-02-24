@@ -19,7 +19,7 @@ func PutCustomerTransaction(ctx iris.Context) {
 
 	headers := utils.ReadHeader(ctx)
 	qparas := utils.ReadQParams(ctx)
-	reqBody, bodyError := utils.ReadPutCustomerTransactionReqBody(ctx)
+	reqBody, bodyError := utils.ReadPutCustomerBillReqBody(ctx)
 
 	utils.Logger.Info(logPrefix, headers, qparas, reqBody)
 
@@ -33,7 +33,7 @@ func PutCustomerTransaction(ctx iris.Context) {
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
 			utils.Logger.Error(logPrefix, QparamsError)
 		} else {
-			reqBodyError, errCodeStr := validator.ValidatePostCustomerTransactionReqBody(&reqBody, bodyError)
+			reqBodyError, errCodeStr := validator.ValidatePostCustomerBillReqBody(&reqBody, bodyError)
 			if errCodeStr != utils.SUCCESS { // body error
 				response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
 				utils.Logger.Error(logPrefix, reqBodyError)

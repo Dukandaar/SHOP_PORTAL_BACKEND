@@ -4,6 +4,7 @@ import (
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"database/sql"
 
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 )
@@ -31,12 +32,18 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	var ownerRowId string
 	err = tx.QueryRow(ServiceQuery, ownerRegID).Scan(&ownerRowId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner Not Found")
+		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetFilteredCustomerData(reqBody)
 	rows, err := tx.Query(ServiceQuery, ownerRowId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Customer Not Found")
+		}
 		utils.Logger.Error(err.Error())
 		response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows")
 		return response, rspCode

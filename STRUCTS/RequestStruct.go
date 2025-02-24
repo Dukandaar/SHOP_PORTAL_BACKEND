@@ -60,6 +60,7 @@ type PutStock struct {
 }
 
 type Transaction struct {
+	Id        int     `json:"id"`
 	ItemName  string  `json:"item_name"`
 	Weight    float64 `json:"weight"`
 	Less      float64 `json:"less"`
@@ -82,7 +83,7 @@ type Payment struct {
 }
 
 type CustomerBill struct {
-	BillNo             int           `json:"bill_no"`
+	BillNo             int64         `json:"bill_no"`
 	Type               string        `json:"type"`
 	Metal              string        `json:"metal"`
 	Rate               float64       `json:"rate"`

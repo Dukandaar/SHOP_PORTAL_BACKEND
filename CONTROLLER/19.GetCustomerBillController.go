@@ -5,11 +5,12 @@ import (
 	service "SHOP_PORTAL_BACKEND/SERVICE"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	validator "SHOP_PORTAL_BACKEND/VALIDATOR"
+	"strconv"
 
 	"github.com/kataras/iris/v12"
 )
 
-func PostCustomerTransaction(ctx iris.Context) {
+func GetCustomerBill(ctx iris.Context) {
 
 	var response interface{}
 	var errCodeStr string
@@ -18,28 +19,21 @@ func PostCustomerTransaction(ctx iris.Context) {
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
 	headers := utils.ReadHeader(ctx)
-	qparas := utils.ReadQParams(ctx)
-	reqBody, bodyError := utils.ReadPutCustomerTransactionReqBody(ctx)
+	qparams := utils.ReadQParams(ctx)
+	utils.Logger.Info(logPrefix, headers, qparams)
 
-	utils.Logger.Info(logPrefix, headers, qparas, reqBody)
-
-	headerError, errCodeStr := validator.ValidateHeader(utils.PostCustomerTransactionHeaders, headers, ctx, logPrefix)
+	headerError, errCodeStr := validator.ValidateHeader(utils.GetCustomerBillHeaders, headers, ctx, logPrefix)
 	if errCodeStr != utils.SUCCESS { // header error
 		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
 		utils.Logger.Error(logPrefix, headerError)
 	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.PostCustomerTransactionQParams, qparas, logPrefix)
+		QparamsError, errCodeStr := validator.ValidateQParams(utils.GetCustomerBillQParams, qparams, logPrefix)
 		if errCodeStr != utils.SUCCESS { // qparams error
 			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
 			utils.Logger.Error(logPrefix, QparamsError)
 		} else {
-			reqBodyError, errCodeStr := validator.ValidatePostCustomerTransactionReqBody(&reqBody, bodyError)
-			if errCodeStr != utils.SUCCESS { // body error
-				response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
-				utils.Logger.Error(logPrefix, reqBodyError)
-			} else {
-				response, rspCode = service.PostCustomerTransactionService(reqBody, ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.CUSTOMER_REG_ID), logPrefix)
-			}
+			billId, _ := strconv.Atoi(ctx.URLParam(utils.BILL_ID))
+			response, rspCode = service.GetBill(ctx.URLParam(utils.OWNER_REG_ID), billId, logPrefix)
 		}
 	}
 

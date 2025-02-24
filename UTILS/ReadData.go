@@ -14,6 +14,7 @@ func ReadHeader(ctx iris.Context) map[string]interface{} {
 	headers[ACCEPT] = ctx.Request().Header.Get(ACCEPT)
 	headers[ACCEPT_ENCODING] = ctx.Request().Header.Get(ACCEPT_ENCODING)
 	headers[TOKEN] = ctx.Request().Header.Get(TOKEN)
+	headers[SKIP_TOKEN] = ctx.Request().Header.Get(SKIP_TOKEN)
 
 	return headers
 }
@@ -92,7 +93,7 @@ func ReadPutStockReqBody(ctx iris.Context) (structs.PutStock, string) {
 	return body, NULL_STRING
 }
 
-func ReadPutCustomerTransactionReqBody(ctx iris.Context) (structs.CustomerBill, string) {
+func ReadPutCustomerBillReqBody(ctx iris.Context) (structs.CustomerBill, string) {
 	body := structs.CustomerBill{}
 	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
 	if err != nil {

@@ -5,6 +5,7 @@ import (
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"database/sql"
 )
 
 func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix string) (interface{}, int) {
@@ -29,6 +30,9 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 	var ownerRowId int
 	err = tx.QueryRow(ServiceQuery, ownerRegId).Scan(&ownerRowId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner Not Found")
+		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
@@ -37,6 +41,9 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 	var customerId int
 	err = tx.QueryRow(ServiceQuery, customerRegId, ownerRowId).Scan(&customerId)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404002", "Customer Not Found")
+		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
@@ -47,6 +54,9 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 	ServiceQuery = database.GetCustomerPreviousBalance()
 	err = tx.QueryRow(ServiceQuery, customerId).Scan(&gold, &silver, &cash)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404003", "Previous Balance Not Found")
+		}
 		return helper.Set500ErrorResponse("Error getting previous balance", "Error getting previous balance:"+err.Error(), logPrefix)
 	}
 
