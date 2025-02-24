@@ -42,7 +42,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	var weight float64
 	var updatedAt string
 
-	rows, err := tx.Query(ServiceQuery, ownerRowId)
+	rows, err := tx.Query(ServiceQuery, ownerRowId, metalType)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404002", "Stock Not Found")

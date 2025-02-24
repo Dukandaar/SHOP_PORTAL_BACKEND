@@ -134,11 +134,11 @@ func main() {
 		controller.GetCustomerBill(ctx)
 	})
 
-	// // api to get all customer transaction
-	// app.Get("shop/getAllCustomerTransaction", func(ctx iris.Context) {
-	// 	helper.SetApiName(util.GET_ALL_CUSTOMER_TRANSACTION, ctx)
-	// 	controller.GetAllCustomerTransaction(ctx)
-	// })
+	// api to get all customer bill
+	app.Get("shop/getAllCustomerBill", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_ALL_CUSTOMER_BILL, ctx)
+		controller.GetAllCustomerBill(ctx)
+	})
 
 	// // api to get filtered customer transaction
 	// app.Get("shop/getFilteredCustomerTransaction", func(ctx iris.Context) {

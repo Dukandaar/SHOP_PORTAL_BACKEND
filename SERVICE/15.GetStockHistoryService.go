@@ -38,16 +38,16 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 	var reason string
 	var remarks string
 	var createdAt string
-	var id int64
-	var billId int64
-	var itemName string
-	var weight float64
-	var less float64
-	var netWeight float64
-	var tunch float64
-	var fine float64
-	var discount float64
-	var amount float64
+	var tid sql.NullInt64
+	var billId sql.NullInt64
+	var itemName sql.NullString
+	var weight sql.NullFloat64
+	var less sql.NullFloat64
+	var netWeight sql.NullFloat64
+	var tunch sql.NullFloat64
+	var fine sql.NullFloat64
+	var discount sql.NullFloat64
+	var amount sql.NullFloat64
 
 	rows, err := tx.Query(ServiceQuery, stockId)
 
@@ -63,7 +63,7 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 
 	// Get transactoin details
 	for rows.Next() {
-		err = rows.Scan(&prevBalance, &newBalance, &reason, &remarks, &createdAt, &id, &billId, &itemName, &weight, &less, &netWeight, &tunch, &fine, &discount, &amount)
+		err = rows.Scan(&prevBalance, &newBalance, &reason, &remarks, &createdAt, &tid, &billId, &itemName, &weight, &less, &netWeight, &tunch, &fine, &discount, &amount)
 		if err != nil {
 			return helper.Set500ErrorResponse("Error in getting stock row", "Error getting stock: "+err.Error(), logPrefix)
 		}
@@ -75,16 +75,16 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 			Remarks:     remarks,
 			CreatedAt:   createdAt,
 			Transaction: structs.TransactionResponse{
-				Id:        id,
-				BillId:    billId,
-				ItemName:  itemName,
-				Weight:    weight,
-				Less:      less,
-				NetWeight: netWeight,
-				Tunch:     tunch,
-				Fine:      fine,
-				Discount:  discount,
-				Amount:    amount,
+				Id:        tid.Int64,
+				BillId:    billId.Int64,
+				ItemName:  itemName.String,
+				Weight:    weight.Float64,
+				Less:      less.Float64,
+				NetWeight: netWeight.Float64,
+				Tunch:     tunch.Float64,
+				Fine:      fine.Float64,
+				Discount:  discount.Float64,
+				Amount:    amount.Float64,
 			},
 		})
 	}

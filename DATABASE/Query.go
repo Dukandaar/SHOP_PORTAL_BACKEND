@@ -493,7 +493,7 @@ func CheckStockPresent() string {
 	query := `
 		SELECT id
 		FROM shop.stock
-		WHERE owner_id = $1 AND type = $2 AND item_name = $3 AND tunch = $4;
+		WHERE owner_id = $1 AND type = $2 AND item_name = $3;
 	`
 	return query
 }
@@ -740,7 +740,7 @@ func GetAllStock() string {
 		FROM
 			shop.stock
 		WHERE
-			owner_id = $1;
+			owner_id = $1 and type = $2;
 	`
 	return query
 }
@@ -782,7 +782,7 @@ func GetDetailedStockHistory() string {
 			st.amount
 		FROM
 			shop.stock_history sh
-		JOIN 
+		LEFT JOIN 
 			shop.transaction st
 		ON 
 			sh.transaction_id = st.id
@@ -857,6 +857,30 @@ func GetBillPayment() string {
 			shop.payment
 		WHERE
 			bill_id = $1;
+	`
+	return query
+}
+
+func CheckIfCustomerBelongsToOwner() string {
+	query := `
+		SELECT
+			is_active
+		FROM
+			shop.customer
+		WHERE
+			id = $1 AND owner_id = $2;
+	`
+	return query
+}
+
+func GetAllCustomerBillId() string {
+	query := `
+		SELECT
+			id
+		FROM
+			shop.bill
+		WHERE
+			customer_id = $1;
 	`
 	return query
 }

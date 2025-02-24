@@ -34,7 +34,7 @@ func PutCustomerTransactionService(reqBody structs.CustomerBill, ownerRegId stri
 	}
 
 	// Get customer row id
-	customerRowId, err := helper.GetCustomerId(customerRegId, tx)
+	customerRowId, err := helper.GetCustomerId(customerRegId, ownerRowId, tx)
 	if err != nil {
 		return helper.Set500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
