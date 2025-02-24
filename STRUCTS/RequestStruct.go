@@ -82,7 +82,7 @@ type Payment struct {
 }
 
 type CustomerBill struct {
-	BillNo             int           `json:"bill_no"`
+	BillNo             int64         `json:"bill_no"`
 	Type               string        `json:"type"`
 	Metal              string        `json:"metal"`
 	Rate               float64       `json:"rate"`

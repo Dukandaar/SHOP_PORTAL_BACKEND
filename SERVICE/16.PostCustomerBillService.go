@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func PostCustomerTransactionService(reqBody structs.CustomerBill, ownerRegId string, customerRegId string, logPrefix string) (interface{}, int) {
+func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerRegId string, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCode := utils.StatusOK

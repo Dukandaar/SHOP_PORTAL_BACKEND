@@ -111,9 +111,9 @@ func main() {
 	})
 
 	// api to add customer transaction
-	app.Post("shop/addCustomerTransaction", func(ctx iris.Context) {
-		helper.SetApiName(util.POST_CUSTOMER_TRANSACTION, ctx)
-		controller.PostCustomerTransaction(ctx)
+	app.Post("shop/addCustomerBill", func(ctx iris.Context) {
+		helper.SetApiName(util.POST_CUSTOMER_BILL, ctx)
+		controller.PostCustomerBill(ctx)
 	})
 
 	// api to update customer transaction

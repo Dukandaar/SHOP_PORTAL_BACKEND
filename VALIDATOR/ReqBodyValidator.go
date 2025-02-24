@@ -248,7 +248,7 @@ func ValidatePostStockReqBody(body *structs.PostStock, bodyErr string) (string, 
 	return utils.NULL_STRING, utils.SUCCESS
 }
 
-func ValidatePostCustomerTransactionReqBody(body *structs.CustomerBill, bodyErr string) (string, string) {
+func ValidatePostCustomerBillReqBody(body *structs.CustomerBill, bodyErr string) (string, string) {
 
 	if bodyErr != utils.NULL_STRING {
 		return bodyErr, "400008"
