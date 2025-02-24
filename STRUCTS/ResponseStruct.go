@@ -143,3 +143,31 @@ type OwnerAllStockResponse struct {
 	Count                 int                     `json:"count"`
 	OwnerStockSubResponse []OwnerStockSubResponse `json:"rsp"`
 }
+
+type StockHistoryResponse struct {
+	Stat                    string                    `json:"stat"`
+	Count                   int                       `json:"count"`
+	StockHistorySubResponse []StockHistorySubResponse `json:"rsp"`
+}
+
+type StockHistorySubResponse struct {
+	PrevBalance float64             `json:"prev_balance"`
+	NewBalance  float64             `json:"new_balance"`
+	Reason      string              `json:"reason"`
+	Remarks     string              `json:"remarks"`
+	CreatedAt   string              `json:"created_at"`
+	Transaction TransactionResponse `json:"transaction"`
+}
+
+type TransactionResponse struct {
+	Id        int64   `json:"id"`
+	BillId    int64   `json:"bill_id"`
+	ItemName  string  `json:"item_name"`
+	Weight    float64 `json:"weight"`
+	Less      float64 `json:"less"`
+	NetWeight float64 `json:"net_weight"`
+	Tunch     float64 `json:"tunch"`
+	Fine      float64 `json:"fine"`
+	Discount  float64 `json:"discount"`
+	Amount    float64 `json:"amount"`
+}

@@ -122,6 +122,12 @@ func main() {
 		controller.PutCustomerTransaction(ctx)
 	})
 
+	// api to get Stock history
+	app.Get("shop/getStockHistory", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_STOCK_HISTORY, ctx)
+		controller.GetStockHistory(ctx)
+	})
+
 	// // api to get customer transaction
 	// app.Get("shop/getCustomerTransaction", func(ctx iris.Context) {
 	// 	helper.SetApiName(util.GET_CUSTOMER_TRANSACTION, ctx)

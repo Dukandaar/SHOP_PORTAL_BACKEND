@@ -25,6 +25,10 @@ func ConnectDB() *sql.DB {
 		utils.Logger.Error(logPrefix + pingErr.Error())
 		return DB
 	}
+
+	DB.SetMaxOpenConns(10) // Maximum number of open connections
+	DB.SetMaxIdleConns(5)  // Maximum number of connections in the idle connection pool
+
 	utils.Logger.Info(logPrefix + "Connection Successful..!!!")
 	return DB
 }
