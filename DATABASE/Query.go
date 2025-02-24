@@ -683,3 +683,112 @@ func GetBillTransactions() string {
 	`
 	return query
 }
+
+func GetStock() string {
+	query := `
+		SELECT
+			item_name,
+			tunch,
+			weight,
+			updated_at
+		FROM
+			shop.stock
+		WHERE
+			id = $1 and owner_id = $2;
+	`
+	return query
+}
+
+func GetAllStock() string {
+	query := `
+		SELECT
+			item_name,
+			tunch,
+			weight,
+			updated_at
+		FROM
+			shop.stock
+		WHERE
+			owner_id = $1;
+	`
+	return query
+}
+
+func GetStockHistory() string {
+	query := `
+		SELECT
+			prev_balance,
+			new_balance,
+			reason,
+			remarks,
+			created_at,
+			transaction_id
+		FROM
+			shop.stock_history
+		WHERE
+			stock_id = $1;
+	`
+	return query
+}
+
+func GetDetailedStockHistory() string {
+	query := `
+		SELECT
+			sh.prev_balance,
+			sh.new_balance,
+			sh.reason,
+			sh.remarks,
+			sh.created_at,
+			st.id,
+			st.bill_id,
+			st.item_name,
+			st.weight,
+			st.less,
+			st.net_weight,
+			st.tunch,
+			st.fine,
+			st.discount,
+			st.amount
+		FROM
+			shop.stock_history sh
+		JOIN 
+			shop.transaction st
+		ON 
+			sh.transaction_id = st.id
+		WHERE
+			sh.stock_id = $1;
+	`
+	return query
+}
+
+// func GetTransactionDetails() string {
+// 	query := `
+// 		SELECT
+// 			bill_id,
+// 			item_name,
+// 			weight,
+// 			less,
+// 			net_weight,
+// 			tunch,
+// 			fine,
+// 			discount,
+// 			amount
+// 		FROM
+// 			shop.transaction
+// 		WHERE
+// 			id = 1;
+// 	`
+// 	return query
+// }
+
+func GetTransactionDetails() string {
+	query := `
+		SELECT
+			item_name
+		FROM
+			shop.transaction
+		WHERE
+			id = $1;
+	`
+	return query
+}

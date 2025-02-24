@@ -92,6 +92,18 @@ func main() {
 		controller.PutStock(ctx)
 	})
 
+	// get stock details
+	app.Get("shop/getStock", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_STOCK, ctx)
+		controller.GetStock(ctx)
+	})
+
+	// get all stock details
+	app.Get("shop/getAllStock", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_ALL_STOCK, ctx)
+		controller.GetAllStock(ctx)
+	})
+
 	// get previous balance
 	app.Get("shop/getPreviousBalance", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_PREVIOUS_BALANCE, ctx)
@@ -108,6 +120,12 @@ func main() {
 	app.Put("shop/updateCustomerTransaction", func(ctx iris.Context) {
 		helper.SetApiName(util.PUT_CUSTOMER_TRANSACTION, ctx)
 		controller.PutCustomerTransaction(ctx)
+	})
+
+	// api to get Stock history
+	app.Get("shop/getStockHistory", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_STOCK_HISTORY, ctx)
+		controller.GetStockHistory(ctx)
 	})
 
 	// // api to get customer transaction

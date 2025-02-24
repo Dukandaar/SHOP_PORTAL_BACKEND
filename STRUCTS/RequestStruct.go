@@ -92,3 +92,7 @@ type CustomerBill struct {
 	TransactionDetails []Transaction `json:"transaction_details"`
 	PaymentDetails     Payment       `json:"payment_details"`
 }
+
+type AllStock struct {
+	Type string `json:"type"`
+}
