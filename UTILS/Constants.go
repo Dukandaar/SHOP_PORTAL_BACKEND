@@ -78,30 +78,6 @@ const (
 	CUSTOMER_REG_ID = "customer_reg_id"
 	STOCK_ID        = "stock_id"
 	BILL_ID         = "bill_id"
-
-	PrivateKeyPEM = `-----BEGIN RSA PRIVATE KEY-----
-MIICWwIBAAKBgGhM3rfXDjV0hTJIrq5bvt+e+EqPVF8S0EHUGSVJpRagyZyBMlNd
-JW4mPEryxG4zP19MS3pqLpMaZADNNvS/jW1pHfLOJwWRFwpAXLgGuT9Q/+j32S/B
-ftAJJLDSHo6BcyJwaT9pVOmSIGsQMCl/1tiyof/rFgDpvt6OhdJENf67AgMBAAEC
-gYAnW2pngNUxwqhIUzjnPmOGSpxyticmQRko3fonIeUT5tRtJCtzXaC0MeVqerU4
-yEnPkiChLtQoWjsGOmnUbTvWYdnWCOLiSgV6CMmz7oTCraxWo3JUdd7ZJUOdhjYP
-tSAdapANdu/iCrnrtKiBfkZah8cSTvs8dYvsRXW6M9MnAQJBAMWMQVg8fTlUoTBp
-IqW/PtQZgrXxZPxU+OUK69ATEV3Zwy6z7e484t0r9SeCBCp4vcvDXqt0463eP9XY
-6St6v8ECQQCHKVkm/AkhajZl2nu5ihYo+lAl8g/gb+6ovaFg/vF7IsFtFnrgtsAk
-hunShnSZdpwclDMViyyWfj0HCd+JQx17AkEAnk4E11ax6s1c1lSKBVS6XnGLA45M
-JMFbKwCTdAyzsAefl79sfauhCSf+rwhLmlVjkvQe2zsycNRXR2EpiUQ2gQJAPJUE
-99taQFb6IPcoI8bIHf/scsWn5iJlp86vielb1aSDbGD6HMTtJLIwFgPcOXkXihvH
-Ne3Ww3G76u66+ixSBwJAEfpA8nM9jZnyhQDW7BdC3DPutJnW0knV+YgDOOWcRrbL
-E8oVALnplwqqVFu3C3ouRVECASS12wugh7yqw6QHlA==
------END RSA PRIVATE KEY-----`
-
-	// Replace with your actual RSA public key
-	PublicKeyPEM = `-----BEGIN PUBLIC KEY-----
-MIGeMA0GCSqGSIb3DQEBAQUAA4GMADCBiAKBgGhM3rfXDjV0hTJIrq5bvt+e+EqP
-VF8S0EHUGSVJpRagyZyBMlNdJW4mPEryxG4zP19MS3pqLpMaZADNNvS/jW1pHfLO
-JwWRFwpAXLgGuT9Q/+j32S/BftAJJLDSHo6BcyJwaT9pVOmSIGsQMCl/1tiyof/r
-FgDpvt6OhdJENf67AgMBAAE=
------END PUBLIC KEY-----`
 )
 
 // headers

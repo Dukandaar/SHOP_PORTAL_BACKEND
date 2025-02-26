@@ -60,6 +60,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 				if err != nil {
 					return helper.Set500ErrorResponse("Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
 				}
+				utils.Logger.Info(logPrefix, "Shop Owner Balance Data inserted successfully with row ID ", rowId)
 				// insert intial bill count to 0 for owner
 				ServiceQuery = database.InsertOwnerBillCount()
 				_, err = tx.Exec(ServiceQuery, rowId, 0, time.Now())

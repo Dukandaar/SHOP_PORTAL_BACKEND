@@ -134,7 +134,7 @@ func ParseAndDecryptJWT(tokenString string) (string, error) {
 		}
 
 		// RSA decrypt (you'll need the private key)
-		privKey, err := ParsePrivateKey(utils.PrivateKeyPEM)
+		privKey, err := ParsePrivateKey(os.Getenv("PRIVATE_KEY"))
 		if err != nil {
 			return "", fmt.Errorf("parsing private key failed: %w", err)
 		}

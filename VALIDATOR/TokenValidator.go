@@ -3,10 +3,11 @@ package validator
 import (
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"os"
 )
 
 func DecodeKey(encryptedRegID string) (string, string) {
-	privKey, err := helper.ParsePrivateKey(utils.PrivateKeyPEM) // Parse private key
+	privKey, err := helper.ParsePrivateKey(os.Getenv("PRIVATE_KEY")) // Parse private key
 	if err != nil {
 		return utils.NULL_STRING, "Error in parsing private key"
 	}
