@@ -29,7 +29,7 @@ func CheckIfCustomerBelongsToOwner(customerId int, ownerRowId int, tx *sql.Tx) (
 	return isActive == utils.TRUE, err
 }
 
-func OwnerAllBill(ownerRowId int, customerRowId int, tx *sql.Tx, logPrefix string) (structs.CustomerAllBillResponse, interface{}, int) {
+func AllBill(ownerRowId int, customerRowId int, tx *sql.Tx, logPrefix string) (structs.CustomerAllBillResponse, interface{}, int) {
 	var response structs.CustomerAllBillResponse
 	var errRsp interface{}
 	errCode := utils.StatusOK

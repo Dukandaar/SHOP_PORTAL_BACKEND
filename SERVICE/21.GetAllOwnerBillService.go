@@ -34,7 +34,7 @@ func GellAllOwnerBills(ownerRegId string, logPrefix string) (interface{}, int) {
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
-	result, response, rspCode := helper.OwnerAllBill(ownerRowId, utils.NULL_INT, tx, logPrefix)
+	result, response, rspCode := helper.AllBill(ownerRowId, utils.NULL_INT, tx, logPrefix)
 	if rspCode != utils.StatusOK {
 		return response, rspCode
 	}
