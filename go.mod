@@ -4,6 +4,7 @@ go 1.22.5
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/joho/godotenv v1.5.1
 	github.com/kataras/iris/v12 v12.2.11
 	github.com/lib/pq v1.10.9
 	github.com/sirupsen/logrus v1.8.1
