@@ -733,6 +733,7 @@ func GetStock() string {
 func GetAllStock() string {
 	query := `
 		SELECT
+			id,
 			item_name,
 			tunch,
 			weight,
@@ -764,31 +765,33 @@ func GetStockHistory() string {
 
 func GetDetailedStockHistory() string {
 	query := `
-		SELECT
-			sh.prev_balance,
-			sh.new_balance,
-			sh.reason,
-			sh.remarks,
-			sh.created_at,
-			st.id,
-			st.bill_id,
-			st.item_name,
-			st.weight,
-			st.less,
-			st.net_weight,
-			st.tunch,
-			st.fine,
-			st.discount,
-			st.amount
-		FROM
-			shop.stock_history sh
-		LEFT JOIN 
-			shop.transaction st
-		ON 
-			sh.transaction_id = st.id
-		WHERE
-			sh.stock_id = $1;
-	`
+        SELECT
+            sh.prev_balance,
+            sh.new_balance,
+            sh.reason,
+            sh.remarks,
+            sh.created_at,
+            st.id,
+            st.bill_id,
+            st.item_name,
+            st.weight,
+            st.less,
+            st.net_weight,
+            st.tunch,
+            st.fine,
+            st.discount,
+            st.amount
+        FROM
+            shop.stock_history sh
+        LEFT JOIN 
+            shop.transaction st
+        ON 
+            sh.transaction_id = st.id
+        WHERE
+            sh.stock_id = $1
+        ORDER BY
+            sh.created_at DESC;
+    `
 	return query
 }
 
@@ -882,5 +885,75 @@ func GetAllCustomerBillId() string {
 		WHERE
 			customer_id = $1;
 	`
+	return query
+}
+
+func GetAllBill() string {
+	query := `
+        SELECT
+            b.id,
+            b.bill_no,
+            b.type,
+            b.metal,
+            b.metal_rate,
+            b.date,
+            p.remarks,
+            json_build_object(
+                'name', c.name,
+                'shop_name', c.shop_name,
+                'gst_in', c.gst_in,
+                'phone_no', c.phone_no,
+                'reg_date', c.reg_date,
+                'address', c.address,
+                'remarks', c.remarks
+            ) AS customer_details,
+        COALESCE(
+            json_agg(
+                json_build_object(
+                    'id', t.id,
+                    'item_name', t.item_name,
+                    'weight', t.weight,
+                    'less', t.less,
+                    'net_weight', t.net_weight,
+                    'tunch', t.tunch,
+                    'fine', t.fine,
+                    'discount', t.discount,
+                    'amount', t.amount
+                )
+            ) FILTER (WHERE t.bill_id = b.id),
+            '[]'::json
+        ) AS transaction_details,
+        json_build_object(
+            'factor', p.factor,
+            'new', p.new,
+            'prev', p.prev,
+            'total', p.total,
+            'paid', p.paid,
+            'rem', p.rem,
+            'payment_type', p.type,
+            'remarks', p.remarks
+        ) AS payment_details,
+            b.created_at,
+            b.updated_at
+            FROM
+            shop.bill b
+        JOIN
+            shop.customer c ON b.customer_id = c.id
+        LEFT JOIN
+            shop.transaction t ON b.id = t.bill_id
+        LEFT JOIN
+            shop.payment p ON b.id = p.bill_id
+        WHERE 
+            CASE
+                WHEN $1::int > 0 THEN c.owner_id = $1  -- Filter by owner ID if provided
+                WHEN $2::int > 0 THEN b.customer_id = $2 -- Filter by customer ID if provided
+                ELSE TRUE  -- No filter if neither owner nor customer ID is provided. Important!
+            END
+        GROUP BY
+            b.id, b.bill_no, b.type, b.metal, b.metal_rate, b.date, p.remarks, c.name, c.shop_name, c.gst_in, c.phone_no, c.reg_date, c.address, c.remarks, p.factor, p.new, p.prev, p.total, p.paid, p.rem, p.type, p.remarks, b.created_at, b.updated_at
+        ORDER BY 
+            b.date DESC;
+    `
+
 	return query
 }

@@ -39,14 +39,14 @@ func PutStock(reqBody structs.PutStock, ownerRegId string, stockId int, logPrefi
 	// Stock id is validated, it is present, update values
 
 	ServiceQuery = database.UpdateStockData()
-	_, err = tx.Exec(ServiceQuery, reqBody.Tunch, reqBody.Weight, time.Now(), stockId, ownerRowId)
+	_, err = tx.Exec(ServiceQuery, reqBody.Tunch, reqBody.CurrentWeight, time.Now(), stockId, ownerRowId)
 	if err != nil {
 		utils.Logger.Error(err.Error())
 		return helper.Set500ErrorResponse("500001", "Error in updating stock", logPrefix)
 	}
 
 	ServiceQuery = database.InsertStockHistoryData()
-	_, err = tx.Exec(ServiceQuery, stockId, utils.NULL_FLOAT, reqBody.Weight, utils.BUY, "Updated Stock", time.Now())
+	_, err = tx.Exec(ServiceQuery, stockId, reqBody.PrevWeight, reqBody.CurrentWeight, utils.BUY, "Updated Stock", time.Now())
 	if err != nil {
 		return helper.Set500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
 	} else {

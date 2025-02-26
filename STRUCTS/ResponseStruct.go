@@ -132,6 +132,7 @@ type OwnerStockResponse struct {
 }
 
 type OwnerStockSubResponse struct {
+	Id        int     `json:"id"`
 	ItemName  string  `json:"item_name"`
 	Tunch     float64 `json:"tunch"`
 	Weight    float64 `json:"weight"`
@@ -160,16 +161,16 @@ type StockHistorySubResponse struct {
 }
 
 type TransactionResponse struct {
-	Id        interface{} `json:"id"`
-	BillId    interface{} `json:"bill_id"`
-	ItemName  interface{} `json:"item_name"`
-	Weight    interface{} `json:"weight"`
-	Less      interface{} `json:"less"`
-	NetWeight interface{} `json:"net_weight"`
-	Tunch     interface{} `json:"tunch"`
-	Fine      interface{} `json:"fine"`
-	Discount  interface{} `json:"discount"`
-	Amount    interface{} `json:"amount"`
+	Id        int64   `json:"id"`
+	BillId    int64   `json:"bill_id"`
+	ItemName  string  `json:"item_name"`
+	Weight    float64 `json:"weight"`
+	Less      float64 `json:"less"`
+	NetWeight float64 `json:"net_weight"`
+	Tunch     float64 `json:"tunch"`
+	Fine      float64 `json:"fine"`
+	Discount  float64 `json:"discount"`
+	Amount    float64 `json:"amount"`
 }
 
 type CustomerBillResponse struct {
@@ -178,6 +179,7 @@ type CustomerBillResponse struct {
 }
 
 type CustomerBillSubResponse struct {
+	Id                 int           `json:"id"`
 	BillNo             int           `json:"bill_no"`
 	Type               string        `json:"type"`
 	Metal              string        `json:"metal"`
