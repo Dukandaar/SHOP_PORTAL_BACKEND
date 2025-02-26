@@ -37,6 +37,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	}
 
 	ServiceQuery := database.GetAllStock()
+	var id int
 	var itemName string
 	var tunch float64
 	var weight float64
@@ -53,13 +54,14 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&itemName, &tunch, &weight, &updatedAt)
+		err = rows.Scan(&id, &itemName, &tunch, &weight, &updatedAt)
 		if err != nil {
 			utils.Logger.Error(err.Error())
 			return helper.Set500ErrorResponse("Error scanning row", "Error scanning row:"+err.Error(), logPrefix)
 		}
 
 		rsp = append(rsp, structs.OwnerStockSubResponse{
+			Id:        id,
 			ItemName:  itemName,
 			Tunch:     tunch,
 			Weight:    weight,

@@ -24,7 +24,7 @@ const (
 	GET_CUSTOMER_BILL                 = "GET_CUSTOMER_BILL"
 	GET_ALL_CUSTOMER_BILL             = "GET_ALL_CUSTOMER_BILL"
 	GET_FILTERED_CUSTOMER_TRANSACTION = "GET_FILTERED_CUSTOMER_TRANS"
-	GET_FILTERED_OWNER_TRANSACTION    = "GET_FILTERED_OWNER_TRANS"
+	GET_ALL_OWNER_BILL                = "GET_FILTERED_OWNER_TRANS"
 
 	// DEFAULTS
 	NULL_STRING = ""
@@ -126,7 +126,7 @@ var PutCustomerTransactionHeaders map[string]bool
 var GetCustomerBillHeaders map[string]bool
 var GetAllCustomerBillHeaders map[string]bool
 var GetFilteredCustomerTransactionHeaders map[string]bool
-var GetFilteredOwnerTransactionHeaders map[string]bool
+var GetAllOwnerBillHeaders map[string]bool
 
 // Qparams
 var PutShopOwnerQParams map[string]bool
@@ -147,7 +147,7 @@ var PutCustomerTransactionQParams map[string]bool
 var GetCustomerBillQParams map[string]bool
 var GetAllCustomerBillQParams map[string]bool
 var GetFilteredCustomerTransactionQParams map[string]bool
-var GetFilteredOwnerTransactionQParams map[string]bool
+var GetAllOwnerBillQParams map[string]bool
 
 func SetApiHeaders() {
 	PostShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
@@ -171,7 +171,7 @@ func SetApiHeaders() {
 	GetCustomerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetAllCustomerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GetFilteredCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetFilteredOwnerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetAllOwnerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
 }
 
 func SetApiQParams() {
@@ -192,7 +192,7 @@ func SetApiQParams() {
 	PutCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true, BILL_ID: true}
 	GetCustomerBillQParams = map[string]bool{OWNER_REG_ID: true, BILL_ID: true}
 	GetAllCustomerBillQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
-	GetFilteredCustomerTransactionQParams = map[string]bool{OWNER_REG_ID: true}
+	GetAllOwnerBillQParams = map[string]bool{OWNER_REG_ID: true}
 }
 
 var ValidHeaders map[string][]interface{}

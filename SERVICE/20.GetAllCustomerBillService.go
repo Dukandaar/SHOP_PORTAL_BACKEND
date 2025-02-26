@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func GetAllBill(ownerRegId string, customerRegId string, logPrefix string) (interface{}, int) {
+func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix string) (interface{}, int) {
 	var response interface{}
 	var rspCode = utils.StatusOK
 

@@ -54,9 +54,10 @@ type PostStock struct {
 }
 
 type PutStock struct {
-	Tunch   float64 `json:"tunch"`
-	Weight  float64 `json:"weight"`
-	Remarks string  `json:"remarks"`
+	Tunch         float64 `json:"tunch"`
+	PrevWeight    float64 `json:"prev_weight"`
+	CurrentWeight float64 `json:"curr_weight"`
+	Remarks       string  `json:"remarks"`
 }
 
 type Transaction struct {

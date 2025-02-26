@@ -146,11 +146,11 @@ func main() {
 	// 	controller.GetFilteredCustomerTransaction(ctx)
 	// })
 
-	// // api to get filtered owner transaction
-	// app.Get("shop/getFilteredOwnerTransaction", func(ctx iris.Context) {
-	// 	helper.SetApiName(util.GET_FILTERED_OWNER_TRANSACTION, ctx)
-	// 	controller.GetFilteredOwnerTransaction(ctx)
-	// })
+	// api to get all owner bill
+	app.Get("shop/getAllOwnerBill", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_ALL_OWNER_BILL, ctx)
+		controller.GetAllOwnerBill(ctx)
+	})
 
 	// Start the server on port 8000
 	err := app.Listen(":8000")
