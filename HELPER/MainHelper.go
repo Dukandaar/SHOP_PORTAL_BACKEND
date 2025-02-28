@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/kataras/iris/v12"
+	"github.com/rs/cors"
 )
 
 func Onit() {
-
 	runtime.GOMAXPROCS(runtime.NumCPU()) // Use all CPU cores
 	utils.SetCodeMap()                   // set code map
 	utils.SetApiHeaders()                // set api headers
@@ -30,4 +30,21 @@ func SetApiName(apiName string, ctx iris.Context) {
 	ctx.Values().Set("logPrefix", logprefix)
 	ctx.Values().Set("apiName", apiName)
 	utils.Logger.Info(logprefix + "Request Recieved.")
+}
+
+func SetCORS(app *iris.Application) {
+
+	// Create a CORS middleware
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{utils.ACCEPT, utils.CONTENT_TYPE, utils.TOKEN, utils.SKIP_TOKEN, utils.ACCEPT_ENCODING, utils.CATCH_CONTROL},
+		AllowCredentials: false,
+	})
+
+	// Apply the CORS middleware to all routes
+	app.Use(func(ctx iris.Context) {
+		c.HandlerFunc(ctx.ResponseWriter(), ctx.Request())
+		ctx.Next()
+	})
 }

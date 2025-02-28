@@ -69,6 +69,7 @@ const (
 	// HEADER NAMES
 	ACCEPT_ENCODING = "Accept-Encoding"
 	CONTENT_TYPE    = "Content-Type"
+	CATCH_CONTROL   = "Catch-Control"
 	ACCEPT          = "Accept"
 	TOKEN           = "Token"
 	SKIP_TOKEN      = "Skip-Token"
@@ -129,25 +130,25 @@ func SetApiHeaders() {
 	PostShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	GenerateTokenHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PutShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetShopOwnerHeaders = map[string]bool{ACCEPT: true, ACCEPT_ENCODING: true}
-	GetAllShopOwnerHeaders = map[string]bool{ACCEPT: true, ACCEPT_ENCODING: true}
+	GetShopOwnerHeaders = map[string]bool{ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetAllShopOwnerHeaders = map[string]bool{ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
 	PostCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PutCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetAllCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetFilteredCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetAllCustomerHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetFilteredCustomerHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
 	PostStockHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PutStockHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetStockHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetAllStockHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetStockHistoryHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetPreviousBalanceHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetStockHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetAllStockHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetStockHistoryHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetPreviousBalanceHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
 	PostCustomerBillHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
 	PutCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetCustomerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetAllCustomerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetFilteredCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
-	GetAllOwnerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true}
+	GetCustomerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetAllCustomerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetFilteredCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
+	GetAllOwnerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CATCH_CONTROL: true}
 }
 
 func SetApiQParams() {
@@ -178,4 +179,5 @@ func SetValidHeaders() {
 	ValidHeaders[CONTENT_TYPE] = []interface{}{"application/json", "text/plain", "application.json; charset=utf-8"}
 	ValidHeaders[ACCEPT] = []interface{}{"application/json, text/plain", "*/*"}
 	ValidHeaders[ACCEPT_ENCODING] = []interface{}{"gzip, deflate, br"}
+	ValidHeaders[CATCH_CONTROL] = []interface{}{"no-cache"}
 }

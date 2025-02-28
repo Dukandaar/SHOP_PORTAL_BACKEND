@@ -10,9 +10,10 @@ import (
 
 func main() {
 
-	helper.Onit()
+	app := iris.Default()
 
-	app := iris.New()
+	helper.Onit()
+	helper.SetCORS(app)
 
 	// to get server is up
 	app.Get("/shop/ping", func(ctx iris.Context) {
