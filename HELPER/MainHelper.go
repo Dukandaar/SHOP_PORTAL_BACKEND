@@ -1,10 +1,10 @@
 package helper
 
 import (
+	config "SHOP_PORTAL_BACKEND/CONFIG"
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"runtime"
-	"time"
 
 	"github.com/kataras/iris/v12"
 	"github.com/rs/cors"
@@ -16,8 +16,9 @@ func Onit() {
 	utils.SetApiHeaders()                // set api headers
 	utils.SetValidHeaders()              // set valid headers
 	utils.SetApiQParams()
-	utils.NewLogger()    // new logger
-	database.ConnectDB() // connect to database
+	utils.NewLogger()                    // new logger
+	config.ReadAllEnvironmentVariables() // read all environment variables
+	database.ConnectDB()                 // connect to database
 }
 
 func ServerUp(ctx iris.Context) {
@@ -26,7 +27,7 @@ func ServerUp(ctx iris.Context) {
 
 func SetApiName(apiName string, ctx iris.Context) {
 	shop_id := ctx.URLParam("owner_reg_id")
-	logprefix := ("[" + time.Now().Format("2006-01-02 15:04:05") + "] ") + apiName + "_SHOP_ID_" + shop_id + " : "
+	logprefix := apiName + "_SHOP_ID_" + shop_id + " : "
 	ctx.Values().Set("logPrefix", logprefix)
 	ctx.Values().Set("apiName", apiName)
 	utils.Logger.Info(logprefix + "Request Recieved.")

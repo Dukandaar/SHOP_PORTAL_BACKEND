@@ -1,6 +1,7 @@
 package helper
 
 import (
+	config "SHOP_PORTAL_BACKEND/CONFIG"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"crypto/rand"
 	"crypto/rsa"
@@ -8,7 +9,6 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -100,7 +100,7 @@ func GenerateJWT(encryptedID string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	signedToken, err := token.SignedString([]byte(config.JWT_SECRET))
 	if err != nil {
 		return "", fmt.Errorf("signing token failed: %w", err)
 	}
@@ -114,7 +114,7 @@ func ParseAndDecryptJWT(tokenString string) (string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Method)
 		}
-		return []byte(os.Getenv("JWT_SECRET")), nil
+		return []byte(config.JWT_SECRET), nil
 	})
 
 	if err != nil {
@@ -134,7 +134,7 @@ func ParseAndDecryptJWT(tokenString string) (string, error) {
 		}
 
 		// RSA decrypt (you'll need the private key)
-		privKey, err := ParsePrivateKey(os.Getenv("PRIVATE_KEY"))
+		privKey, err := ParsePrivateKey(config.PRIVATE_KEY)
 		if err != nil {
 			return "", fmt.Errorf("parsing private key failed: %w", err)
 		}

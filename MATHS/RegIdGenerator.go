@@ -1,12 +1,12 @@
 package maths
 
 import (
+	config "SHOP_PORTAL_BACKEND/CONFIG"
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"database/sql"
 	"math/rand"
-	"os"
 )
 
 const (
@@ -71,7 +71,7 @@ func GenerateCustomerRegID() string {
 }
 
 func GenerateKey(regId string) (string, string) {
-	pubKey, err := helper.ParsePublicKey(os.Getenv("PUBLIC_KEY")) // Parse public key
+	pubKey, err := helper.ParsePublicKey(config.PUBLIC_KEY) // Parse public key
 	if err != nil {
 		return utils.NULL_STRING, "Error in parsing public key"
 	}
