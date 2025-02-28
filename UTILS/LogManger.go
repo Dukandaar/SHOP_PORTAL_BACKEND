@@ -40,12 +40,12 @@ func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	var formatted string
 	var DisableColors = os.Getenv("DISABLE_COLORS")
 
-	if DisableColors == "true" {
-		// No colors for CloudWatch
-		formatted = fmt.Sprintf("%s[%s] %s%s", logLevel, timestamp, prefix, rest)
-	} else {
+	if DisableColors == "false" {
 		// Colors for local development
 		formatted = fmt.Sprintf("%s%s%s[%s%s%s] %s%s%s%s", infoColor, logLevel, resetColor, timestampColor, timestamp, resetColor, prefixColor, prefix, resetColor, rest)
+	} else {
+		// No colors for CloudWatch
+		formatted = fmt.Sprintf("%s[%s] %s%s", logLevel, timestamp, prefix, rest)
 	}
 
 	b.WriteString(formatted + "\n")

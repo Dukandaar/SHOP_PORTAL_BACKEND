@@ -1,6 +1,7 @@
 package helper
 
 import (
+	config "SHOP_PORTAL_BACKEND/CONFIG"
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"runtime"
@@ -15,8 +16,9 @@ func Onit() {
 	utils.SetApiHeaders()                // set api headers
 	utils.SetValidHeaders()              // set valid headers
 	utils.SetApiQParams()
-	utils.NewLogger()    // new logger
-	database.ConnectDB() // connect to database
+	utils.NewLogger()                    // new logger
+	config.ReadAllEnvironmentVariables() // read all environment variables
+	database.ConnectDB()                 // connect to database
 }
 
 func ServerUp(ctx iris.Context) {
