@@ -14,35 +14,35 @@ func ValidateGenerateTokenReqBody(body *structs.GenerateToken, bodyErr string, l
 		return bodyErr, "400008"
 	}
 
-	if body.RegId == utils.NULL_STRING {
+	if body.OwnerRegId == utils.NULL_STRING {
 		return "Missing reg_id", "400005"
 	}
 
-	if len(body.RegId) > utils.SHOP_REG_ID_MAX_LEN {
-		return "reg_id length greater than 10", "400007"
+	if len(body.OwnerRegId) > utils.OWNER_REG_ID_MAX_LEN {
+		return "owner reg_id length greater than 10", "400007"
 	}
 
 	var exists bool
 	ServiceQuery := database.CheckValidOwnerRegId()
 	db := database.DB
-	err := db.QueryRow(ServiceQuery, body.RegId).Scan(&exists)
+	err := db.QueryRow(ServiceQuery, body.OwnerRegId).Scan(&exists)
 	if err != nil {
-		errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", body.RegId)
+		errMsg := fmt.Sprintf("[DB ERROR] Error in checking if row with reg_id %s exists : ", body.OwnerRegId)
 		utils.Logger.Error(logPrefix, err.Error())
 		return errMsg, "500001"
 	}
 
 	if exists {
-		utils.Logger.Info(logPrefix, "Row with reg_id : ", body.RegId, " exists")
+		utils.Logger.Info(logPrefix, "Row with owner reg_id : ", body.OwnerRegId, " exists")
 	} else {
-		utils.Logger.Info(logPrefix, "Row with reg_id ", body.RegId, " does not exist")
+		utils.Logger.Info(logPrefix, "Row with owner reg_id ", body.OwnerRegId, " does not exist")
 		return "Owner Registration ID does not exist", "400006"
 	}
 
 	if body.Key == utils.NULL_STRING {
 		return "Missing key", "400005"
 	} else {
-		errMsg, errCodeStr := ValidateKey(body.Key, body.RegId, logPrefix)
+		errMsg, errCodeStr := ValidateKey(body.Key, body.OwnerRegId, logPrefix)
 		if errMsg != utils.NULL_STRING {
 			return errMsg, errCodeStr
 		}

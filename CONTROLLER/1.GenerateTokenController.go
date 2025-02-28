@@ -19,7 +19,7 @@ func GenerateToken(ctx iris.Context) {
 
 	headers := utils.ReadHeader(ctx)
 	reqBody, bodyError := utils.ReadGenerateTokenReqBody(ctx)
-	utils.Logger.Info(headers, reqBody)
+	utils.LogRequest(logPrefix, ctx, reqBody)
 
 	headerError, errCodeStr := validator.ValidateHeader(utils.GenerateTokenHeaders, headers, ctx, logPrefix)
 	if errCodeStr != utils.SUCCESS {
@@ -35,7 +35,7 @@ func GenerateToken(ctx iris.Context) {
 		}
 	}
 
-	utils.Logger.Info(logPrefix, response)
+	utils.LogResponse(logPrefix, response)
 
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)

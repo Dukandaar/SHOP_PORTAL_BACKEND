@@ -62,6 +62,7 @@ const (
 	GST_IN_MAX_LEN          = 15
 	CUSTOMER_NAME_MAX_LEN   = 255
 	shop_name_MAX_LEN       = 255
+	OWNER_REG_ID_MAX_LEN    = 10
 	CUSTOMER_REG_ID_MAX_LEN = 15
 	ADDRESS_MAX_LEN         = 255
 	ITEM_NAME_MAX_LEN       = 255
@@ -178,6 +179,6 @@ func SetValidHeaders() {
 	ValidHeaders = make(map[string][]interface{})
 	ValidHeaders[CONTENT_TYPE] = []interface{}{"application/json", "text/plain", "application.json; charset=utf-8"}
 	ValidHeaders[ACCEPT] = []interface{}{"application/json, text/plain", "*/*"}
-	ValidHeaders[ACCEPT_ENCODING] = []interface{}{"gzip, deflate, br"}
+	ValidHeaders[ACCEPT_ENCODING] = []interface{}{"gzip, deflate, br, zstd"}
 	ValidHeaders[CATCH_CONTROL] = []interface{}{"no-cache"}
 }

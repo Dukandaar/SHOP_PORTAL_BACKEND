@@ -1,8 +1,23 @@
 package structs
 
+import (
+	"net/http"
+	"net/url"
+)
+
+// RequestLogData stores the data to be logged
+type RequestLogData struct {
+	Headers     http.Header `json:"headers"`
+	QueryParams url.Values  `json:"queryParams"`
+	RequestBody interface{} `json:"requestBody"`
+	Method      string      `json:"method"`
+	URL         string      `json:"url"`
+	RemoteAddr  string      `json:"remoteAddr"`
+}
+
 type GenerateToken struct {
-	RegId string `json:"reg_id"`
-	Key   string `json:"key"`
+	OwnerRegId string `json:"reg_id"`
+	Key        string `json:"key"`
 }
 
 type ShopOwner struct {

@@ -16,8 +16,8 @@ func GenerateToken(reqBody structs.GenerateToken, logPrefix string) (interface{}
 		utils.Logger.Error(logPrefix, err.Error())
 		response, rspCode = helper.CreateErrorResponse("500001", "Error in generating Token")
 	} else {
-		utils.Logger.Info(logPrefix, "Generated JWT:", token)
-		response, rspCode = helper.CreateSuccessResponse(token)
+		utils.Logger.Info(logPrefix, "Generated JWT: ", token)
+		response, rspCode = helper.CreateGenerateTokenResponse(token)
 	}
 
 	return response, rspCode

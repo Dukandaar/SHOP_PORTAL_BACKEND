@@ -26,11 +26,17 @@ func ServerUp(ctx iris.Context) {
 }
 
 func SetApiName(apiName string, ctx iris.Context) {
+	var logPrefix string
 	shop_id := ctx.URLParam("owner_reg_id")
-	logprefix := apiName + "_SHOP_ID_" + shop_id + " : "
-	ctx.Values().Set("logPrefix", logprefix)
+	if shop_id != utils.NULL_STRING {
+		logPrefix = apiName + " : " + shop_id + " : "
+	} else {
+		logPrefix = apiName + " : "
+	}
+
+	ctx.Values().Set("logPrefix", logPrefix)
 	ctx.Values().Set("apiName", apiName)
-	utils.Logger.Info(logprefix + "Request Recieved.")
+	utils.Logger.Info(logPrefix + "Request Recieved.")
 }
 
 func SetCORS(app *iris.Application) {
