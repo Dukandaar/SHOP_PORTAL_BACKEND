@@ -39,7 +39,7 @@ func PutStock(reqBody structs.PutStock, ownerRegId string, stockId int, logPrefi
 	if err != nil {
 		return helper.Create500ErrorResponse("[DB ERROR 0060] Error in inserting row", "Error in inserting row: "+err.Error(), logPrefix)
 	} else {
-		response, rspCode = helper.CreateAddStockResponse("Stock updated successfully", stockId)
+		response, rspCode = helper.CreateSuccessWithIdResponse("Stock updated successfully", stockId, logPrefix)
 	}
 
 	if rspCode == utils.StatusOK {

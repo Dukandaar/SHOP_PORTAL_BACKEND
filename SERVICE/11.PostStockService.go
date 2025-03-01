@@ -59,7 +59,7 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 	if err != nil {
 		return helper.Create500ErrorResponse("[DB ERROR 0055] Error in inserting row", "Error in inserting row: "+err.Error(), logPrefix)
 	} else {
-		response, rspCode = helper.CreateAddStockResponse("Stock added successfully", id)
+		response, rspCode = helper.CreateSuccessWithIdResponse("Stock added successfully", id, logPrefix)
 	}
 	utils.Logger.Info(logPrefix, "Stock history added successfully")
 

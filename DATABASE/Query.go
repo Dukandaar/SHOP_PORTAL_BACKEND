@@ -592,9 +592,9 @@ func CreateBill() string {
 func AddTransaction() string {
 	query := `
 		INSERT INTO
-			shop.transaction (bill_id, item_name, weight, less, net_weight, tunch, fine, discount, amount)
+			shop.transaction (bill_id, is_active, item_name, weight, less, net_weight, tunch, fine, discount, amount)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id;
 	`
 	return query
@@ -608,7 +608,7 @@ func GetStockId() string {
 		FROM
 			shop.stock
 		WHERE
-			item_name = $1;
+			item_name = $1 and owner_id = $2;
 	`
 	return query
 }
