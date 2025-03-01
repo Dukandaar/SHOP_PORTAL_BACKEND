@@ -11,18 +11,19 @@ func Set500ErrorResponse(errMessage string, logMessage string, logPrefix string)
 	return CreateErrorResponse("500001", errMessage)
 }
 
-func CreateErrorResponse(code string, des string) (structs.ErrorResponse, int) {
+func CreateErrorResponse(code string, des string) (structs.ErrorResponse1, int) {
 	rsp := utils.CodeMap[code]
 	errCode := rsp.StatusCode
 	rsp.StatusCode, _ = strconv.Atoi(code)
 	rsp.Description = des
 
-	return structs.ErrorResponse{
-		Stat: "Fail",
-		ErrorSubResponse: structs.ErrorSubResponse{
-			ErrorCode:       rsp.StatusCode,
-			ErrorMsg:        rsp.Message,
-			ErrorDescrition: rsp.Description,
+	return structs.ErrorResponse1{
+		Response: structs.ErrorSubResponse1{
+			Stat: "Fail",
+			Payload: structs.ErrorPayloadResponse{
+				Message:     rsp.Message,
+				Description: rsp.Description,
+			},
 		},
 	}, errCode
 }
@@ -36,6 +37,27 @@ func CreateSuccessResponse(message string) (structs.SuccessResponse, int) {
 	}, utils.StatusOK
 }
 
+func CreateSuccessResponse1(message string) (structs.SuccessResponse1, int) {
+	return structs.SuccessResponse1{
+		Response: structs.SuccessSubResponse1{
+			Stat: "OK",
+			Payload: structs.SuccessPayloadResponse{
+				Message: message,
+			},
+		},
+	}, utils.StatusOK
+}
+
+func CreateGenerateTokenResponse(token string) (structs.GenerateTokenResponse, int) {
+	return structs.GenerateTokenResponse{
+		Response: structs.GenerateTokenSubResponse{
+			Stat: utils.OK,
+			Payload: structs.GenerateTokenPayloadResponse{
+				Token: token,
+			},
+		},
+	}, utils.StatusOK
+}
 func CreateSuccessResponseWithRegId(message string, regIg string) (structs.SuccessRegIdResponse, int) {
 	return structs.SuccessRegIdResponse{
 		Stat: "OK",

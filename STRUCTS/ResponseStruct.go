@@ -1,5 +1,47 @@
 package structs
 
+type ErrorResponse1 struct {
+	Response ErrorSubResponse1 `json:"rsp"`
+}
+
+type ErrorSubResponse1 struct {
+	Stat    string               `json:"stat"`
+	Payload ErrorPayloadResponse `json:"payload"`
+}
+
+type ErrorPayloadResponse struct {
+	Message     string `json:"msg"`
+	Description string `json:"description"`
+}
+
+type SuccessResponse1 struct {
+	Response SuccessSubResponse1 `json:"rsp"`
+}
+
+type SuccessSubResponse1 struct {
+	Stat    string                 `json:"stat"`
+	Payload SuccessPayloadResponse `json:"payload"`
+}
+
+type SuccessPayloadResponse struct {
+	Message     string `json:"msg"`
+	Description string `json:"description"`
+}
+
+// Generate Token Reponse
+type GenerateTokenResponse struct {
+	Response GenerateTokenSubResponse `json:"rsp"`
+}
+
+type GenerateTokenSubResponse struct {
+	Stat    string                       `json:"stat"`
+	Payload GenerateTokenPayloadResponse `json:"payload"`
+}
+
+type GenerateTokenPayloadResponse struct {
+	Token string `json:"token"`
+}
+
 type ErrorResponse struct {
 	Stat             string           `json:"stat"`
 	ErrorSubResponse ErrorSubResponse `json:"rsp"`
@@ -49,15 +91,6 @@ type CreateOwnerSuccessSubResponseWithIdKey struct {
 type SuccessRegIdSubResponse struct {
 	SuccessMsg string `json:"msg"`
 	RegId      string `json:"reg_id"`
-}
-
-type TokenResponse struct {
-	Stat             string           `json:"stat"`
-	TokenSubResponse TokenSubResponse `json:"rsp"`
-}
-
-type TokenSubResponse struct {
-	Token string `json:"token"`
 }
 
 type ShopOwnerDetailsResponse struct {
