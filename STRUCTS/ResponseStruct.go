@@ -26,7 +26,6 @@ type SuccessSubResponse struct {
 }
 
 type SuccessPayloadResponse struct {
-	Code    int    `json:"code"`
 	Message string `json:"msg"`
 }
 
@@ -99,9 +98,62 @@ type GetAllShopOwnerSubResponse struct {
 	Description string                        `json:"description"`
 }
 
+// Post Customer Response
+type PostCustomerResponse struct {
+	Response PostCustomerSubResponse `json:"rsp"`
+}
+
+type PostCustomerSubResponse struct {
+	Stat        string                      `json:"stat"`
+	Payload     PostCustomerPayloadResponse `json:"payload"`
+	Description string                      `json:"description"`
+}
+
+type PostCustomerPayloadResponse struct {
+	RegId string `json:"reg_id"`
+}
+
+// Get Customer Response
+type GetCustomerResponse struct {
+	Response GetCustomerSubResponse `json:"rsp"`
+}
+
+type GetCustomerSubResponse struct {
+	Stat        string                     `json:"stat"`
+	Payload     GetCustomerPayloadResponse `json:"payload"`
+	Description string                     `json:"description"`
+}
+
+type GetCustomerPayloadResponse struct {
+	ShopName string  `json:"shop_name"`
+	Name     string  `json:"owner_name"`
+	RegId    string  `json:"reg_id"`
+	GstIN    string  `json:"gst_in"`
+	PhoneNo  string  `json:"phone_no"`
+	RegDate  string  `json:"reg_date"`
+	Address  string  `json:"address"`
+	Remarks  string  `json:"remarks"`
+	Gold     float64 `json:"gold"`
+	Silver   float64 `json:"silver"`
+	Cash     float64 `json:"cash"`
+	IsActive string  `json:"is_active"`
+}
+
 type SuccessRegIdResponse struct {
 	Stat               string                  `json:"stat"`
 	SuccessSubResponse SuccessRegIdSubResponse `json:"rsp"`
+}
+
+// Get All Customer Response
+type GetAllCustomerResponse struct {
+	Response GetAllCustomerSubResponse `json:"rsp"`
+}
+
+type GetAllCustomerSubResponse struct {
+	Stat        string                       `json:"stat"`
+	Count       int                          `json:"count"`
+	Payload     []GetCustomerPayloadResponse `json:"payload"`
+	Description string                       `json:"description"`
 }
 
 type SuccessIdResponse struct {

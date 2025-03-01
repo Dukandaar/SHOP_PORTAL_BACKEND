@@ -11,7 +11,6 @@ import (
 func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 
 	var response interface{}
-	rspCount := 0
 	rspCode := utils.StatusOK
 
 	var name string
@@ -27,34 +26,22 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 	var cash float64
 	var isActive string
 
-	rsp := make([]structs.CustomerDetailsSubResponse, 0)
+	customerPayload := make([]structs.GetCustomerPayloadResponse, 0)
 
 	DB := database.DB
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0043] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
-	defer func() {
-		if r := recover(); r != nil || rspCode != utils.StatusOK {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
-	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
-	var ownerRowId int
-	err = tx.QueryRow(ServiceQuery, owner_reg_id).Scan(&ownerRowId)
+	ownerRowId, err := helper.GetOwnerId(owner_reg_id, tx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			utils.Logger.Info(logPrefix, "Data for reg_id ", owner_reg_id, " does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+owner_reg_id+" does not exist", logPrefix)
-			return response, rspCode
-		}
-		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0044] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
-	ServiceQuery = database.GetAllCustomerData()
+	ServiceQuery := database.GetAllCustomerData()
 	rows, err := tx.Query(ServiceQuery, ownerRowId)
 	if err == nil {
 		for rows.Next() {
@@ -66,7 +53,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 				return response, rspCode
 			} else {
 
-				rsp = append(rsp, structs.CustomerDetailsSubResponse{
+				customerPayload = append(customerPayload, structs.GetCustomerPayloadResponse{
 					Name:     name,
 					ShopName: shopName,
 					RegId:    regId,
@@ -79,25 +66,23 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 					Cash:     cash,
 					IsActive: isActive,
 				})
-				rspCount++
 			}
 		}
 	} else {
 		if err == sql.ErrNoRows {
-			utils.Logger.Info("No rows found")
-			response, rspCode = helper.CreateSuccessResponse("No any customer found", logPrefix, logPrefix)
-			return response, rspCode
+			return helper.CreateSuccessResponse("No any customer found", "No customer found for owner reg id : "+owner_reg_id, logPrefix)
 		} else {
-			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows", logPrefix)
-			return response, rspCode
+			return helper.Create500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 		}
 	}
 
-	response = structs.AllCustomerDetailsResponse{
-		Stat:                       "OK",
-		Count:                      rspCount,
-		CustomerDetailsSubResponse: rsp,
+	if rspCode == utils.StatusOK {
+		err = tx.Commit()
+		if err != nil {
+			return helper.Create500ErrorResponse("500002", "Error in committing transaction", logPrefix)
+		}
+
+		response, rspCode = helper.CreateGetAllCustomerResponse(customerPayload, "All Customer found successfully for owner with regId : "+owner_reg_id, logPrefix)
 	}
 
 	return response, rspCode

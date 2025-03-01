@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string) (interface{}, int) {
+func PostCustomer(reqBody structs.Customer, ownerRegID string, logPrefix string) (interface{}, int) {
 	var response interface{}
 	rspCode := utils.StatusOK
 
@@ -18,74 +18,70 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0027] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
+	defer tx.Rollback()
 
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-			tx.Rollback()
-		}
-	}()
-
-	ServiceQuery := database.GetOwnerRowId()
-	var ownerRowId string
-	err = tx.QueryRow(ServiceQuery, OwnerRegId).Scan(&ownerRowId)
+	ownerRowID, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
-		return helper.Create500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0028] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
-	ServiceQuery = database.CheckCustomerPresent()
-	var rowId int
+	ServiceQuery := database.CheckCustomerPresent()
+	var rowID int
 	var isActive string
-	var customerRegId string
+	var customerRegID string
 
-	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &isActive, &customerRegId)
+	err = tx.QueryRow(ServiceQuery, ownerRowID, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowID, &isActive, &customerRegID)
 	if err == sql.ErrNoRows { // Add New customer
 		ServiceQuery = database.InsertCustomerData()
 		date, _ := time.Parse("2006-01-02", reqBody.RegDate)
-		regId := maths.GenerateCustomerRegID()
+		regID := maths.GenerateCustomerRegID()
 
-		if regId == utils.NULL_STRING {
-			return helper.Create500ErrorResponse("Error generating reg_id", "Error generating reg_id", logPrefix)
+		if regID == utils.NULL_STRING {
+			return helper.Create500ErrorResponse("Error in generating reg_id", "Error in generating reg_id", logPrefix)
 		}
 
-		err = tx.QueryRow(ServiceQuery, utils.ACTIVE_YES, ownerRowId, reqBody.Name, reqBody.ShopName, regId, date, reqBody.PhoneNo, reqBody.Address, reqBody.Remarks, reqBody.GstIN, time.Now(), time.Now()).Scan(&rowId)
+		err = tx.QueryRow(ServiceQuery, utils.ACTIVE_YES, ownerRowID, reqBody.Name, reqBody.ShopName, regID, date, reqBody.PhoneNo, reqBody.Address, reqBody.Remarks, reqBody.GstIN, time.Now(), time.Now()).Scan(&rowID)
 		if err != nil {
-			helper.Create500ErrorResponse("Error in inserting row in customer table", "Error inserting customer data:"+err.Error(), logPrefix)
-		} else {
-			utils.Logger.Info(logPrefix, "Inserted customer with reg_id:", regId)
-			// insert new balance
-			ServiceQuery = database.InsertCustomerBalanceData()
-			_, err = tx.Exec(ServiceQuery, rowId, utils.NULL_FLOAT, utils.NULL_FLOAT, utils.NULL_FLOAT, time.Now(), time.Now())
-			if err != nil {
-				return helper.Create500ErrorResponse("Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
-			}
-			response, rspCode = helper.CreateSuccessResponse(regId, "Customer Added Successfully", logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0029] Error in inserting row in customer table", "Error inserting customer data:"+err.Error(), logPrefix)
 		}
+
+		utils.Logger.Info(logPrefix, "Inserted customer with reg_id:", regID)
+
+		// insert new balance
+		ServiceQuery = database.InsertCustomerBalanceData()
+		_, err = tx.Exec(ServiceQuery, rowID, utils.NULL_FLOAT, utils.NULL_FLOAT, utils.NULL_FLOAT, time.Now(), time.Now())
+		if err != nil {
+			return helper.Create500ErrorResponse("[DB ERROR 0030] Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
+		}
+
+		response, rspCode = helper.CreatePostCustomerResponse(regID, "Customer Added Successfully", logPrefix)
+
 	} else if err != nil { // Database error checking for existing customer
-		return helper.Create500ErrorResponse("Error in checking row", "Error checking for existing customer:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0031] Error in checking row", "Error checking for existing customer:"+err.Error(), logPrefix)
 	} else { // Existing customer
 		if isActive == utils.ACTIVE_YES {
 			utils.Logger.Info(logPrefix, "Same customer data exists")
-			response, rspCode = helper.CreateErrorResponse("400009", "Same data exists with reg_id: "+customerRegId, logPrefix)
-			return response, rspCode
-		} else { // Activate existing customer
-			ServiceQuery = database.UpdateOwnerCustomerData()
-			_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, reqBody.Remarks, customerRegId)
-			if err != nil {
-				return helper.Create500ErrorResponse("Error in updating active status", "Error updating customer status:"+err.Error(), logPrefix)
-			} else {
-				response, rspCode = helper.CreateSuccessResponse("Customer Activated Successfully", "Customer Activated Successfully", logPrefix)
-			}
+			return helper.CreateErrorResponse("400009", "Same data exists with reg_id: "+customerRegID, logPrefix)
 		}
+
+		// Activate existing customer
+		ServiceQuery = database.UpdateOwnerCustomerData()
+		_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, reqBody.Remarks, customerRegID)
+		if err != nil {
+			return helper.Create500ErrorResponse("[DB ERROR 0032] Error in updating active status", "Error updating customer status:"+err.Error(), logPrefix)
+		}
+
+		response, rspCode = helper.CreatePostCustomerResponse(customerRegID, "Customer Activated Successfully", logPrefix)
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0033] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
+		utils.Logger.Info(logPrefix, "Transaction committed")
 	}
 
 	return response, rspCode

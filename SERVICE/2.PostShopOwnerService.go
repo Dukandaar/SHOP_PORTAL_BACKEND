@@ -35,7 +35,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 		date, _ := time.Parse("2006-01-02", reqBody.RegDate)
 		ownerRegID := maths.GenerateShopRegID(tx)
 		if ownerRegID == utils.NULL_STRING {
-			return helper.Create500ErrorResponse("[DB ERROR 0007] Error in generating Shop Owner Registration ID", "Error generating Shop Owner Registration ID.", logPrefix)
+			return helper.Create500ErrorResponse("Error in generating Shop Owner Registration ID", "Error generating Shop Owner Registration ID.", logPrefix)
 		}
 		key, errMsg := maths.GenerateKey(ownerRegID) // Key generation *before* transaction
 

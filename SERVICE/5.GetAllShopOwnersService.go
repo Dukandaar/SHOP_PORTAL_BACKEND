@@ -66,14 +66,14 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 		if err == sql.ErrNoRows {
 			return helper.CreateSuccessResponse("No any owner found", "No any owner found", logPrefix)
 		} else {
-			return helper.Create500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0025] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 		}
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0026] Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Transaction committed successfully")
 

@@ -43,7 +43,6 @@ func CreateSuccessResponse(message string, description string, logPrefix string)
 		Response: structs.SuccessSubResponse{
 			Stat: "OK",
 			Payload: structs.SuccessPayloadResponse{
-				Code:    utils.StatusOK,
 				Message: message,
 			},
 			Description: description,
@@ -75,6 +74,45 @@ func CreatePostOwnerResponse(key string, regID string, description string, logPr
 				RegId: regID,
 				Key:   key,
 			},
+			Description: description,
+		},
+	}, utils.StatusOK
+}
+
+// Post Customer Response
+func CreatePostCustomerResponse(regID string, description string, logPrefix string) (structs.PostCustomerResponse, int) {
+	utils.Logger.Info(logPrefix + description)
+	return structs.PostCustomerResponse{
+		Response: structs.PostCustomerSubResponse{
+			Stat: "OK",
+			Payload: structs.PostCustomerPayloadResponse{
+				RegId: regID,
+			},
+			Description: description,
+		},
+	}, utils.StatusOK
+}
+
+// GET CUSTOMER RESPONSE
+func CreateGetCustomerResponse(payload structs.GetCustomerPayloadResponse, description string, logPrefix string) (structs.GetCustomerResponse, int) {
+	utils.Logger.Info(logPrefix + description)
+	return structs.GetCustomerResponse{
+		Response: structs.GetCustomerSubResponse{
+			Stat:        "OK",
+			Payload:     payload,
+			Description: description,
+		},
+	}, utils.StatusOK
+}
+
+// GET ALL CUSTOMER RESPONSE
+func CreateGetAllCustomerResponse(payload []structs.GetCustomerPayloadResponse, description string, logPrefix string) (structs.GetAllCustomerResponse, int) {
+	utils.Logger.Info(logPrefix + description)
+	return structs.GetAllCustomerResponse{
+		Response: structs.GetAllCustomerSubResponse{
+			Stat:        "OK",
+			Count:       len(payload),
+			Payload:     payload,
 			Description: description,
 		},
 	}, utils.StatusOK
