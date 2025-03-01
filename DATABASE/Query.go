@@ -554,6 +554,7 @@ func GetStockData() string {
 func GetCustomerPreviousBalance() string {
 	query := `
 		SELECT
+			b.id,
 			b.gold,
 			b.silver,
 			b.cash

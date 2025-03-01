@@ -197,6 +197,45 @@ type OwnerAllStockSubResponse struct {
 	Description string                      `json:"description"`
 }
 
+// Get Stock History Response
+type StockHistoryResponse struct {
+	Response StockHistorySubResponse `json:"rsp"`
+}
+
+type StockHistorySubResponse struct {
+	Stat        string                        `json:"stat"`
+	Count       int                           `json:"count"`
+	Payload     []StockHistoryPayloadResponse `json:"payload"`
+	Description string                        `json:"description"`
+}
+
+type StockHistoryPayloadResponse struct {
+	PrevBalance float64             `json:"prev_balance"`
+	NewBalance  float64             `json:"new_balance"`
+	Reason      string              `json:"reason"`
+	Remarks     string              `json:"remarks"`
+	CreatedAt   string              `json:"created_at"`
+	Transaction TransactionResponse `json:"transaction"`
+}
+
+// Get Previous Customer Balance
+type CustomerPreviousBalanceResponse struct {
+	Response CustomerPreviousBalanceSubResponse `json:"rsp"`
+}
+
+type CustomerPreviousBalanceSubResponse struct {
+	Stat        string                                 `json:"stat"`
+	Payload     CustomerPreviousBalancePayloadResponse `json:"payload"`
+	Description string                                 `json:"description"`
+}
+
+type CustomerPreviousBalancePayloadResponse struct {
+	RowId  int     `json:"row_id"`
+	Gold   float64 `json:"gold"`
+	Silver float64 `json:"silver"`
+	Cash   float64 `json:"cash"`
+}
+
 type SuccessIdResponse struct {
 	Stat               string               `json:"stat"`
 	SuccessSubResponse SuccessIdSubResponse `json:"rsp"`
@@ -275,33 +314,6 @@ type CustomerDetailsSubResponse struct {
 	Cash      float64 `json:"cash"`
 	IsActive  string  `json:"isActive"`
 	BillCount int     `json:"bill_count"`
-}
-
-type CustomerPreviousBalanceResponse struct {
-	Stat                               string                               `json:"stat"`
-	CustomerPreviousBalanceSubResponse []CustomerPreviousBalanceSubResponse `json:"rsp"`
-}
-
-type CustomerPreviousBalanceSubResponse struct {
-	RowId  int     `json:"row_id"`
-	Gold   float64 `json:"gold"`
-	Silver float64 `json:"silver"`
-	Cash   float64 `json:"cash"`
-}
-
-type StockHistoryResponse struct {
-	Stat                    string                    `json:"stat"`
-	Count                   int                       `json:"count"`
-	StockHistorySubResponse []StockHistorySubResponse `json:"rsp"`
-}
-
-type StockHistorySubResponse struct {
-	PrevBalance float64             `json:"prev_balance"`
-	NewBalance  float64             `json:"new_balance"`
-	Reason      string              `json:"reason"`
-	Remarks     string              `json:"remarks"`
-	CreatedAt   string              `json:"created_at"`
-	Transaction TransactionResponse `json:"transaction"`
 }
 
 type TransactionResponse struct {

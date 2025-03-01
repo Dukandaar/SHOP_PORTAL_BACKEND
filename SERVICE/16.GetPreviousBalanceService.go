@@ -17,65 +17,55 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 
 	tx, err := Db.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0074] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
-	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
-	var ownerRowId int
-	err = tx.QueryRow(ServiceQuery, ownerRegId).Scan(&ownerRowId)
+	// Get owner row id
+	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
-		}
-		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0075] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// Get customer_id from reg_id
-	ServiceQuery = database.GetCustomerId()
-	var customerId int
-	err = tx.QueryRow(ServiceQuery, customerRegId, ownerRowId).Scan(&customerId)
+	customerId, err := helper.GetCustomerId(customerRegId, ownerRowId, tx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404002", "Customer Not Found", logPrefix)
-		}
-		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0076] Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
 	var gold float64
 	var silver float64
 	var cash float64
+	var id int
 
-	ServiceQuery = database.GetCustomerPreviousBalance()
-	err = tx.QueryRow(ServiceQuery, customerId).Scan(&gold, &silver, &cash)
+	ServiceQuery := database.GetCustomerPreviousBalance()
+	err = tx.QueryRow(ServiceQuery, customerId).Scan(&id, &gold, &silver, &cash)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404003", "Previous Balance Not Found", logPrefix)
 		}
-		return helper.Create500ErrorResponse("Error getting previous balance", "Error getting previous balance:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0077] Error getting previous balance", "Error getting previous balance: "+err.Error(), logPrefix)
 	}
 
 	if rspCode == utils.StatusOK {
+		err = tx.Commit()
+		if err != nil {
+			return helper.Create500ErrorResponse("[DB ERROR 0078] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+		}
+
+		utils.Logger.Info(logPrefix, "Transaction committed Successfully")
+
 		response = structs.CustomerPreviousBalanceResponse{
-			Stat: "OK",
-			CustomerPreviousBalanceSubResponse: []structs.CustomerPreviousBalanceSubResponse{
-				{
-					RowId:  customerId,
+			Response: structs.CustomerPreviousBalanceSubResponse{
+				Stat: utils.OK,
+				Payload: structs.CustomerPreviousBalancePayloadResponse{
+					RowId:  id,
 					Gold:   gold,
 					Silver: silver,
 					Cash:   cash,
 				},
+				Description: "Previous Balance Fetched Successfully",
 			},
-		}
-
-		err = tx.Commit()
-		if err != nil {
-			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 	}
 

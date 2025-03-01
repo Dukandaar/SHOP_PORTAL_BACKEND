@@ -12,7 +12,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 
 	var response interface{}
 	var rspCode = utils.StatusOK
-	var rsp = make([]structs.OwnerStockPayloadResponse, 0)
+	var stockPayloads = make([]structs.OwnerStockPayloadResponse, 0)
 
 	DB := database.DB
 
@@ -52,7 +52,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 			return helper.Create500ErrorResponse("[DB ERROR 0069] Error scanning row", "Error scanning row: "+err.Error(), logPrefix)
 		}
 
-		rsp = append(rsp, structs.OwnerStockPayloadResponse{
+		stockPayloads = append(stockPayloads, structs.OwnerStockPayloadResponse{
 			Id:        id,
 			ItemName:  itemName,
 			Tunch:     tunch,
@@ -71,8 +71,8 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 		response = structs.OwnerAllStockResponse{
 			Response: structs.OwnerAllStockSubResponse{
 				Stat:        utils.OK,
-				Count:       len(rsp),
-				Payload:     rsp,
+				Count:       len(stockPayloads),
+				Payload:     stockPayloads,
 				Description: "All Stock retrieved successfully",
 			},
 		}
