@@ -20,7 +20,7 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -58,14 +58,14 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 			response, rspCode = helper.CreateErrorResponse("404001", msg, logPrefix)
 			return response, rspCode
 		}
-		return helper.Set500ErrorResponse("Error in getting stock history row", "Error in getting stock history row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in getting stock history row", "Error in getting stock history row:"+err.Error(), logPrefix)
 	}
 
 	// Get transactoin details
 	for rows.Next() {
 		err = rows.Scan(&prevBalance, &newBalance, &reason, &remarks, &createdAt, &tid, &billId, &itemName, &weight, &less, &netWeight, &tunch, &fine, &discount, &amount)
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in getting stock row", "Error getting stock: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in getting stock row", "Error getting stock: "+err.Error(), logPrefix)
 		}
 
 		rsp = append(rsp, structs.StockHistorySubResponse{
@@ -92,7 +92,7 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		response = structs.StockHistoryResponse{
 			Stat:                    "OK",

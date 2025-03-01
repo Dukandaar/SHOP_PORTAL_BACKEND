@@ -17,7 +17,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 
 	tx, err := DB.Begin() // Start transaction
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -31,7 +31,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 	var ownerRowId int
 	err = tx.QueryRow(ServiceQuery, OwnerRegId).Scan(&ownerRowId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// Check if customer exists with same name, shopname and phone no
@@ -43,7 +43,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &isActive, &customer_reg_id)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			return helper.Set500ErrorResponse("Error checking customer", "Error checking customer:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error checking customer", "Error checking customer:"+err.Error(), logPrefix)
 		}
 	}
 
@@ -63,15 +63,15 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 	ServiceQuery = database.UpdateCustomerData()
 	_, err = tx.Exec(ServiceQuery, reqBody.Name, reqBody.ShopName, reqBody.GstIN, reqBody.RegDate, reqBody.PhoneNo, utils.ACTIVE_YES, reqBody.Address, time.Now(), CustomerRegId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error updating customer", "Error updating customer:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error updating customer", "Error updating customer:"+err.Error(), logPrefix)
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
-		response, rspCode = helper.CreateSuccessResponse("Customer updated successfully")
+		response, rspCode = helper.CreateSuccessResponse("Customer updated successfully", logPrefix)
 	}
 
 	return response, rspCode

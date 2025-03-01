@@ -6,12 +6,14 @@ import (
 	"strconv"
 )
 
-func Set500ErrorResponse(errMessage string, logMessage string, logPrefix string) (interface{}, int) { // 500 error only
+// 500 ERROR RESPONSE
+func Create500ErrorResponse(errMessage string, logMessage string, logPrefix string) (interface{}, int) { // 500 error only
 	utils.Logger.Error(logPrefix, logMessage)
 	return CreateErrorResponse("500001", errMessage, logPrefix)
 }
 
-func CreateErrorResponse(code string, des string, logPrefix string) (structs.ErrorResponse1, int) {
+// ERROR RESPONSE
+func CreateErrorResponse(code string, des string, logPrefix string) (structs.ErrorResponse, int) {
 
 	utils.Logger.Error(logPrefix, des)
 
@@ -20,53 +22,57 @@ func CreateErrorResponse(code string, des string, logPrefix string) (structs.Err
 	rsp.StatusCode, _ = strconv.Atoi(code)
 	rsp.Description = des
 
-	return structs.ErrorResponse1{
-		Response: structs.ErrorSubResponse1{
+	return structs.ErrorResponse{
+		Response: structs.ErrorSubResponse{
 			Stat: "Fail",
 			Payload: structs.ErrorPayloadResponse{
-				Message:     rsp.Message,
-				Description: rsp.Description,
+				Code:    rsp.StatusCode,
+				Message: rsp.Message,
 			},
+			Description: rsp.Description,
 		},
 	}, errCode
 }
 
-func CreateSuccessResponse(message string) (structs.SuccessResponse, int) {
+// SUCCESS RESPONSE
+func CreateSuccessResponse(message string, description string) (structs.SuccessResponse, int) {
 	return structs.SuccessResponse{
-		Stat: "OK",
-		SuccessSubResponse: structs.SuccessSubResponse{
-			SuccessMsg: message,
-		},
-	}, utils.StatusOK
-}
-
-func CreateSuccessResponse1(message string) (structs.SuccessResponse1, int) {
-	return structs.SuccessResponse1{
-		Response: structs.SuccessSubResponse1{
+		Response: structs.SuccessSubResponse{
 			Stat: "OK",
 			Payload: structs.SuccessPayloadResponse{
+				Code:    utils.StatusOK,
 				Message: message,
 			},
+			Description: description,
 		},
 	}, utils.StatusOK
 }
 
-func CreateGenerateTokenResponse(token string) (structs.GenerateTokenResponse, int) {
+// POST GENERATE TOKEN RESPONSE
+func CreateGenerateTokenResponse(token string, description string, logPrefix string) (structs.GenerateTokenResponse, int) {
+	utils.Logger.Info(logPrefix + description)
 	return structs.GenerateTokenResponse{
 		Response: structs.GenerateTokenSubResponse{
 			Stat: utils.OK,
 			Payload: structs.GenerateTokenPayloadResponse{
 				Token: token,
 			},
+			Description: description,
 		},
 	}, utils.StatusOK
 }
-func CreateSuccessResponseWithRegId(message string, regIg string) (structs.SuccessRegIdResponse, int) {
-	return structs.SuccessRegIdResponse{
-		Stat: "OK",
-		SuccessSubResponse: structs.SuccessRegIdSubResponse{
-			SuccessMsg: message,
-			RegId:      regIg,
+
+// POST SHOP OWNER RESPONSE
+func CreatePostOwnerResponse(key string, regID string, description string, logPrefix string) (structs.PostShowOwnerResponse, int) {
+	utils.Logger.Info(logPrefix + description)
+	return structs.PostShowOwnerResponse{
+		Response: structs.PostShowOwnerSubResponse{
+			Stat: "OK",
+			Payload: structs.PostShowOwnerPayloadResponse{
+				RegId: regID,
+				Key:   key,
+			},
+			Description: description,
 		},
 	}, utils.StatusOK
 }

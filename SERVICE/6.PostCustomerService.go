@@ -18,7 +18,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -32,7 +32,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 	var ownerRowId string
 	err = tx.QueryRow(ServiceQuery, OwnerRegId).Scan(&ownerRowId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.CheckCustomerPresent()
@@ -47,24 +47,24 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 		regId := maths.GenerateCustomerRegID()
 
 		if regId == utils.NULL_STRING {
-			return helper.Set500ErrorResponse("Error generating reg_id", "Error generating reg_id", logPrefix)
+			return helper.Create500ErrorResponse("Error generating reg_id", "Error generating reg_id", logPrefix)
 		}
 
 		err = tx.QueryRow(ServiceQuery, utils.ACTIVE_YES, ownerRowId, reqBody.Name, reqBody.ShopName, regId, date, reqBody.PhoneNo, reqBody.Address, reqBody.Remarks, reqBody.GstIN, time.Now(), time.Now()).Scan(&rowId)
 		if err != nil {
-			helper.Set500ErrorResponse("Error in inserting row in customer table", "Error inserting customer data:"+err.Error(), logPrefix)
+			helper.Create500ErrorResponse("Error in inserting row in customer table", "Error inserting customer data:"+err.Error(), logPrefix)
 		} else {
 			utils.Logger.Info(logPrefix, "Inserted customer with reg_id:", regId)
 			// insert new balance
 			ServiceQuery = database.InsertCustomerBalanceData()
 			_, err = tx.Exec(ServiceQuery, rowId, utils.NULL_FLOAT, utils.NULL_FLOAT, utils.NULL_FLOAT, time.Now(), time.Now())
 			if err != nil {
-				return helper.Set500ErrorResponse("Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
+				return helper.Create500ErrorResponse("Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
 			}
-			response, rspCode = helper.CreateSuccessResponseWithRegId("Customer Added Successfully", regId)
+			response, rspCode = helper.CreateSuccessResponse(regId, "Customer Added Successfully")
 		}
 	} else if err != nil { // Database error checking for existing customer
-		return helper.Set500ErrorResponse("Error in checking row", "Error checking for existing customer:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in checking row", "Error checking for existing customer:"+err.Error(), logPrefix)
 	} else { // Existing customer
 		if isActive == utils.ACTIVE_YES {
 			utils.Logger.Info(logPrefix, "Same customer data exists")
@@ -74,9 +74,9 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 			ServiceQuery = database.UpdateOwnerCustomerData()
 			_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, reqBody.Remarks, customerRegId)
 			if err != nil {
-				return helper.Set500ErrorResponse("Error in updating active status", "Error updating customer status:"+err.Error(), logPrefix)
+				return helper.Create500ErrorResponse("Error in updating active status", "Error updating customer status:"+err.Error(), logPrefix)
 			} else {
-				response, rspCode = helper.CreateSuccessResponse("Customer Activated Successfully")
+				response, rspCode = helper.CreateSuccessResponse("Customer Activated Successfully", "Customer Activated Successfully")
 			}
 		}
 	}
@@ -84,7 +84,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 	}
 

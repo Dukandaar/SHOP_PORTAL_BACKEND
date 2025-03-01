@@ -18,7 +18,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	// Start transaction
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -35,7 +35,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetFilteredCustomerData(reqBody)

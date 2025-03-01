@@ -17,7 +17,7 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 
 	tx, err := Db.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 	defer func() {
 		if r := recover(); r != nil || err != nil {
@@ -33,7 +33,7 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// Get customer_id from reg_id
@@ -44,7 +44,7 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404002", "Customer Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	var gold float64
@@ -57,7 +57,7 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404003", "Previous Balance Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting previous balance", "Error getting previous balance:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting previous balance", "Error getting previous balance:"+err.Error(), logPrefix)
 	}
 
 	if rspCode == utils.StatusOK {
@@ -75,7 +75,7 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 	}
 

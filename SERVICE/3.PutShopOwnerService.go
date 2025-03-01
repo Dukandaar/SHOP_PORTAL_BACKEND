@@ -18,15 +18,10 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
 	ServiceQuery := database.CheckOwnerPresent()
 	var rowId int
@@ -34,13 +29,8 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 	var isActive string
 
 	err = tx.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &reg_id, &isActive)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			utils.Logger.Info(logPrefix, "Data for reg_id ", OwnerRegId, " does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+OwnerRegId+" does not exist", logPrefix)
-			return response, rspCode
-		}
-		response, rspCode = helper.Set500ErrorResponse("Error in getting row", "Error in getting row:"+err.Error(), logPrefix)
+	if err != nil && err != sql.ErrNoRows {
+		response, rspCode = helper.Create500ErrorResponse("Error in getting row", "Error in getting row:"+err.Error(), logPrefix)
 		return response, rspCode
 	}
 
@@ -49,7 +39,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 			utils.Logger.Info(logPrefix, "Data with reg_id ", OwnerRegId, " exists") // update row
 		} else {
 			utils.Logger.Info(logPrefix, "Same data with reg_id ", OwnerRegId, " exists")
-			response, rspCode = helper.CreateErrorResponse("400009", "Same data with reg_id "+OwnerRegId+" exists", logPrefix)
+			response, rspCode = helper.CreateErrorResponse("400009", "Another owner with same name, shopname and phone_no. exists : reg_id : "+OwnerRegId, logPrefix)
 			return response, rspCode
 		}
 	}
@@ -58,15 +48,15 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 	ServiceQuery = database.UpdateShopOwnerData()
 	_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, reqBody.GstIN, reqBody.PhoneNo, utils.ACTIVE_YES, reqBody.RegDate, reqBody.Address, reqBody.Remarks, time.Now(), OwnerRegId)
 	if err != nil {
-		response, rspCode = helper.Set500ErrorResponse("Error in updating row", "Error in updating row:"+err.Error(), logPrefix)
+		response, rspCode = helper.Create500ErrorResponse("Error in updating row", "Error in updating row:"+err.Error(), logPrefix)
 	} else {
-		response, rspCode = helper.CreateSuccessResponse("Updated owner with reg_id : " + OwnerRegId)
+		response, rspCode = helper.CreateSuccessResponse("Updated Successfully.", "Updated owner with reg_id : "+OwnerRegId)
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Transaction committed")
 	}

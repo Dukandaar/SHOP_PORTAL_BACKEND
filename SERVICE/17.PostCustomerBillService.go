@@ -19,7 +19,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -35,7 +35,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 	var ownerRowId int
 	err = tx.QueryRow(ServiceQuery, ownerRegId).Scan(&ownerRowId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// check customer id
@@ -51,7 +51,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 			if err == sql.ErrNoRows {
 				utils.Logger.Info(logPrefix, "Customer does not exist")
 			} else {
-				return helper.Set500ErrorResponse("Error in getting row", "Error getting customer row ID:"+err.Error(), logPrefix)
+				return helper.Create500ErrorResponse("Error in getting row", "Error getting customer row ID:"+err.Error(), logPrefix)
 			}
 		} else {
 			utils.Logger.Info(logPrefix, "Customer exists with id:", customerRowId)
@@ -61,12 +61,12 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		ServiceQuery = database.InsertCustomerData()
 		regId := maths.GenerateCustomerRegID()
 		if regId == utils.NULL_STRING {
-			return helper.Set500ErrorResponse("Error generating reg_id", "Error generating reg_id", logPrefix)
+			return helper.Create500ErrorResponse("Error generating reg_id", "Error generating reg_id", logPrefix)
 		}
 
 		err = tx.QueryRow(ServiceQuery, utils.ACTIVE_YES, ownerRowId, reqBody.CustomerDetails.Name, reqBody.CustomerDetails.ShopName, regId, reqBody.Date, reqBody.CustomerDetails.PhoneNo, reqBody.CustomerDetails.Address, reqBody.Remarks, reqBody.CustomerDetails.GstIN, time.Now(), time.Now()).Scan(&customerRowId)
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in creating customer", "Error in creating customer:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in creating customer", "Error in creating customer:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Customer created with id:", customerRowId)
 
@@ -74,7 +74,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		ServiceQuery = database.GetCustomerId()
 		err = tx.QueryRow(ServiceQuery, customerRegId, ownerRowId).Scan(&customerRowId)
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in getting row", "Error getting customer row ID:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in getting row", "Error getting customer row ID:"+err.Error(), logPrefix)
 		}
 	}
 
@@ -83,7 +83,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 	var billId int
 	err = tx.QueryRow(ServiceQuery, reqBody.BillNo, customerRowId, reqBody.Type, reqBody.Metal, reqBody.Rate, reqBody.Date, time.Now(), time.Now()).Scan(&billId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in creating bill", "Error in creating bill:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in creating bill", "Error in creating bill:"+err.Error(), logPrefix)
 	} else {
 		utils.Logger.Info(logPrefix, "Bill created with id:", billId)
 	}
@@ -98,7 +98,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		ServiceQuery = database.AddTransaction()
 		err = tx.QueryRow(ServiceQuery, billId, reqBody.TransactionDetails[i].ItemName, reqBody.TransactionDetails[i].Weight, reqBody.TransactionDetails[i].Less, reqBody.TransactionDetails[i].NetWeight, reqBody.TransactionDetails[i].Tunch, reqBody.TransactionDetails[i].Fine, reqBody.TransactionDetails[i].Discount, reqBody.TransactionDetails[i].Amount).Scan(&transcId)
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in adding transaction", "Error in adding transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in adding transaction", "Error in adding transaction:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Transaction added with id:", transcId)
 
@@ -108,7 +108,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		ServiceQuery = database.GetStockId()
 		err = tx.QueryRow(ServiceQuery, reqBody.TransactionDetails[i].ItemName).Scan(&stockId, &prev_balance)
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in getting stock id", "Error getting stock id:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in getting stock id", "Error getting stock id:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Stock id:", stockId)
 
@@ -116,7 +116,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		ServiceQuery = database.DecreaseStock()
 		_, err = tx.Exec(ServiceQuery, (prev_balance - reqBody.TransactionDetails[i].NetWeight), stockId)
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in decreasing stock", "Error in decreasing stock:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in decreasing stock", "Error in decreasing stock:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Stock decreased by:", reqBody.TransactionDetails[i].NetWeight)
 
@@ -124,7 +124,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		ServiceQuery = database.AddStockHistory()
 		_, err = tx.Exec(ServiceQuery, stockId, prev_balance, (prev_balance - reqBody.TransactionDetails[i].NetWeight), utils.SELL, transcId, time.Now(), time.Now())
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in adding stock history", "Error in adding stock history:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in adding stock history", "Error in adding stock history:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Stock history added for stock id:", stockId)
 
@@ -134,7 +134,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 	ServiceQuery = database.BillPayment()
 	_, err = tx.Exec(ServiceQuery, billId, customerRowId, reqBody.PaymentDetails.Factor, reqBody.PaymentDetails.New, reqBody.PaymentDetails.Prev, reqBody.PaymentDetails.Total, reqBody.PaymentDetails.Paid, reqBody.PaymentDetails.Rem, reqBody.PaymentDetails.PaymentType, reqBody.Date, reqBody.PaymentDetails.Remarks, time.Now(), time.Now())
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in adding payment", "Error in adding payment:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in adding payment", "Error in adding payment:"+err.Error(), logPrefix)
 	}
 	utils.Logger.Info(logPrefix, "Payment added for bill id:", billId)
 
@@ -142,7 +142,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 	ServiceQuery = database.UpdateCustomerBalance(reqBody.Metal)
 	_, err = tx.Exec(ServiceQuery, reqBody.PaymentDetails.Rem, time.Now(), customerRowId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in updating customer balance", "Error in updating customer balance:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in updating customer balance", "Error in updating customer balance:"+err.Error(), logPrefix)
 	}
 	utils.Logger.Info(logPrefix, "Customer balance updated for customer id:", customerRowId)
 
@@ -150,16 +150,16 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 	ServiceQuery = database.UpdateOwnerBillCount()
 	_, err = tx.Exec(ServiceQuery, ownerRowId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in updating owner bill count", "Error in updating owner bill count:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in updating owner bill count", "Error in updating owner bill count:"+err.Error(), logPrefix)
 	}
 	utils.Logger.Info(logPrefix, "Owner bill count updated for owner id:", ownerRowId)
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
-		response, rspCode = helper.CreateSuccessResponse("Bill created successfully")
+		response, rspCode = helper.CreateSuccessResponse("Bill created successfully", logPrefix)
 		utils.Logger.Info(logPrefix, "Transaction committed")
 	}
 

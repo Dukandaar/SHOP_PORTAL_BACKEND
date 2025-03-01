@@ -39,7 +39,7 @@ func AllBill(ownerRowId int, customerRowId int, tx *sql.Tx, logPrefix string) (s
 	ServiceQuery := database.GetAllBill()
 	rows, err := tx.Query(ServiceQuery, ownerRowId, customerRowId)
 	if err != nil {
-		errRsp, errCode = Set500ErrorResponse("Error in getting owner bill row", "Error getting owner Bill row ID:"+err.Error(), logPrefix)
+		errRsp, errCode = Create500ErrorResponse("Error in getting owner bill row", "Error getting owner Bill row ID:"+err.Error(), logPrefix)
 		return response, errRsp, errCode
 	}
 	defer rows.Close()
@@ -60,28 +60,28 @@ func AllBill(ownerRowId int, customerRowId int, tx *sql.Tx, logPrefix string) (s
 
 		err := rows.Scan(&id, &billNo, &Type, &metal, &rate, &date, &remarks, &customerDetailsJSON, &transactionDetailsJSON, &paymentDetailsJSON, &createdAt, &updatedAt)
 		if err != nil {
-			errRsp, errCode = Set500ErrorResponse("Error in scanning row", "Error getting owner row ID:"+err.Error(), logPrefix)
+			errRsp, errCode = Create500ErrorResponse("Error in scanning row", "Error getting owner row ID:"+err.Error(), logPrefix)
 			return response, errRsp, errCode // Return immediately on error
 		}
 
 		var customerDetails structs.Customer
 		err = json.Unmarshal([]byte(customerDetailsJSON), &customerDetails)
 		if err != nil {
-			errRsp, errCode = Set500ErrorResponse("Error unmarshaling customer details", err.Error(), logPrefix)
+			errRsp, errCode = Create500ErrorResponse("Error unmarshaling customer details", err.Error(), logPrefix)
 			return response, errRsp, errCode // Return immediately on error
 		}
 
 		var transactionDetails []structs.Transaction
 		err = json.Unmarshal([]byte(transactionDetailsJSON), &transactionDetails)
 		if err != nil {
-			errRsp, errCode = Set500ErrorResponse("Error unmarshaling transaction details", err.Error(), logPrefix)
+			errRsp, errCode = Create500ErrorResponse("Error unmarshaling transaction details", err.Error(), logPrefix)
 			return response, errRsp, errCode // Return immediately on error
 		}
 
 		var paymentDetails structs.Payment
 		err = json.Unmarshal([]byte(paymentDetailsJSON), &paymentDetails)
 		if err != nil {
-			errRsp, errCode = Set500ErrorResponse("Error unmarshaling payment details", err.Error(), logPrefix)
+			errRsp, errCode = Create500ErrorResponse("Error unmarshaling payment details", err.Error(), logPrefix)
 			return response, errRsp, errCode // Return immediately on error
 		}
 

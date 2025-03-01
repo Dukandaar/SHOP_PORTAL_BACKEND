@@ -33,7 +33,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 	defer func() {
 		if r := recover(); r != nil || rspCode != utils.StatusOK {
@@ -51,7 +51,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+owner_reg_id+" does not exist", logPrefix)
 			return response, rspCode
 		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery = database.GetAllCustomerData()
@@ -85,7 +85,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 	} else {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info("No rows found")
-			response, rspCode = helper.CreateSuccessResponse("No any customer found")
+			response, rspCode = helper.CreateSuccessResponse("No any customer found", logPrefix)
 			return response, rspCode
 		} else {
 			utils.Logger.Error(err.Error())

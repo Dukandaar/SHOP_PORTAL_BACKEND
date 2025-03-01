@@ -17,7 +17,7 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -31,7 +31,7 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 	var ownerRowId string
 	err = tx.QueryRow(ServiceQuery, ownerRegId).Scan(&ownerRowId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// check stock with same item_name
@@ -43,7 +43,7 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 		if err == sql.ErrNoRows { // Stock NOT found
 			utils.Logger.Info(logPrefix, "Stock NOT found")
 		} else {
-			return helper.Set500ErrorResponse("Error in getting row", "Error in getting row:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in getting row", "Error in getting row:"+err.Error(), logPrefix)
 		}
 	}
 
@@ -57,14 +57,14 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 	ServiceQuery = database.InsertStockData()
 	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Type, reqBody.ItemName, reqBody.Tunch, reqBody.Weight, time.Now(), time.Now()).Scan(&id)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
 	}
 
 	// insert data in stock history
 	ServiceQuery = database.InsertStockHistoryData()
 	_, err = tx.Exec(ServiceQuery, id, utils.NULL_FLOAT, reqBody.Weight, utils.BUY, "Initial Stock", time.Now())
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
 	} else {
 		response, rspCode = helper.CreateSuccessResponseWithId("Stock added successfully", id)
 	}
@@ -73,7 +73,7 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 	}
 

@@ -16,7 +16,7 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -35,7 +35,7 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
 	// Get Owner's row ID
@@ -44,7 +44,7 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// check if customer is for this owner only
@@ -52,7 +52,7 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 	var isActive string
 	err = tx.QueryRow(ServiceQuery, ownerRowId, customerId).Scan(&isActive)
 	if err != nil && err != sql.ErrNoRows {
-		return helper.Set500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
 	if isActive == utils.NULL_STRING {
@@ -71,7 +71,7 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		response = result
 		utils.Logger.Info(logPrefix, "Transaction committed")

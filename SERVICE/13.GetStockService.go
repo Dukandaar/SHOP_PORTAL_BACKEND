@@ -17,7 +17,7 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 	defer func() {
 		if r := recover(); r != nil || rspCode != utils.StatusOK {
@@ -32,7 +32,7 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery := database.GetStock()
@@ -46,7 +46,7 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Stock not found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error in getting stock", "Error getting stock:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in getting stock", "Error getting stock:"+err.Error(), logPrefix)
 	}
 
 	response = structs.OwnerStockResponse{
@@ -62,7 +62,7 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 	}
 

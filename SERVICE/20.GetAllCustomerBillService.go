@@ -16,7 +16,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -33,7 +33,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// Get customer Id
@@ -42,7 +42,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
 	// Get Bills
@@ -50,7 +50,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 	ServiceQuery := database.GetAllCustomerBillId()
 	rows, err := tx.Query(ServiceQuery, customerId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error getting bills", "Error getting bills:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting bills", "Error getting bills:"+err.Error(), logPrefix)
 	}
 
 	// bill Id array
@@ -59,7 +59,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 	for rows.Next() {
 		err := rows.Scan(&billId)
 		if err != nil {
-			return helper.Set500ErrorResponse("Error scanning row", "Error scanning row:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error scanning row", "Error scanning row:"+err.Error(), logPrefix)
 		}
 		billIdArray = append(billIdArray, billId)
 	}
@@ -113,7 +113,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 			if err == sql.ErrNoRows {
 				return helper.CreateErrorResponse("404001", "Bill Not Found", logPrefix)
 			}
-			return helper.Set500ErrorResponse("Error getting bill", "Error getting bill:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error getting bill", "Error getting bill:"+err.Error(), logPrefix)
 		}
 
 		rsp.BillNo = billNo
@@ -131,7 +131,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 			if err == sql.ErrNoRows {
 				return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
 			}
-			return helper.Set500ErrorResponse("Error getting customer", "Error getting customer:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error getting customer", "Error getting customer:"+err.Error(), logPrefix)
 		}
 
 		customerRsp.ShopName = shopName
@@ -148,12 +148,12 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 			if err == sql.ErrNoRows {
 				return helper.CreateErrorResponse("404001", "Bill Transaction  Not Found", logPrefix)
 			}
-			return helper.Set500ErrorResponse("Error getting bill transactions", "Error getting bill transactions:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error getting bill transactions", "Error getting bill transactions:"+err.Error(), logPrefix)
 		}
 		for row.Next() {
 			err = row.Scan(&id, &item_name, &weight, &less, &net_weight, &tunch, &fine, &discount, &amount)
 			if err != nil {
-				return helper.Set500ErrorResponse("Error getting bill transactions", "Error getting bill transactions:"+err.Error(), logPrefix)
+				return helper.Create500ErrorResponse("Error getting bill transactions", "Error getting bill transactions:"+err.Error(), logPrefix)
 			}
 
 			transactionRsp.Id = id
@@ -177,7 +177,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 			if err == sql.ErrNoRows {
 				return helper.CreateErrorResponse("404001", "Bill Payment Not Found", logPrefix)
 			}
-			return helper.Set500ErrorResponse("Error getting bill payment", "Error getting bill payment:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error getting bill payment", "Error getting bill payment:"+err.Error(), logPrefix)
 		}
 
 		payment.Factor = factor

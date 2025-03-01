@@ -45,7 +45,7 @@ func SetCORS(app *iris.Application) {
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{utils.ACCEPT, utils.CONTENT_TYPE, utils.TOKEN, utils.SKIP_TOKEN, utils.ACCEPT_ENCODING, utils.CATCH_CONTROL},
+		AllowedHeaders:   []string{utils.ACCEPT, utils.CONTENT_TYPE, utils.TOKEN, utils.SKIP_TOKEN, utils.ACCEPT_ENCODING, utils.CACHE_CONTROL},
 		AllowCredentials: false,
 	})
 

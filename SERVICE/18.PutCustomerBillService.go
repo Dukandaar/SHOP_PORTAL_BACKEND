@@ -17,7 +17,7 @@ func PutCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerRe
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -30,20 +30,20 @@ func PutCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerRe
 	// Get owner row id
 	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// Get customer row id
 	customerRowId, err := helper.GetCustomerId(customerRegId, ownerRowId, tx)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
 	// Update bill using bill id
 	ServiceQuery := database.UpdateBill()
 	_, err = tx.Exec(ServiceQuery, reqBody.Type, reqBody.Metal, reqBody.Rate, reqBody.Date, time.Now(), billId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in updating bill", "Error in updating bill:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in updating bill", "Error in updating bill:"+err.Error(), logPrefix)
 	}
 	utils.Logger.Info(logPrefix, "Bill updated successfully")
 
@@ -51,7 +51,7 @@ func PutCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerRe
 	ServiceQuery = database.GetBillTransactions()
 	rows, err := tx.Query(ServiceQuery, billId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in getting transactions", "Error in getting transactions:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in getting transactions", "Error in getting transactions:"+err.Error(), logPrefix)
 	}
 	defer rows.Close()
 
@@ -61,7 +61,7 @@ func PutCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerRe
 		var name string
 		err = rows.Scan(&id, &name)
 		if err != nil {
-			return helper.Set500ErrorResponse("Error in scanning row", "Error in scanning row:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error in scanning row", "Error in scanning row:"+err.Error(), logPrefix)
 		}
 		IdNameMap[id] = name
 	}

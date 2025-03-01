@@ -17,7 +17,7 @@ func PutStock(reqBody structs.PutStock, ownerRegId string, stockId int, logPrefi
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -33,7 +33,7 @@ func PutStock(reqBody structs.PutStock, ownerRegId string, stockId int, logPrefi
 	var ownerRowId string
 	err = tx.QueryRow(ServiceQuery, ownerRegId).Scan(&ownerRowId)
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// Stock id is validated, it is present, update values
@@ -42,13 +42,13 @@ func PutStock(reqBody structs.PutStock, ownerRegId string, stockId int, logPrefi
 	_, err = tx.Exec(ServiceQuery, reqBody.Tunch, reqBody.CurrentWeight, time.Now(), stockId, ownerRowId)
 	if err != nil {
 		utils.Logger.Error(err.Error())
-		return helper.Set500ErrorResponse("500001", "Error in updating stock", logPrefix)
+		return helper.Create500ErrorResponse("500001", "Error in updating stock", logPrefix)
 	}
 
 	ServiceQuery = database.InsertStockHistoryData()
 	_, err = tx.Exec(ServiceQuery, stockId, reqBody.PrevWeight, reqBody.CurrentWeight, utils.BUY, "Updated Stock", time.Now())
 	if err != nil {
-		return helper.Set500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
 	} else {
 		response, rspCode = helper.CreateSuccessResponseWithId("Stock updated successfully", stockId)
 	}
@@ -56,7 +56,7 @@ func PutStock(reqBody structs.PutStock, ownerRegId string, stockId int, logPrefi
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 	}
 

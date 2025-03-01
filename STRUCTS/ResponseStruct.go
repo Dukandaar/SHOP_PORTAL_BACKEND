@@ -1,31 +1,33 @@
 package structs
 
-type ErrorResponse1 struct {
-	Response ErrorSubResponse1 `json:"rsp"`
+type ErrorResponse struct {
+	Response ErrorSubResponse `json:"rsp"`
 }
 
-type ErrorSubResponse1 struct {
-	Stat    string               `json:"stat"`
-	Payload ErrorPayloadResponse `json:"payload"`
+type ErrorSubResponse struct {
+	Stat        string               `json:"stat"`
+	Payload     ErrorPayloadResponse `json:"payload"`
+	Description string               `json:"description"`
 }
 
 type ErrorPayloadResponse struct {
-	Message     string `json:"msg"`
-	Description string `json:"description"`
+	Code    int    `json:"code"`
+	Message string `json:"msg"`
 }
 
-type SuccessResponse1 struct {
-	Response SuccessSubResponse1 `json:"rsp"`
+type SuccessResponse struct {
+	Response SuccessSubResponse `json:"rsp"`
 }
 
-type SuccessSubResponse1 struct {
-	Stat    string                 `json:"stat"`
-	Payload SuccessPayloadResponse `json:"payload"`
+type SuccessSubResponse struct {
+	Stat        string                 `json:"stat"`
+	Payload     SuccessPayloadResponse `json:"payload"`
+	Description string                 `json:"description"`
 }
 
 type SuccessPayloadResponse struct {
-	Message     string `json:"msg"`
-	Description string `json:"description"`
+	Code    int    `json:"code"`
+	Message string `json:"msg"`
 }
 
 // Generate Token Reponse
@@ -34,32 +36,29 @@ type GenerateTokenResponse struct {
 }
 
 type GenerateTokenSubResponse struct {
-	Stat    string                       `json:"stat"`
-	Payload GenerateTokenPayloadResponse `json:"payload"`
+	Stat        string                       `json:"stat"`
+	Payload     GenerateTokenPayloadResponse `json:"payload"`
+	Description string                       `json:"description"`
 }
 
 type GenerateTokenPayloadResponse struct {
 	Token string `json:"token"`
 }
 
-type ErrorResponse struct {
-	Stat             string           `json:"stat"`
-	ErrorSubResponse ErrorSubResponse `json:"rsp"`
+// Generate Post Show Owner Reponse
+type PostShowOwnerResponse struct {
+	Response PostShowOwnerSubResponse `json:"rsp"`
 }
 
-type ErrorSubResponse struct {
-	ErrorCode       int    `json:"code"`
-	ErrorMsg        string `json:"msg"`
-	ErrorDescrition string `json:"description"`
+type PostShowOwnerSubResponse struct {
+	Stat        string                       `json:"stat"`
+	Payload     PostShowOwnerPayloadResponse `json:"payload"`
+	Description string                       `json:"description"`
 }
 
-type SuccessResponse struct {
-	Stat               string             `json:"stat"`
-	SuccessSubResponse SuccessSubResponse `json:"rsp"`
-}
-
-type SuccessSubResponse struct {
-	SuccessMsg string `json:"msg"`
+type PostShowOwnerPayloadResponse struct {
+	RegId string `json:"reg_id"`
+	Key   string `json:"key"`
 }
 
 type SuccessRegIdResponse struct {

@@ -33,7 +33,7 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -52,10 +52,10 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 			if err != nil {
 				if err == sql.ErrNoRows {
 					utils.Logger.Info(logPrefix, "No rows found")
-					response, rspCode = helper.CreateSuccessResponse("No any owner found")
+					response, rspCode = helper.CreateSuccessResponse("No any owner found", "No any owner found")
 					return response, rspCode
 				}
-				response, rspCode = helper.Set500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
+				response, rspCode = helper.Create500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 				return response, rspCode
 			} else {
 				rsp = append(rsp, structs.ShopOwnerDetailsSubResponse{
@@ -78,10 +78,10 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 	} else {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info(logPrefix, "No rows found")
-			response, rspCode = helper.CreateSuccessResponse("No any owner found")
+			response, rspCode = helper.CreateSuccessResponse("No any owner found", "No any owner found")
 			return response, rspCode
 		} else {
-			response, rspCode = helper.Set500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
+			response, rspCode = helper.Create500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 			return response, rspCode
 		}
 	}
@@ -89,7 +89,7 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 	if rspCode != utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			response, rspCode = helper.Set500ErrorResponse("Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
+			response, rspCode = helper.Create500ErrorResponse("Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
 			return response, rspCode
 		}
 	} else {

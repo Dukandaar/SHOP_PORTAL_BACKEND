@@ -16,7 +16,7 @@ func GetAllOwnerBill(ownerRegId string, logPrefix string) (interface{}, int) {
 
 	tx, err := Db.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer func() {
@@ -31,7 +31,7 @@ func GetAllOwnerBill(ownerRegId string, logPrefix string) (interface{}, int) {
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	result, response, rspCode := helper.AllBill(ownerRowId, utils.NULL_INT, tx, logPrefix)
@@ -41,7 +41,7 @@ func GetAllOwnerBill(ownerRegId string, logPrefix string) (interface{}, int) {
 
 	err = tx.Commit()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 	}
 
 	return result, rspCode
