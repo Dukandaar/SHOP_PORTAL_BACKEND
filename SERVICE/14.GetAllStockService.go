@@ -31,7 +31,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	ownerRowId, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found")
+			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
@@ -46,7 +46,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	rows, err := tx.Query(ServiceQuery, ownerRowId, metalType)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404002", "Stock Not Found")
+			return helper.CreateErrorResponse("404002", "Stock Not Found", logPrefix)
 		}
 		utils.Logger.Error(err.Error())
 		return helper.Set500ErrorResponse("Error getting stock", "Error getting stock:"+err.Error(), logPrefix)

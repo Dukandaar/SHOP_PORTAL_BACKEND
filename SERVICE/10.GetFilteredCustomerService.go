@@ -33,7 +33,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	err = tx.QueryRow(ServiceQuery, ownerRegID).Scan(&ownerRowId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found")
+			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
@@ -42,10 +42,10 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	rows, err := tx.Query(ServiceQuery, ownerRowId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Customer Not Found")
+			return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
 		}
 		utils.Logger.Error(err.Error())
-		response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows")
+		response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows", logPrefix)
 		return response, rspCode
 	}
 
@@ -66,7 +66,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 		err = rows.Scan(&shopName, &name, &GstIN, &regId, &regDate, &phoneNo, &isActive, &address, &remarks, &gold, &silver, &cash)
 		if err != nil {
 			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows")
+			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows", logPrefix)
 			return response, rspCode
 		}
 		rsp = append(rsp, structs.CustomerDetailsSubResponse{

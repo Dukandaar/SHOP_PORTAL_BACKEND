@@ -49,7 +49,7 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 
 	if rowId > 0 { // Stock found
 		utils.Logger.Info(logPrefix, "Stock found")
-		return helper.CreateErrorResponse("400009", "Stock with same item name, type already present")
+		return helper.CreateErrorResponse("400009", "Stock with same item name, type already present", logPrefix)
 	}
 
 	// insert stock

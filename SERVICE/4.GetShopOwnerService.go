@@ -47,10 +47,10 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info("Data for reg_id", regId, "does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+regId+" does not exist")
+			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+regId+" does not exist", logPrefix)
 		} else {
 			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row")
+			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row", logPrefix)
 		}
 	}
 
@@ -59,10 +59,10 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info("Bill count data for reg_id", regId, "does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Bill count data for reg_id "+regId+" does not exist")
+			response, rspCode = helper.CreateErrorResponse("404001", "Bill count data for reg_id "+regId+" does not exist", logPrefix)
 		} else {
 			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row")
+			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row", logPrefix)
 		}
 	}
 
@@ -71,7 +71,7 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 		err = tx.Commit()
 		if err != nil {
 			utils.Logger.Error(err.Error())
-			return helper.CreateErrorResponse("500001", "Error in committing transaction")
+			return helper.CreateErrorResponse("500001", "Error in committing transaction", logPrefix)
 		}
 		response = structs.ShopOwnerDetailsSubResponse{
 			ShopName:  shopName,

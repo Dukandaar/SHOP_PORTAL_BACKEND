@@ -7,7 +7,7 @@ import (
 	"database/sql"
 )
 
-func GetBill(ownerRegId string, billId int, logPrefix string) (interface{}, int) {
+func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	var rspCode = utils.StatusOK
@@ -33,7 +33,7 @@ func GetBill(ownerRegId string, billId int, logPrefix string) (interface{}, int)
 	err = tx.QueryRow(ServiceQuery, billId).Scan(&customerId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Customer Not Found")
+			return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
@@ -42,7 +42,7 @@ func GetBill(ownerRegId string, billId int, logPrefix string) (interface{}, int)
 	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found")
+			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
@@ -56,11 +56,11 @@ func GetBill(ownerRegId string, billId int, logPrefix string) (interface{}, int)
 	}
 
 	if isActive == utils.NULL_STRING {
-		return helper.CreateErrorResponse("404001", "Customer registered with another owner")
+		return helper.CreateErrorResponse("404001", "Customer registered with another owner", logPrefix)
 	}
 
 	if isActive == utils.ACTIVE_NO {
-		return helper.CreateErrorResponse("404001", "Customer is InActive")
+		return helper.CreateErrorResponse("404001", "Customer is InActive", logPrefix)
 	}
 
 	result, response, rspCode := helper.AllBill(ownerRowId, customerId, tx, logPrefix)

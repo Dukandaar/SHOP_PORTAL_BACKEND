@@ -30,7 +30,7 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 	ownerRowId, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found")
+			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
@@ -44,7 +44,7 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 	err = tx.QueryRow(ServiceQuery, stockId, ownerRowId).Scan(&itemName, &tunch, &weight, &updatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Stock not found")
+			return helper.CreateErrorResponse("404001", "Stock not found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error in getting stock", "Error getting stock:"+err.Error(), logPrefix)
 	}

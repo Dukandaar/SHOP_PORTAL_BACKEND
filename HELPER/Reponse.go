@@ -8,10 +8,13 @@ import (
 
 func Set500ErrorResponse(errMessage string, logMessage string, logPrefix string) (interface{}, int) { // 500 error only
 	utils.Logger.Error(logPrefix, logMessage)
-	return CreateErrorResponse("500001", errMessage)
+	return CreateErrorResponse("500001", errMessage, logPrefix)
 }
 
-func CreateErrorResponse(code string, des string) (structs.ErrorResponse1, int) {
+func CreateErrorResponse(code string, des string, logPrefix string) (structs.ErrorResponse1, int) {
+
+	utils.Logger.Error(logPrefix, des)
+
 	rsp := utils.CodeMap[code]
 	errCode := rsp.StatusCode
 	rsp.StatusCode, _ = strconv.Atoi(code)

@@ -68,7 +68,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 	} else { // Existing customer
 		if isActive == utils.ACTIVE_YES {
 			utils.Logger.Info(logPrefix, "Same customer data exists")
-			response, rspCode = helper.CreateErrorResponse("400009", "Same data exists with reg_id: "+customerRegId)
+			response, rspCode = helper.CreateErrorResponse("400009", "Same data exists with reg_id: "+customerRegId, logPrefix)
 			return response, rspCode
 		} else { // Activate existing customer
 			ServiceQuery = database.UpdateOwnerCustomerData()

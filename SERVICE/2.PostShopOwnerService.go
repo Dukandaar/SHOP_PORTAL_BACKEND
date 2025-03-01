@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-// Helper function to set error response and log (NO ROLLBACK HERE)
-
 func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, int) {
 	var response interface{}
 	rspCode := utils.StatusOK
@@ -22,13 +20,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 	if err != nil {
 		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
-
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
 	ServiceQuery := database.CheckOwnerPresent()
 	var rowId int
@@ -75,7 +67,7 @@ func PostShopOwner(reqBody structs.ShopOwner, logPrefix string) (interface{}, in
 	} else {
 		// Shop owner ALREADY exists (proceed with update if not active)
 		if isActive == utils.ACTIVE_YES {
-			response, rspCode = helper.CreateErrorResponse("400009", "Shop Owner with same details is already present")
+			response, rspCode = helper.CreateErrorResponse("400009", "Shop Owner with same details is already present", logPrefix)
 			return response, rspCode
 		} else {
 			ServiceQuery = database.ToggleShopOwnerActiveStatus()

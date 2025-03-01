@@ -54,7 +54,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 			utils.Logger.Info("Row with reg_id ", CustomerRegId, " exists") // update row
 		} else {
 			utils.Logger.Info("Same data with reg_id ", customer_reg_id, " exists")
-			response, rspCode = helper.CreateErrorResponse("400009", "Same data with reg_id "+customer_reg_id+" exists")
+			response, rspCode = helper.CreateErrorResponse("400009", "Same data with reg_id "+customer_reg_id+" exists", logPrefix)
 			return response, rspCode
 		}
 	}

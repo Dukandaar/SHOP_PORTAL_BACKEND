@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func PutCustomerTransactionService(reqBody structs.CustomerBill, ownerRegId string, customerRegId string, billId string, logPrefix string) (interface{}, int) {
+func PutCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerRegId string, billId int, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCode := utils.StatusOK

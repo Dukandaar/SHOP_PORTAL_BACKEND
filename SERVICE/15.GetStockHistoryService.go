@@ -55,7 +55,7 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 		if err == sql.ErrNoRows {
 			utils.Logger.Info(logPrefix, "Data for stockId ", stockId, " and reg_id ", ownerRegID, " does not exist")
 			msg := fmt.Sprintf("Data for stockId %d and reg_id %s does not exist", stockId, ownerRegID)
-			response, rspCode = helper.CreateErrorResponse("404001", msg)
+			response, rspCode = helper.CreateErrorResponse("404001", msg, logPrefix)
 			return response, rspCode
 		}
 		return helper.Set500ErrorResponse("Error in getting stock history row", "Error in getting stock history row:"+err.Error(), logPrefix)

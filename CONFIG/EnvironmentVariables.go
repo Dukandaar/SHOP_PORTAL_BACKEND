@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var DRIVER_NAME string
 var DB_USER string
 var DB_PASSWORD string
 var DB_HOST string
@@ -21,6 +22,11 @@ func ReadAllEnvironmentVariables() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		panic("Error loading .env file")
+	}
+
+	DRIVER_NAME = os.Getenv("DRIVER_NAME")
+	if DRIVER_NAME == utils.NULL_STRING {
+		utils.Logger.Warn("DRIVER_NAME is not set")
 	}
 
 	DB_USER = os.Getenv("DB_USER")

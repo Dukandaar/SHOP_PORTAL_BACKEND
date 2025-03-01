@@ -19,7 +19,7 @@ func ConnectDB() *sql.DB {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-	driverName := "postgres"
+	driverName := config.DRIVER_NAME
 	user := config.DB_USER
 	password := config.DB_PASSWORD
 	host := config.DB_HOST
