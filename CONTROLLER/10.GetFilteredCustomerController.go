@@ -12,38 +12,28 @@ import (
 func GetFilteredCustomer(ctx iris.Context) {
 
 	var response interface{}
-	var errCodeStr string
 	rspCode := utils.StatusOK
-
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
 	headers := utils.ReadHeader(ctx)
 	qparams := utils.ReadQParams(ctx)
-	reqBody, bodyError := utils.ReadFilteredCustomerReqBody(ctx)
-	utils.Logger.Info(logPrefix, headers, qparams, reqBody)
+	reqBody, response, rspCode := utils.ReadFilteredCustomerReqBody(ctx, logPrefix, helper.CreateErrorResponse)
+	utils.LogRequest(logPrefix, ctx, reqBody)
 
-	headerError, errCodeStr := validator.ValidateHeader(utils.GetFilteredCustomerHeaders, headers, ctx, logPrefix)
-	if errCodeStr != utils.SUCCESS { // header error
-		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
-		utils.Logger.Error(logPrefix, headerError)
-	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.GetFilteredCustomerQParams, qparams, logPrefix)
-		if errCodeStr != utils.SUCCESS { // qparams error
-			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
-			utils.Logger.Error(logPrefix, QparamsError)
-		} else {
-			reqBodyError, errCodeStr := validator.ValidateFilteredCustomerReqBody(&reqBody, bodyError)
-			if errCodeStr != utils.SUCCESS { // body error
-				response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
-				utils.Logger.Error(logPrefix, reqBodyError)
-			} else {
-				response, rspCode = service.GetFilteredCustomer(reqBody, ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
+	if rspCode == utils.StatusOK {
+		response, rspCode = validator.ValidateHeader(utils.GetFilteredCustomerHeaders, headers, ctx, logPrefix)
+		if rspCode == utils.StatusOK {
+			response, rspCode = validator.ValidateQParams(utils.GetFilteredCustomerQParams, qparams, logPrefix)
+			if rspCode == utils.StatusOK {
+				response, rspCode = validator.ValidateFilteredCustomerReqBody(&reqBody, logPrefix)
+				if rspCode == utils.StatusOK {
+					response, rspCode = service.GetFilteredCustomer(reqBody, ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
+				}
 			}
 		}
 	}
 
-	utils.Logger.Info(logPrefix, response)
-
+	utils.LogResponse(logPrefix, response)
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
 	utils.Logger.Info(logPrefix, "Response Completed.")

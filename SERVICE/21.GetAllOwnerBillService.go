@@ -7,7 +7,7 @@ import (
 	"database/sql"
 )
 
-func GellAllOwnerBills(ownerRegId string, logPrefix string) (interface{}, int) {
+func GetAllOwnerBill(ownerRegId string, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCode := utils.StatusOK
@@ -29,7 +29,7 @@ func GellAllOwnerBills(ownerRegId string, logPrefix string) (interface{}, int) {
 	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found")
+			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}

@@ -120,7 +120,7 @@ func main() {
 	// api to update customer transaction
 	app.Put("shop/updateCustomerTransaction", func(ctx iris.Context) {
 		helper.SetApiName(util.PUT_CUSTOMER_TRANSACTION, ctx)
-		controller.PutCustomerTransaction(ctx)
+		controller.PutCustomerBill(ctx)
 	})
 
 	// api to get Stock history

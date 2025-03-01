@@ -37,7 +37,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info(logPrefix, "Data for reg_id ", OwnerRegId, " does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+OwnerRegId+" does not exist")
+			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+OwnerRegId+" does not exist", logPrefix)
 			return response, rspCode
 		}
 		response, rspCode = helper.Set500ErrorResponse("Error in getting row", "Error in getting row:"+err.Error(), logPrefix)
@@ -49,7 +49,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 			utils.Logger.Info(logPrefix, "Data with reg_id ", OwnerRegId, " exists") // update row
 		} else {
 			utils.Logger.Info(logPrefix, "Same data with reg_id ", OwnerRegId, " exists")
-			response, rspCode = helper.CreateErrorResponse("400009", "Same data with reg_id "+OwnerRegId+" exists")
+			response, rspCode = helper.CreateErrorResponse("400009", "Same data with reg_id "+OwnerRegId+" exists", logPrefix)
 			return response, rspCode
 		}
 	}

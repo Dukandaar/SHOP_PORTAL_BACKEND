@@ -48,7 +48,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info(logPrefix, "Data for reg_id ", owner_reg_id, " does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+owner_reg_id+" does not exist")
+			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+owner_reg_id+" does not exist", logPrefix)
 			return response, rspCode
 		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
@@ -62,7 +62,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 			err = rows.Scan(&shopName, &name, &GstIN, &regId, &phoneNo, &regDate, &isActive, &address, &remarks, &gold, &silver, &cash)
 			if err != nil {
 				utils.Logger.Error(err.Error())
-				response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows")
+				response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows", logPrefix)
 				return response, rspCode
 			} else {
 
@@ -89,7 +89,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 			return response, rspCode
 		} else {
 			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows")
+			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting rows", logPrefix)
 			return response, rspCode
 		}
 	}

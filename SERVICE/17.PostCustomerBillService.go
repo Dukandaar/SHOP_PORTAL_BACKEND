@@ -55,7 +55,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 			}
 		} else {
 			utils.Logger.Info(logPrefix, "Customer exists with id:", customerRowId)
-			return helper.CreateErrorResponse("400009", "Customer already exists with reg_id:"+regId)
+			return helper.CreateErrorResponse("400009", "Customer already exists with reg_id:"+regId, logPrefix)
 		}
 		// Add Customer Details and return customer id
 		ServiceQuery = database.InsertCustomerData()

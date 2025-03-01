@@ -5,46 +5,37 @@ import (
 	service "SHOP_PORTAL_BACKEND/SERVICE"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	validator "SHOP_PORTAL_BACKEND/VALIDATOR"
+	"strconv"
 
 	"github.com/kataras/iris/v12"
 )
 
-func PutCustomerTransaction(ctx iris.Context) {
+func PutCustomerBill(ctx iris.Context) {
 
 	var response interface{}
-	var errCodeStr string
 	rspCode := utils.StatusOK
-
 	logPrefix := ctx.Values().Get("logPrefix").(string)
 
 	headers := utils.ReadHeader(ctx)
-	qparas := utils.ReadQParams(ctx)
-	reqBody, bodyError := utils.ReadPutCustomerBillReqBody(ctx)
+	qparams := utils.ReadQParams(ctx)
+	reqBody, response, rspCode := utils.ReadCustomerBillReqBody(ctx, logPrefix, helper.CreateErrorResponse)
+	utils.LogRequest(logPrefix, ctx, reqBody)
 
-	utils.Logger.Info(logPrefix, headers, qparas, reqBody)
-
-	headerError, errCodeStr := validator.ValidateHeader(utils.PutCustomerTransactionHeaders, headers, ctx, logPrefix)
-	if errCodeStr != utils.SUCCESS { // header error
-		response, rspCode = helper.CreateErrorResponse(errCodeStr, headerError)
-		utils.Logger.Error(logPrefix, headerError)
-	} else {
-		QparamsError, errCodeStr := validator.ValidateQParams(utils.PutCustomerTransactionQParams, qparas, logPrefix)
-		if errCodeStr != utils.SUCCESS { // qparams error
-			response, rspCode = helper.CreateErrorResponse(errCodeStr, QparamsError)
-			utils.Logger.Error(logPrefix, QparamsError)
-		} else {
-			reqBodyError, errCodeStr := validator.ValidatePostCustomerBillReqBody(&reqBody, bodyError)
-			if errCodeStr != utils.SUCCESS { // body error
-				response, rspCode = helper.CreateErrorResponse(errCodeStr, reqBodyError)
-				utils.Logger.Error(logPrefix, reqBodyError)
-			} else {
-				response, rspCode = service.PutCustomerTransactionService(reqBody, ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.CUSTOMER_REG_ID), ctx.URLParam(utils.BILL_ID), logPrefix)
+	if rspCode == utils.StatusOK {
+		response, rspCode = validator.ValidateHeader(utils.PutCustomerTransactionHeaders, headers, ctx, logPrefix)
+		if rspCode == utils.StatusOK {
+			response, rspCode = validator.ValidateQParams(utils.PutCustomerTransactionQParams, qparams, logPrefix)
+			if rspCode == utils.StatusOK {
+				response, rspCode = validator.ValidatePostCustomerBillReqBody(&reqBody, logPrefix)
+				if rspCode == utils.StatusOK {
+					bill_Id, _ := strconv.Atoi(ctx.URLParam(utils.BILL_ID))
+					response, rspCode = service.PutCustomerBill(reqBody, ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.CUSTOMER_REG_ID), bill_Id, logPrefix)
+				}
 			}
 		}
 	}
 
-	utils.Logger.Info(logPrefix, response)
-
+	utils.LogResponse(logPrefix, response)
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
 	utils.Logger.Info(logPrefix, "Request Completed.")

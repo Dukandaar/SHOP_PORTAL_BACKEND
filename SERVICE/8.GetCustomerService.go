@@ -50,10 +50,10 @@ func GetCustomer(owner_reg_id string, customer_reg_id string, logPrefix string) 
 	if err != nil {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info(logPrefix, "Data for reg_id ", customer_reg_id, " does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+customer_reg_id+" does not exist")
+			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+customer_reg_id+" does not exist", logPrefix)
 		} else {
 			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row")
+			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row", logPrefix)
 		}
 	}
 

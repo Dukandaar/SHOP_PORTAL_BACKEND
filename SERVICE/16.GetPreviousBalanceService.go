@@ -31,7 +31,7 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 	err = tx.QueryRow(ServiceQuery, ownerRegId).Scan(&ownerRowId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found")
+			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
@@ -42,7 +42,7 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 	err = tx.QueryRow(ServiceQuery, customerRegId, ownerRowId).Scan(&customerId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404002", "Customer Not Found")
+			return helper.CreateErrorResponse("404002", "Customer Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
@@ -55,7 +55,7 @@ func GetPreviousBalance(ownerRegId string, customerRegId string, logPrefix strin
 	err = tx.QueryRow(ServiceQuery, customerId).Scan(&gold, &silver, &cash)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404003", "Previous Balance Not Found")
+			return helper.CreateErrorResponse("404003", "Previous Balance Not Found", logPrefix)
 		}
 		return helper.Set500ErrorResponse("Error getting previous balance", "Error getting previous balance:"+err.Error(), logPrefix)
 	}
