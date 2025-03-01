@@ -554,6 +554,7 @@ func GetStockData() string {
 func GetCustomerPreviousBalance() string {
 	query := `
 		SELECT
+			b.id,
 			b.gold,
 			b.silver,
 			b.cash
@@ -591,9 +592,9 @@ func CreateBill() string {
 func AddTransaction() string {
 	query := `
 		INSERT INTO
-			shop.transaction (bill_id, item_name, weight, less, net_weight, tunch, fine, discount, amount)
+			shop.transaction (bill_id, is_active, item_name, weight, less, net_weight, tunch, fine, discount, amount)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7, $8, $9)
+			($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id;
 	`
 	return query
@@ -607,7 +608,7 @@ func GetStockId() string {
 		FROM
 			shop.stock
 		WHERE
-			item_name = $1;
+			item_name = $1 and owner_id = $2;
 	`
 	return query
 }
@@ -807,24 +808,6 @@ func GetCustomerIdFromBill() string {
 	return query
 }
 
-func GetBill() string {
-	query := `
-		SELECT
-			bill_no,
-			type,
-			metal,
-			metal_rate,
-			date,
-			created_at,
-			updated_at
-		FROM
-			shop.bill
-		WHERE
-			id = $1;
-	`
-	return query
-}
-
 func GetTransactoins() string {
 	query := `
 		SELECT
@@ -888,6 +871,72 @@ func GetAllCustomerBillId() string {
 	return query
 }
 
+func GetBill() string {
+	query := `
+		SELECT
+			b.id,
+			b.bill_no,
+			b.type,
+			b.metal,
+			b.metal_rate,
+			b.date,
+			p.remarks,
+		json_build_object(
+			'name', c.name,
+			'shop_name', c.shop_name,
+			'gst_in', c.gst_in,
+			'phone_no', c.phone_no,
+			'reg_date', c.reg_date,
+			'address', c.address,
+			'remarks', c.remarks
+		) AS customer_details,
+		COALESCE(
+			json_agg(
+				json_build_object(
+					'id', t.id,
+					'item_name', t.item_name,
+					'weight', t.weight,
+					'less', t.less,
+					'net_weight', t.net_weight,
+					'tunch', t.tunch,
+					'fine', t.fine,
+					'discount', t.discount,
+					'amount', t.amount,
+					'is_active', t.is_active
+				)
+			) FILTER (WHERE t.bill_id = b.id AND t.is_active = 'Y'), -- Added is_active condition
+			'[]'::json
+		) AS transaction_details,
+		json_build_object(
+			'factor', p.factor,
+			'new', p.new,
+			'prev', p.prev,
+			'total', p.total,
+			'paid', p.paid,
+			'rem', p.rem,
+			'payment_type', p.type,
+			'remarks', p.remarks
+		) AS payment_details,
+			b.created_at,
+			b.updated_at
+		FROM
+			shop.bill b
+		JOIN
+			shop.customer c ON b.customer_id = c.id
+		LEFT JOIN
+			shop.transaction t ON b.id = t.bill_id
+		LEFT JOIN
+			shop.payment p ON b.id = p.bill_id
+		WHERE
+			b.id = $1
+		GROUP BY
+			b.id, b.bill_no, b.type, b.metal, b.metal_rate, b.date, p.remarks, c.name, c.shop_name, c.gst_in, c.phone_no, c.reg_date, c.address, c.remarks, p.factor, p.new, p.prev, p.total, p.paid, p.rem, p.type, p.remarks, b.created_at, b.updated_at
+		ORDER BY
+			b.date DESC;
+	`
+	return query
+}
+
 func GetAllBill() string {
 	query := `
         SELECT
@@ -918,7 +967,8 @@ func GetAllBill() string {
                     'tunch', t.tunch,
                     'fine', t.fine,
                     'discount', t.discount,
-                    'amount', t.amount
+                    'amount', t.amount,
+					'is_active', t.is_active
                 )
             ) FILTER (WHERE t.bill_id = b.id),
             '[]'::json

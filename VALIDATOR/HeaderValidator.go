@@ -82,13 +82,13 @@ func ValidateHeader(reqApiHeader map[string]bool, apiHeader map[string]interface
 	}
 
 	// Catch-Control
-	if reqApiHeader[utils.CATCH_CONTROL] {
-		if apiHeader[utils.CATCH_CONTROL] == utils.NULL_STRING {
+	if reqApiHeader[utils.CACHE_CONTROL] {
+		if apiHeader[utils.CACHE_CONTROL] == utils.NULL_STRING {
 			return helper.CreateErrorResponse("400001", "Missing Catch-Control header", logPrefix)
 		}
 		valid := false
-		for _, validHeaderValue := range utils.ValidHeaders[utils.CATCH_CONTROL] {
-			if apiHeader[utils.CATCH_CONTROL] == validHeaderValue {
+		for _, validHeaderValue := range utils.ValidHeaders[utils.CACHE_CONTROL] {
+			if apiHeader[utils.CACHE_CONTROL] == validHeaderValue {
 				valid = true
 				break
 			}

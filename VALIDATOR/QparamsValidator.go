@@ -28,14 +28,14 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 		if err != nil {
-			errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", regId)
-			return helper.Set500ErrorResponse(errMsg, err.Error(), logPrefix)
+			errMsg := fmt.Sprintf("[DB ERROR 0001] Error in checking if owner with reg_id %s exists", regId)
+			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}
 
 		if exists {
-			utils.Logger.Info(logPrefix, "Row with reg_id : ", regId, " exists")
+			utils.Logger.Info(logPrefix, "Owner with reg_id : ", regId, " exists")
 		} else {
-			return helper.CreateErrorResponse("404001", "Data for reg_id "+regId+" does not exist", logPrefix)
+			return helper.CreateErrorResponse("404001", "Owner for reg_id "+regId+" does not exist", logPrefix)
 		}
 
 	}
@@ -57,14 +57,14 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 		if err != nil {
-			errMsg := fmt.Sprintf("Error in checking if row with reg_id %s exists", regId)
-			return helper.Set500ErrorResponse(errMsg, err.Error(), logPrefix)
+			errMsg := fmt.Sprintf("[DB ERROR 0002] Error in checking if customer with reg_id %s exists", regId)
+			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}
 
 		if exists {
-			utils.Logger.Info(logPrefix, "Row with reg_id : ", regId, " exists")
+			utils.Logger.Info(logPrefix, "Customer with reg_id : ", regId, " exists")
 		} else {
-			return helper.CreateErrorResponse("404001", "Data for reg_id "+regId+" does not exist", logPrefix)
+			return helper.CreateErrorResponse("404001", "Customer for reg_id "+regId+" does not exist", logPrefix)
 		}
 	}
 
@@ -81,8 +81,8 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, stockId).Scan(&exists)
 		if err != nil {
-			errMsg := fmt.Sprintf("Error in checking if row with stock_id %s exists", stockId)
-			return helper.Set500ErrorResponse(errMsg, err.Error(), logPrefix)
+			errMsg := fmt.Sprintf("[DB ERROR 0003] Error in checking if row with stock_id %s exists", stockId)
+			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}
 
 		if exists {
@@ -105,8 +105,8 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, billId).Scan(&exists)
 		if err != nil {
-			errMsg := fmt.Sprintf("Error in checking if row with bill_id %s exists", billId)
-			return helper.Set500ErrorResponse(errMsg, err.Error(), logPrefix)
+			errMsg := fmt.Sprintf("[DB ERROR 0004] Error in checking if row with bill_id %s exists", billId)
+			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}
 
 		if exists {

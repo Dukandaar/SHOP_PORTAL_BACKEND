@@ -85,6 +85,7 @@ type Transaction struct {
 	Fine      float64 `json:"fine"`
 	Discount  float64 `json:"discount"`
 	Amount    float64 `json:"amount"`
+	IsActive  string  `json:"is_active"`
 }
 
 type Payment struct {

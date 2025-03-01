@@ -18,38 +18,26 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	// Start transaction
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0048] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
-	ServiceQuery := database.GetOwnerRowId() // Get Owner's row ID
-	var ownerRowId string
-	err = tx.QueryRow(ServiceQuery, ownerRegID).Scan(&ownerRowId)
+	ownerRowID, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
-		}
-		return helper.Set500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0049] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
-	ServiceQuery = database.GetFilteredCustomerData(reqBody)
-	rows, err := tx.Query(ServiceQuery, ownerRowId)
+	ServiceQuery := database.GetFilteredCustomerData(reqBody)
+	rows, err := tx.Query(ServiceQuery, ownerRowID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
 		}
-		utils.Logger.Error(err.Error())
-		response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows", logPrefix)
-		return response, rspCode
+		return helper.Create500ErrorResponse("[DB ERROR 0050] Error in getting filtered rows", "Error in getting filtered rows: "+err.Error(), logPrefix)
 	}
 
-	rsp := make([]structs.CustomerDetailsSubResponse, 0)
+	customerPayload := make([]structs.GetCustomerPayloadResponse, 0)
 	for rows.Next() {
 		var name string
 		var shopName string
@@ -69,9 +57,9 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows", logPrefix)
 			return response, rspCode
 		}
-		rsp = append(rsp, structs.CustomerDetailsSubResponse{
-			Name:     name,
+		customerPayload = append(customerPayload, structs.GetCustomerPayloadResponse{
 			ShopName: shopName,
+			Name:     name,
 			GstIN:    GstIN,
 			RegId:    regId,
 			PhoneNo:  phoneNo,
@@ -85,10 +73,20 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 		})
 	}
 
-	response = structs.AllCustomerDetailsResponse{
-		Stat:                       "OK",
-		Count:                      len(rsp),
-		CustomerDetailsSubResponse: rsp,
+	if rspCode == utils.StatusOK {
+		err = tx.Commit()
+		if err != nil {
+			return helper.Create500ErrorResponse("[DB ERROR 0051] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+		}
+		response = structs.GetAllCustomerResponse{
+			Response: structs.GetAllCustomerSubResponse{
+				Stat:        "OK",
+				Count:       len(customerPayload),
+				Payload:     customerPayload,
+				Description: "All Customers Fetched Successfully",
+			},
+		}
 	}
+
 	return response, rspCode
 }

@@ -29,17 +29,88 @@ func CheckIfCustomerBelongsToOwner(customerId int, ownerRowId int, tx *sql.Tx) (
 	return isActive == utils.TRUE, err
 }
 
-func AllBill(ownerRowId int, customerRowId int, tx *sql.Tx, logPrefix string) (structs.CustomerAllBillResponse, interface{}, int) {
-	var response structs.CustomerAllBillResponse
+func GetBill(billId int, tx *sql.Tx, logPrefix string) (structs.CustomerBillResponse, interface{}, int) {
+
+	var response structs.CustomerBillResponse
 	var errRsp interface{}
 	errCode := utils.StatusOK
 
-	AllBill := make([]structs.CustomerBillSubResponse, 0)
+	ServiceQuery := database.GetBill()
+	var id int
+	var billNo int
+	var Type string
+	var metal string
+	var rate float64
+	var date string
+	var remarks string
+	var customerDetailsJSON string
+	var transactionDetailsJSON string
+	var paymentDetailsJSON string
+	var createdAt string
+	var updatedAt string
+
+	err := tx.QueryRow(ServiceQuery, billId).Scan(&id, &billNo, &Type, &metal, &rate, &date, &remarks, &customerDetailsJSON, &transactionDetailsJSON, &paymentDetailsJSON, &createdAt, &updatedAt)
+	if err != nil {
+		errRsp, errCode = Create500ErrorResponse("[DB ERROR 0117] Error in getting owner bill row", "Error getting owner Bill row ID:"+err.Error(), logPrefix)
+		return response, errRsp, errCode
+	}
+
+	var customerDetails structs.Customer
+	err = json.Unmarshal([]byte(customerDetailsJSON), &customerDetails)
+	if err != nil {
+		errRsp, errCode = Create500ErrorResponse("[DB ERROR 0118] Error in getting owner bill row", "Error getting owner Bill row ID:"+err.Error(), logPrefix)
+		return response, errRsp, errCode
+	}
+
+	var transactionDetails []structs.Transaction
+	err = json.Unmarshal([]byte(transactionDetailsJSON), &transactionDetails)
+	if err != nil {
+		errRsp, errCode = Create500ErrorResponse("[DB ERROR 0119] Error in getting owner bill row", "Error getting owner Bill row ID:"+err.Error(), logPrefix)
+		return response, errRsp, errCode
+	}
+
+	var paymentDetails structs.Payment
+	err = json.Unmarshal([]byte(paymentDetailsJSON), &paymentDetails)
+	if err != nil {
+		errRsp, errCode = Create500ErrorResponse("[DB ERROR 0120] Error in getting owner bill row", "Error getting owner Bill row ID:"+err.Error(), logPrefix)
+		return response, errRsp, errCode
+	}
+
+	response = structs.CustomerBillResponse{
+		Response: structs.CustomerBillSubResponse{
+			Stat: "Success",
+			Payload: structs.BillPayloadResponse{
+				Id:                 id,
+				BillNo:             billNo,
+				Type:               Type,
+				Metal:              metal,
+				Rate:               rate,
+				Date:               date,
+				Remarks:            remarks,
+				CustomerDetails:    customerDetails,
+				TransactionDetails: transactionDetails,
+				PaymentDetails:     paymentDetails,
+				CreatedAt:          createdAt,
+				UpdatedAt:          updatedAt,
+			},
+			Description: "Customer bill fetched successfully",
+		},
+	}
+
+	return response, errRsp, errCode
+}
+
+func AllBill(ownerRowId int, customerRowId int, tx *sql.Tx, logPrefix string) (structs.AllBillResponse, interface{}, int) {
+	var response structs.AllBillResponse
+	var errRsp interface{}
+	errCode := utils.StatusOK
+
+	AllBill := make([]structs.BillPayloadResponse, 0)
 
 	ServiceQuery := database.GetAllBill()
 	rows, err := tx.Query(ServiceQuery, ownerRowId, customerRowId)
 	if err != nil {
-		errRsp, errCode = Set500ErrorResponse("Error in getting owner bill row", "Error getting owner Bill row ID:"+err.Error(), logPrefix)
+		errRsp, errCode = Create500ErrorResponse("[DB ERROR 0126] Error in getting owner bill row", "Error getting owner Bill row ID:"+err.Error(), logPrefix)
 		return response, errRsp, errCode
 	}
 	defer rows.Close()
@@ -60,32 +131,32 @@ func AllBill(ownerRowId int, customerRowId int, tx *sql.Tx, logPrefix string) (s
 
 		err := rows.Scan(&id, &billNo, &Type, &metal, &rate, &date, &remarks, &customerDetailsJSON, &transactionDetailsJSON, &paymentDetailsJSON, &createdAt, &updatedAt)
 		if err != nil {
-			errRsp, errCode = Set500ErrorResponse("Error in scanning row", "Error getting owner row ID:"+err.Error(), logPrefix)
+			errRsp, errCode = Create500ErrorResponse("[DB ERROR 0127] Error in scanning row", "Error getting owner row ID:"+err.Error(), logPrefix)
 			return response, errRsp, errCode // Return immediately on error
 		}
 
 		var customerDetails structs.Customer
 		err = json.Unmarshal([]byte(customerDetailsJSON), &customerDetails)
 		if err != nil {
-			errRsp, errCode = Set500ErrorResponse("Error unmarshaling customer details", err.Error(), logPrefix)
+			errRsp, errCode = Create500ErrorResponse("[DB ERROR 0128] Error unmarshaling customer details", err.Error(), logPrefix)
 			return response, errRsp, errCode // Return immediately on error
 		}
 
 		var transactionDetails []structs.Transaction
 		err = json.Unmarshal([]byte(transactionDetailsJSON), &transactionDetails)
 		if err != nil {
-			errRsp, errCode = Set500ErrorResponse("Error unmarshaling transaction details", err.Error(), logPrefix)
+			errRsp, errCode = Create500ErrorResponse("[DB ERROR 0129] Error unmarshaling transaction details", err.Error(), logPrefix)
 			return response, errRsp, errCode // Return immediately on error
 		}
 
 		var paymentDetails structs.Payment
 		err = json.Unmarshal([]byte(paymentDetailsJSON), &paymentDetails)
 		if err != nil {
-			errRsp, errCode = Set500ErrorResponse("Error unmarshaling payment details", err.Error(), logPrefix)
+			errRsp, errCode = Create500ErrorResponse("[DB ERROR 0130] Error unmarshaling payment details", err.Error(), logPrefix)
 			return response, errRsp, errCode // Return immediately on error
 		}
 
-		OneBill := structs.CustomerBillSubResponse{
+		OneBill := structs.BillPayloadResponse{
 			Id:                 id,
 			BillNo:             billNo,
 			Type:               Type,
@@ -103,11 +174,22 @@ func AllBill(ownerRowId int, customerRowId int, tx *sql.Tx, logPrefix string) (s
 		AllBill = append(AllBill, OneBill)
 	}
 
+	description := utils.NULL_STRING
+	if customerRowId == utils.NULL_INT {
+		description = "All bills of owner is fetched successfully"
+	} else {
+		description = "All bills of customer is fetched successfully"
+	}
+
 	if errCode == utils.StatusOK {
-		response = structs.CustomerAllBillResponse{
-			Stat:                    "OK",
-			Count:                   len(AllBill),
-			CustomerBillSubResponse: AllBill,
+
+		response = structs.AllBillResponse{
+			Response: structs.AllBillSubResponse{
+				Stat:        utils.OK,
+				Count:       len(AllBill),
+				Payload:     AllBill,
+				Description: description,
+			},
 		}
 	}
 	return response, errRsp, errCode

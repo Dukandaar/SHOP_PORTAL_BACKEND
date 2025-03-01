@@ -9,7 +9,7 @@ import (
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 )
 
-func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
+func GetShopOwner(ownerRegID string, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCode := utils.StatusOK
@@ -32,25 +32,18 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0019] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
 	ServiceQuery := database.GetShopOwnerData()
-	err = tx.QueryRow(ServiceQuery, regId).Scan(&rowId, &shopName, &ownerName, &GstIN, &PhoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash)
+	err = tx.QueryRow(ServiceQuery, ownerRegID).Scan(&rowId, &shopName, &ownerName, &GstIN, &PhoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			utils.Logger.Info("Data for reg_id", regId, "does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Data for reg_id "+regId+" does not exist", logPrefix)
+			return helper.CreateErrorResponse("404001", "Data for owner reg_id "+ownerRegID+" does not exist", logPrefix)
 		} else {
-			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row", logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0020] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
 		}
 	}
 
@@ -58,11 +51,9 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 	err = tx.QueryRow(ServiceQuery, rowId).Scan(&billCount)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			utils.Logger.Info("Bill count data for reg_id", regId, "does not exist")
-			response, rspCode = helper.CreateErrorResponse("404001", "Bill count data for reg_id "+regId+" does not exist", logPrefix)
+			return helper.CreateErrorResponse("404001", "Bill count data for owner reg_id "+ownerRegID+" does not exist", logPrefix)
 		} else {
-			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting row", logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 00021] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
 		}
 	}
 
@@ -70,22 +61,27 @@ func GetShopOwner(regId string, logPrefix string) (interface{}, int) {
 
 		err = tx.Commit()
 		if err != nil {
-			utils.Logger.Error(err.Error())
-			return helper.CreateErrorResponse("500001", "Error in committing transaction", logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0022] Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
-		response = structs.ShopOwnerDetailsSubResponse{
-			ShopName:  shopName,
-			OwnerName: ownerName,
-			GstIN:     GstIN,
-			PhoneNo:   PhoneNo,
-			RegDate:   regDate,
-			Address:   address,
-			Remarks:   remarks,
-			Gold:      gold,
-			Silver:    silver,
-			Cash:      cash,
-			IsActive:  isActive,
-			BillCount: billCount,
+		response = structs.GetShopOwnerResponse{
+			Response: structs.GetShopOwnerSubResponse{
+				Stat: utils.OK,
+				Payload: structs.GetShopOwnerPayloadResponse{
+					ShopName:  shopName,
+					OwnerName: ownerName,
+					GstIN:     GstIN,
+					PhoneNo:   PhoneNo,
+					RegDate:   regDate,
+					Address:   address,
+					Remarks:   remarks,
+					Gold:      gold,
+					Silver:    silver,
+					Cash:      cash,
+					IsActive:  isActive,
+					BillCount: billCount,
+				},
+				Description: "Owner details for reg_id " + ownerRegID,
+			},
 		}
 	}
 

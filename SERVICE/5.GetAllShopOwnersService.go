@@ -11,7 +11,6 @@ import (
 func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{}, int) {
 
 	var response interface{}
-	rspCount := 0
 	rspCode := utils.StatusOK
 
 	var shopName string
@@ -27,21 +26,16 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 	var isActive string
 	var billCount int
 
-	rsp := make([]structs.ShopOwnerDetailsSubResponse, 0)
+	owners := make([]structs.GetShopOwnerPayloadResponse, 0)
 
 	DB := database.DB
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Set500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0023] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
 	ServiceQuery := database.GetAllShopOwnerData(reqBody.IsActive)
 	rows, err := tx.Query(ServiceQuery)
@@ -50,15 +44,9 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 
 			err = rows.Scan(&shopName, &ownerName, &gst_in, &phoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash, &billCount)
 			if err != nil {
-				if err == sql.ErrNoRows {
-					utils.Logger.Info(logPrefix, "No rows found")
-					response, rspCode = helper.CreateSuccessResponse("No any owner found")
-					return response, rspCode
-				}
-				response, rspCode = helper.Set500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
-				return response, rspCode
+				return helper.Create500ErrorResponse("[DB ERROR 0024] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 			} else {
-				rsp = append(rsp, structs.ShopOwnerDetailsSubResponse{
+				owners = append(owners, structs.GetShopOwnerPayloadResponse{
 					ShopName:  shopName,
 					OwnerName: ownerName,
 					GstIN:     gst_in,
@@ -72,31 +60,30 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 					IsActive:  isActive,
 					BillCount: billCount,
 				})
-				rspCount++
 			}
 		}
 	} else {
 		if err == sql.ErrNoRows {
-			utils.Logger.Info(logPrefix, "No rows found")
-			response, rspCode = helper.CreateSuccessResponse("No any owner found")
-			return response, rspCode
+			return helper.CreateSuccessResponse("No any owner found", "No any owner found", logPrefix)
 		} else {
-			response, rspCode = helper.Set500ErrorResponse("Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
-			return response, rspCode
+			return helper.Create500ErrorResponse("[DB ERROR 0025] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 		}
 	}
 
-	if rspCode != utils.StatusOK {
+	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			response, rspCode = helper.Set500ErrorResponse("Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
-			return response, rspCode
+			return helper.Create500ErrorResponse("[DB ERROR 0026] Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
 		}
-	} else {
-		response = structs.AllShopOwnerDetailsResponse{
-			Stat:                           "OK",
-			Count:                          rspCount,
-			AllShopOwnerDetailsSubResponse: rsp,
+		utils.Logger.Info(logPrefix, "Transaction committed successfully")
+
+		response = structs.GetAllShopOwnerResponse{
+			Response: structs.GetAllShopOwnerSubResponse{
+				Stat:        utils.OK,
+				Count:       len(owners),
+				Payload:     owners,
+				Description: "All registered owner details.",
+			},
 		}
 	}
 

@@ -27,6 +27,8 @@ func GetAllOwnerBill(ctx iris.Context) {
 			}
 		}
 	}
+
+	utils.LogResponse(logPrefix, response)
 	ctx.ResponseWriter().WriteHeader(rspCode)
 	ctx.JSON(response)
 	utils.Logger.Info(logPrefix + "Request Completed.")
