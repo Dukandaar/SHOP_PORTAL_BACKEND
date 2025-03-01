@@ -16,16 +16,10 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0113] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
-	defer func() {
-		if r := recover(); r != nil || rspCode != utils.StatusOK {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r)
-			tx.Rollback()
-			utils.Logger.Error(logPrefix, "Transaction rolled back")
-		}
-	}()
+	defer tx.Rollback()
 
 	// Get customer Id from Bill
 	ServiceQuery := database.GetCustomerIdFromBill()
@@ -33,18 +27,15 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 	err = tx.QueryRow(ServiceQuery, billId).Scan(&customerId)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
+			return helper.CreateErrorResponse("404001", "Bill Not Found", logPrefix)
 		}
-		return helper.Create500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0114] Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
 	// Get Owner's row ID
 	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
-		}
-		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0115] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// check if customer is for this owner only
@@ -52,7 +43,7 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 	var isActive string
 	err = tx.QueryRow(ServiceQuery, ownerRowId, customerId).Scan(&isActive)
 	if err != nil && err != sql.ErrNoRows {
-		return helper.Create500ErrorResponse("Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0116] Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
 	if isActive == utils.NULL_STRING {
@@ -63,7 +54,8 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 		return helper.CreateErrorResponse("404001", "Customer is InActive", logPrefix)
 	}
 
-	result, response, rspCode := helper.AllBill(ownerRowId, customerId, tx, logPrefix)
+	// Get Bill details
+	result, response, rspCode := helper.GetBill(billId, tx, logPrefix)
 	if rspCode != utils.StatusOK {
 		return response, rspCode
 	}
@@ -71,10 +63,10 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0121] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
-		response = result
 		utils.Logger.Info(logPrefix, "Transaction committed")
+		response = result
 	}
 
 	return response, rspCode

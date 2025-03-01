@@ -246,17 +246,6 @@ type SuccessIdSubResponse struct {
 	Id         int    `json:"id"`
 }
 
-type CreateOwnerSuccessResponseWithIdKey struct {
-	Stat               string                                 `json:"stat"`
-	SuccessSubResponse CreateOwnerSuccessSubResponseWithIdKey `json:"rsp"`
-}
-
-type CreateOwnerSuccessSubResponseWithIdKey struct {
-	SuccessMsg string `json:"msg"`
-	RegId      string `json:"reg_id"`
-	Key        string `json:"key"`
-}
-
 type SuccessRegIdSubResponse struct {
 	SuccessMsg string `json:"msg"`
 	RegId      string `json:"reg_id"`
@@ -330,11 +319,16 @@ type TransactionResponse struct {
 }
 
 type CustomerBillResponse struct {
-	Stat                    string                  `json:"stat"`
-	CustomerBillSubResponse CustomerBillSubResponse `json:"rsp"`
+	Response CustomerBillSubResponse `json:"rsp"`
 }
 
 type CustomerBillSubResponse struct {
+	Stat        string              `json:"stat"`
+	Payload     BillPayloadResponse `json:"payload"`
+	Description string              `json:"description"`
+}
+
+type BillPayloadResponse struct {
 	Id                 int           `json:"id"`
 	BillNo             int           `json:"bill_no"`
 	Type               string        `json:"type"`
@@ -349,8 +343,13 @@ type CustomerBillSubResponse struct {
 	UpdatedAt          string        `json:"updated_at"`
 }
 
-type CustomerAllBillResponse struct {
-	Stat                    string                    `json:"stat"`
-	Count                   int                       `json:"count"`
-	CustomerBillSubResponse []CustomerBillSubResponse `json:"rsp"`
+type AllBillResponse struct {
+	Response AllBillSubResponse `json:"rsp"`
+}
+
+type AllBillSubResponse struct {
+	Stat        string                `json:"stat"`
+	Count       int                   `json:"count"`
+	Payload     []BillPayloadResponse `json:"payload"`
+	Description string                `json:"description"`
 }
