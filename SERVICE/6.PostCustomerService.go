@@ -61,7 +61,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 			if err != nil {
 				return helper.Create500ErrorResponse("Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
 			}
-			response, rspCode = helper.CreateSuccessResponse(regId, "Customer Added Successfully")
+			response, rspCode = helper.CreateSuccessResponse(regId, "Customer Added Successfully", logPrefix)
 		}
 	} else if err != nil { // Database error checking for existing customer
 		return helper.Create500ErrorResponse("Error in checking row", "Error checking for existing customer:"+err.Error(), logPrefix)
@@ -76,7 +76,7 @@ func PostCustomer(reqBody structs.Customer, OwnerRegId string, logPrefix string)
 			if err != nil {
 				return helper.Create500ErrorResponse("Error in updating active status", "Error updating customer status:"+err.Error(), logPrefix)
 			} else {
-				response, rspCode = helper.CreateSuccessResponse("Customer Activated Successfully", "Customer Activated Successfully")
+				response, rspCode = helper.CreateSuccessResponse("Customer Activated Successfully", "Customer Activated Successfully", logPrefix)
 			}
 		}
 	}

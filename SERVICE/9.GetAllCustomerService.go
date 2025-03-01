@@ -85,7 +85,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 	} else {
 		if err == sql.ErrNoRows {
 			utils.Logger.Info("No rows found")
-			response, rspCode = helper.CreateSuccessResponse("No any customer found", logPrefix)
+			response, rspCode = helper.CreateSuccessResponse("No any customer found", logPrefix, logPrefix)
 			return response, rspCode
 		} else {
 			utils.Logger.Error(err.Error())

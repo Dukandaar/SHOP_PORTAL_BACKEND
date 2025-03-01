@@ -159,7 +159,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		if err != nil {
 			return helper.Create500ErrorResponse("Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
-		response, rspCode = helper.CreateSuccessResponse("Bill created successfully", logPrefix)
+		response, rspCode = helper.CreateSuccessResponse("Bill created successfully", logPrefix, logPrefix)
 		utils.Logger.Info(logPrefix, "Transaction committed")
 	}
 

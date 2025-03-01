@@ -28,7 +28,7 @@ func main() {
 	})
 
 	// add new shop owner
-	app.Post("shop/addShowOwner", func(ctx iris.Context) {
+	app.Post("shop/addShopOwner", func(ctx iris.Context) {
 		helper.SetApiName(util.POST_SHOP_OWNER, ctx)
 		controller.PostShopOwner(ctx)
 	})

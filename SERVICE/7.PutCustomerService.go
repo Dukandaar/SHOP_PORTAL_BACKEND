@@ -71,7 +71,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 		if err != nil {
 			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
-		response, rspCode = helper.CreateSuccessResponse("Customer updated successfully", logPrefix)
+		response, rspCode = helper.CreateSuccessResponse("Customer updated successfully", logPrefix, logPrefix)
 	}
 
 	return response, rspCode

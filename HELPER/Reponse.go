@@ -35,7 +35,10 @@ func CreateErrorResponse(code string, des string, logPrefix string) (structs.Err
 }
 
 // SUCCESS RESPONSE
-func CreateSuccessResponse(message string, description string) (structs.SuccessResponse, int) {
+func CreateSuccessResponse(message string, description string, logPrefix string) (structs.SuccessResponse, int) {
+
+	utils.Logger.Info(logPrefix + description)
+
 	return structs.SuccessResponse{
 		Response: structs.SuccessSubResponse{
 			Stat: "OK",
@@ -63,12 +66,12 @@ func CreateGenerateTokenResponse(token string, description string, logPrefix str
 }
 
 // POST SHOP OWNER RESPONSE
-func CreatePostOwnerResponse(key string, regID string, description string, logPrefix string) (structs.PostShowOwnerResponse, int) {
+func CreatePostOwnerResponse(key string, regID string, description string, logPrefix string) (structs.PostShopOwnerResponse, int) {
 	utils.Logger.Info(logPrefix + description)
-	return structs.PostShowOwnerResponse{
-		Response: structs.PostShowOwnerSubResponse{
+	return structs.PostShopOwnerResponse{
+		Response: structs.PostShopOwnerSubResponse{
 			Stat: "OK",
-			Payload: structs.PostShowOwnerPayloadResponse{
+			Payload: structs.PostShopOwnerPayloadResponse{
 				RegId: regID,
 				Key:   key,
 			},

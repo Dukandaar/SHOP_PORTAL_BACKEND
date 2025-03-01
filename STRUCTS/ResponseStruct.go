@@ -30,7 +30,7 @@ type SuccessPayloadResponse struct {
 	Message string `json:"msg"`
 }
 
-// Generate Token Reponse
+// Generate Token Response
 type GenerateTokenResponse struct {
 	Response GenerateTokenSubResponse `json:"rsp"`
 }
@@ -45,20 +45,58 @@ type GenerateTokenPayloadResponse struct {
 	Token string `json:"token"`
 }
 
-// Generate Post Show Owner Reponse
-type PostShowOwnerResponse struct {
-	Response PostShowOwnerSubResponse `json:"rsp"`
+// Post Shop Owner Response
+type PostShopOwnerResponse struct {
+	Response PostShopOwnerSubResponse `json:"rsp"`
 }
 
-type PostShowOwnerSubResponse struct {
+type PostShopOwnerSubResponse struct {
 	Stat        string                       `json:"stat"`
-	Payload     PostShowOwnerPayloadResponse `json:"payload"`
+	Payload     PostShopOwnerPayloadResponse `json:"payload"`
 	Description string                       `json:"description"`
 }
 
-type PostShowOwnerPayloadResponse struct {
+type PostShopOwnerPayloadResponse struct {
 	RegId string `json:"reg_id"`
 	Key   string `json:"key"`
+}
+
+// Get Shop Owner Response
+type GetShopOwnerResponse struct {
+	Response GetShopOwnerSubResponse `json:"rsp"`
+}
+
+type GetShopOwnerSubResponse struct {
+	Stat        string                      `json:"stat"`
+	Payload     GetShopOwnerPayloadResponse `json:"payload"`
+	Description string                      `json:"description"`
+}
+
+type GetShopOwnerPayloadResponse struct {
+	ShopName  string  `json:"shop_name"`
+	OwnerName string  `json:"owner_name"`
+	GstIN     string  `json:"gst_in"`
+	PhoneNo   string  `json:"phone_no"`
+	RegDate   string  `json:"reg_date"`
+	Address   string  `json:"address"`
+	Remarks   string  `json:"remarks"`
+	Gold      float64 `json:"gold"`
+	Silver    float64 `json:"silver"`
+	Cash      float64 `json:"cash"`
+	IsActive  string  `json:"is_active"`
+	BillCount int     `json:"bill_count"`
+}
+
+// Get All Shop Owner Response
+type GetAllShopOwnerResponse struct {
+	Response GetAllShopOwnerSubResponse `json:"rsp"`
+}
+
+type GetAllShopOwnerSubResponse struct {
+	Stat        string                        `json:"stat"`
+	Count       int                           `json:"count"`
+	Payload     []GetShopOwnerPayloadResponse `json:"payload"`
+	Description string                        `json:"description"`
 }
 
 type SuccessRegIdResponse struct {
