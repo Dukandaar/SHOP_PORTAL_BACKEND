@@ -139,11 +139,6 @@ type GetCustomerPayloadResponse struct {
 	IsActive string  `json:"is_active"`
 }
 
-type SuccessRegIdResponse struct {
-	Stat               string                  `json:"stat"`
-	SuccessSubResponse SuccessRegIdSubResponse `json:"rsp"`
-}
-
 // Get All Customer Response
 type GetAllCustomerResponse struct {
 	Response GetAllCustomerSubResponse `json:"rsp"`
@@ -154,6 +149,52 @@ type GetAllCustomerSubResponse struct {
 	Count       int                          `json:"count"`
 	Payload     []GetCustomerPayloadResponse `json:"payload"`
 	Description string                       `json:"description"`
+}
+
+// Stock Response
+type PostStockResponse struct {
+	Response PostStockSubResponse `json:"rsp"`
+}
+
+type PostStockSubResponse struct {
+	Stat        string                   `json:"stat"`
+	Payload     PostStockPayloadResponse `json:"payload"`
+	Description string                   `json:"description"`
+}
+
+type PostStockPayloadResponse struct {
+	Id int `json:"id"`
+}
+
+// Get Stock Response
+type OwnerStockResponse struct {
+	Response OwnerStockSubResponse `json:"rsp"`
+}
+
+type OwnerStockSubResponse struct {
+	Stat        string                    `json:"stat"`
+	Payload     OwnerStockPayloadResponse `json:"payload"`
+	Description string                    `json:"description"`
+}
+
+type OwnerStockPayloadResponse struct {
+	Id        int     `json:"id"`
+	ItemName  string  `json:"item_name"`
+	Tunch     float64 `json:"tunch"`
+	Weight    float64 `json:"weight"`
+	UpdatedAt string  `json:"updated_at"`
+}
+
+// Get All Stock Response
+type OwnerAllStockResponse struct {
+	Response OwnerAllStockSubResponse `json:"rsp"`
+}
+
+type OwnerAllStockSubResponse struct {
+	Stat        string                      `json:"stat"`
+	Count       int                         `json:"count"`
+	Payload     []OwnerStockPayloadResponse `json:"payload"`
+	Description string                      `json:"description"`
 }
 
 type SuccessIdResponse struct {
@@ -246,25 +287,6 @@ type CustomerPreviousBalanceSubResponse struct {
 	Gold   float64 `json:"gold"`
 	Silver float64 `json:"silver"`
 	Cash   float64 `json:"cash"`
-}
-
-type OwnerStockResponse struct {
-	Stat                  string                `json:"stat"`
-	OwnerStockSubResponse OwnerStockSubResponse `json:"rsp"`
-}
-
-type OwnerStockSubResponse struct {
-	Id        int     `json:"id"`
-	ItemName  string  `json:"item_name"`
-	Tunch     float64 `json:"tunch"`
-	Weight    float64 `json:"weight"`
-	UpdatedAt string  `json:"updated_at"`
-}
-
-type OwnerAllStockResponse struct {
-	Stat                  string                  `json:"stat"`
-	Count                 int                     `json:"count"`
-	OwnerStockSubResponse []OwnerStockSubResponse `json:"rsp"`
 }
 
 type StockHistoryResponse struct {

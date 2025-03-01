@@ -17,38 +17,30 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0052] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
 	}
 
-	defer func() {
-		if r := recover(); r != nil || err != nil {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r, err)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
-	ServiceQuery := database.GetOwnerRowId()
-	var ownerRowId string
-	err = tx.QueryRow(ServiceQuery, ownerRegId).Scan(&ownerRowId)
+	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx) // Get ownerRowId
 	if err != nil {
-		return helper.Create500ErrorResponse("Error in getting row", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("Error in getting row", "Error getting owner row ID: "+err.Error(), logPrefix)
 	}
 
 	// check stock with same item_name
 
-	ServiceQuery = database.CheckStockPresent()
+	ServiceQuery := database.CheckStockPresent() // tunch validation not added now : todo
 	var rowId int
 	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Type, reqBody.ItemName).Scan(&rowId)
 	if err != nil {
 		if err == sql.ErrNoRows { // Stock NOT found
-			utils.Logger.Info(logPrefix, "Stock NOT found")
+			utils.Logger.Info(logPrefix, "Stock Not found")
 		} else {
-			return helper.Create500ErrorResponse("Error in getting row", "Error in getting row:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0053] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
 		}
 	}
 
 	if rowId > 0 { // Stock found
-		utils.Logger.Info(logPrefix, "Stock found")
 		return helper.CreateErrorResponse("400009", "Stock with same item name, type already present", logPrefix)
 	}
 
@@ -57,24 +49,27 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 	ServiceQuery = database.InsertStockData()
 	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Type, reqBody.ItemName, reqBody.Tunch, reqBody.Weight, time.Now(), time.Now()).Scan(&id)
 	if err != nil {
-		return helper.Create500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0054] Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
 	}
+	utils.Logger.Info(logPrefix, "Stock added successfully")
 
 	// insert data in stock history
 	ServiceQuery = database.InsertStockHistoryData()
 	_, err = tx.Exec(ServiceQuery, id, utils.NULL_FLOAT, reqBody.Weight, utils.BUY, "Initial Stock", time.Now())
 	if err != nil {
-		return helper.Create500ErrorResponse("Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0055] Error in inserting row", "Error in inserting row: "+err.Error(), logPrefix)
 	} else {
-		response, rspCode = helper.CreateSuccessResponseWithId("Stock added successfully", id)
+		response, rspCode = helper.CreateAddStockResponse("Stock added successfully", id)
 	}
+	utils.Logger.Info(logPrefix, "Stock history added successfully")
 
 	// commit transaction
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0056] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
+		utils.Logger.Info(logPrefix, "Transaction committed successfully")
 	}
 
 	return response, rspCode

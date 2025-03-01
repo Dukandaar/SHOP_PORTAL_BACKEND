@@ -118,6 +118,19 @@ func CreateGetAllCustomerResponse(payload []structs.GetCustomerPayloadResponse, 
 	}, utils.StatusOK
 }
 
+// POST/PUT STOCK RESPONSE
+func CreateAddStockResponse(message string, id int) (structs.PostStockResponse, int) {
+	return structs.PostStockResponse{
+		Response: structs.PostStockSubResponse{
+			Stat: "OK",
+			Payload: structs.PostStockPayloadResponse{
+				Id: id,
+			},
+			Description: message,
+		},
+	}, utils.StatusOK
+}
+
 func CreateOwnerSuccessResponseWithIdKey(message string, regId string, key string) (structs.CreateOwnerSuccessResponseWithIdKey, int) {
 	return structs.CreateOwnerSuccessResponseWithIdKey{
 		Stat: "OK",
@@ -125,16 +138,6 @@ func CreateOwnerSuccessResponseWithIdKey(message string, regId string, key strin
 			SuccessMsg: message,
 			RegId:      regId,
 			Key:        key,
-		},
-	}, utils.StatusOK
-}
-
-func CreateSuccessResponseWithId(message string, id int) (structs.SuccessIdResponse, int) {
-	return structs.SuccessIdResponse{
-		Stat: "OK",
-		SuccessSubResponse: structs.SuccessIdSubResponse{
-			SuccessMsg: message,
-			Id:         id,
 		},
 	}, utils.StatusOK
 }

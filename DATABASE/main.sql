@@ -209,7 +209,7 @@ CREATE INDEX idx_owner_bill_count_owner_id ON owner_bill_count (owner_id);
 -- Constraint
 ALTER TABLE shop.owner ADD CONSTRAINT owner_reg_id UNIQUE (reg_id);
 ALTER TABLE shop.owner ADD CONSTRAINT unique_name_ph_no UNIQUE (shop_name, owner_name, phone_no);
-ALTER TABLE shop.stock ADD CONSTRAINT unique_type_item_tunch UNIQUE (type, item_name, tunch);
+ALTER TABLE shop.stock ADD CONSTRAINT unique_owner_type_item_tunch UNIQUE (owner_id, type, item_name, tunch);
 ALTER TABLE shop.customer ADD CONSTRAINT unique_reg_id UNIQUE (reg_id);
 ALTER TABLE shop.customer ADD CONSTRAINT unique_name_ph_no_oId UNIQUE (shop_name, name, phone_no, owner_id);
 ALTER TABLE shop.balance ADD CONSTRAINT check_either_owner_or_customer CHECK ((owner_id IS NULL AND customer_id IS NOT NULL) OR (owner_id IS NOT NULL AND customer_id IS NULL));

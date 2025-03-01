@@ -12,28 +12,20 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 
 	var response interface{}
 	var rspCode = utils.StatusOK
-	var rsp = make([]structs.OwnerStockSubResponse, 0)
+	var rsp = make([]structs.OwnerStockPayloadResponse, 0)
 
 	DB := database.DB
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0066] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
 	}
-	defer func() {
-		if r := recover(); r != nil || rspCode != utils.StatusOK {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
 	// Get owner row id
 	ownerRowId, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
-		}
-		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0067] Error getting owner row ID", "Error getting owner row ID: "+err.Error(), logPrefix)
 	}
 
 	ServiceQuery := database.GetAllStock()
@@ -49,7 +41,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 			return helper.CreateErrorResponse("404002", "Stock Not Found", logPrefix)
 		}
 		utils.Logger.Error(err.Error())
-		return helper.Create500ErrorResponse("Error getting stock", "Error getting stock:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0068] Error getting stock", "Error getting stock: "+err.Error(), logPrefix)
 	}
 	defer rows.Close()
 
@@ -57,10 +49,10 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 		err = rows.Scan(&id, &itemName, &tunch, &weight, &updatedAt)
 		if err != nil {
 			utils.Logger.Error(err.Error())
-			return helper.Create500ErrorResponse("Error scanning row", "Error scanning row:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0069] Error scanning row", "Error scanning row: "+err.Error(), logPrefix)
 		}
 
-		rsp = append(rsp, structs.OwnerStockSubResponse{
+		rsp = append(rsp, structs.OwnerStockPayloadResponse{
 			Id:        id,
 			ItemName:  itemName,
 			Tunch:     tunch,
@@ -72,15 +64,18 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0070] Error committing transaction", "Error committing transaction: "+err.Error(), logPrefix)
 		}
+		utils.Logger.Info(logPrefix, "Transaction committed successfully")
 
 		response = structs.OwnerAllStockResponse{
-			Stat:                  "OK",
-			Count:                 len(rsp),
-			OwnerStockSubResponse: rsp,
+			Response: structs.OwnerAllStockSubResponse{
+				Stat:        utils.OK,
+				Count:       len(rsp),
+				Payload:     rsp,
+				Description: "All Stock retrieved successfully",
+			},
 		}
 	}
-
 	return response, rspCode
 }

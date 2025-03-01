@@ -17,22 +17,14 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("DB ERROR 0062] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
 	}
-	defer func() {
-		if r := recover(); r != nil || rspCode != utils.StatusOK {
-			utils.Logger.Error(logPrefix, "Panic occurred during transaction:", r)
-			tx.Rollback()
-		}
-	}()
+	defer tx.Rollback()
 
 	// Get owner row id
 	ownerRowId, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
-		}
-		return helper.Create500ErrorResponse("Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0063] Error getting owner row ID", "Error getting owner row ID: "+err.Error(), logPrefix)
 	}
 
 	ServiceQuery := database.GetStock()
@@ -46,23 +38,27 @@ func GetStock(ownerRegID string, stockId int, logPrefix string) (interface{}, in
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Stock not found", logPrefix)
 		}
-		return helper.Create500ErrorResponse("Error in getting stock", "Error getting stock:"+err.Error(), logPrefix)
-	}
-
-	response = structs.OwnerStockResponse{
-		Stat: "OK",
-		OwnerStockSubResponse: structs.OwnerStockSubResponse{
-			ItemName:  itemName,
-			Tunch:     tunch,
-			Weight:    weight,
-			UpdatedAt: updatedAt,
-		},
+		return helper.Create500ErrorResponse("[DB ERROR 0064] Error in getting stock", "Error getting stock: "+err.Error(), logPrefix)
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0065] Error committing transaction", "Error committing transaction: "+err.Error(), logPrefix)
+		}
+		utils.Logger.Info(logPrefix, "Transaction committed successfully")
+
+		response = structs.OwnerStockResponse{
+			Response: structs.OwnerStockSubResponse{
+				Stat: utils.OK,
+				Payload: structs.OwnerStockPayloadResponse{
+					Id:        stockId,
+					ItemName:  itemName,
+					Tunch:     tunch,
+					Weight:    weight,
+					UpdatedAt: updatedAt,
+				}, Description: "Successfully got stock",
+			},
 		}
 	}
 
