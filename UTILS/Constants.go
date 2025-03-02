@@ -179,6 +179,6 @@ func SetValidHeaders() {
 	ValidHeaders = make(map[string][]interface{})
 	ValidHeaders[CONTENT_TYPE] = []interface{}{"application/json", "text/plain", "application.json; charset=utf-8"}
 	ValidHeaders[ACCEPT] = []interface{}{"application/json, text/plain", "*/*"}
-	ValidHeaders[ACCEPT_ENCODING] = []interface{}{"gzip, deflate, br", "gzip, deflate, br, zstd"}
+	ValidHeaders[ACCEPT_ENCODING] = []interface{}{"gzip, deflate, br", "gzip, deflate, br, zstd", "gzip, deflate"}
 	ValidHeaders[CACHE_CONTROL] = []interface{}{"no-cache"}
 }
