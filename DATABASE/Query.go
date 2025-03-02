@@ -726,7 +726,7 @@ func GetStock() string {
 		FROM
 			shop.stock
 		WHERE
-			id = $1 and owner_id = $2;
+			id = $1 and owner_id = $2 and is_active = 'Y';
 	`
 	return query
 }
@@ -742,7 +742,7 @@ func GetAllStock() string {
 		FROM
 			shop.stock
 		WHERE
-			owner_id = $1 and type = $2;
+			owner_id = $1 and type = $2 and is_active = 'Y';
 	`
 	return query
 }

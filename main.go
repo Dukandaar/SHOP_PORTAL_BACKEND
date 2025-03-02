@@ -158,4 +158,13 @@ func main() {
 	if err != nil {
 		app.Logger().Fatal(err)
 	}
+
+	// port := "8000"
+	// addr := "0.0.0.0:" + port // Bind to 0.0.0.0
+	// fmt.Println("Server listening on:", addr)
+
+	// err := app.Listen(addr) // Start the Iris server
+	// if err != nil {
+	// 	fmt.Println("Error starting server:", err)
+	// }
 }

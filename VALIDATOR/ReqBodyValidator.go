@@ -124,9 +124,9 @@ func ValidateCustomerReqBody(body *structs.Customer, logPrefix string) (interfac
 		return helper.CreateErrorResponse("400007", "name length greater than 255", logPrefix)
 	}
 
-	if body.ShopName == utils.NULL_STRING {
-		return helper.CreateErrorResponse("400005", "Missing shop_name", logPrefix)
-	}
+	// if body.ShopName == utils.NULL_STRING {
+	// 	return helper.CreateErrorResponse("400005", "Missing shop_name", logPrefix)
+	// }
 
 	if len(body.ShopName) > utils.SHOP_NAME_MAX_LEN {
 		return helper.CreateErrorResponse("400007", "shop_name length greater than 255", logPrefix)
@@ -157,17 +157,17 @@ func ValidateCustomerReqBody(body *structs.Customer, logPrefix string) (interfac
 		}
 	}
 
-	if body.Address == utils.NULL_STRING {
-		return helper.CreateErrorResponse("400005", "Missing address", logPrefix)
-	}
+	// if body.Address == utils.NULL_STRING {
+	// 	return helper.CreateErrorResponse("400005", "Missing address", logPrefix)
+	// }
 
 	if len(body.Address) > utils.ADDRESS_MAX_LEN {
 		return helper.CreateErrorResponse("400007", "address length greater than 255", logPrefix)
 	}
 
-	if body.Remarks == utils.NULL_STRING {
-		return helper.CreateErrorResponse("400005", "Missing remarks", logPrefix)
-	}
+	// if body.Remarks == utils.NULL_STRING {
+	// 	return helper.CreateErrorResponse("400005", "Missing remarks", logPrefix)
+	// }
 
 	return utils.NULL_STRING, utils.StatusOK
 }
