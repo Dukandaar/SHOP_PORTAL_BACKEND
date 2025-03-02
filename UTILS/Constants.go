@@ -1,5 +1,7 @@
 package utils
 
+import "math"
+
 const (
 	// API NAME
 	SERVER_UP                         = "SERVER_UP"
@@ -30,6 +32,8 @@ const (
 	NULL_STRING = ""
 	NULL_INT    = 0
 	NULL_FLOAT  = 0.0
+	MAX_INT     = math.MaxInt8
+	MAX_FLOAT   = math.MaxFloat64
 	OK          = "OK"
 	ACTIVE_YES  = "Y"
 	ACTIVE_NO   = "N"
@@ -37,6 +41,7 @@ const (
 	SUCCESS     = "200000"
 	GOLD        = "Gold"
 	SILVER      = "Silver"
+	BOTH        = "Both"
 	CASH        = "Cash"
 	UPI         = "UPI"
 	NEFT        = "NEFT"
@@ -53,6 +58,10 @@ const (
 	SELL        = "Sell"
 	TRUE        = "True"
 	FALSE       = "False"
+	WHOLESALE   = "WholeSale"
+	RETAIL      = "Retail"
+	FINE        = "Fine"
+	AMOUNT      = "Amount"
 
 	// MAX FIELD LENGTH
 	SHOP_NAME_MAX_LEN       = 255
