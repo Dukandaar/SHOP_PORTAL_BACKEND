@@ -3,7 +3,6 @@ package service
 import (
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 	helper "SHOP_PORTAL_BACKEND/HELPER"
-	maths "SHOP_PORTAL_BACKEND/MATHS"
 	structs "SHOP_PORTAL_BACKEND/STRUCTS"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"database/sql"
@@ -42,29 +41,35 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		if err != nil {
 			if err == sql.ErrNoRows {
 				utils.Logger.Info(logPrefix, "Customer does not exist")
+				// Add Customer Details and return customer id
+				response, rspCode = PostCustomer(reqBody.CustomerDetails, ownerRegId, logPrefix)
+				if rspCode != utils.StatusOK {
+					return response, rspCode
+				}
+				utils.Logger.Info(logPrefix, "Customer created with id: ", customerRowId)
 			} else {
 				return helper.Create500ErrorResponse("[DB ERROR 0081] Error in getting row", "Error getting customer row ID: "+err.Error(), logPrefix)
 			}
-		} else if isActive == utils.ACTIVE_YES {
-			utils.Logger.Info(logPrefix, "Customer exists with id:", customerRowId)
-			return helper.CreateErrorResponse("400009", "Customer already exists with reg_id: "+regId, logPrefix)
-		}
+		} else if isActive != utils.NULL_STRING {
 
-		// Add Customer Details and return customer id
-		ServiceQuery = database.InsertCustomerData()
-		regId := maths.GenerateCustomerRegID()
-		if regId == utils.NULL_STRING {
-			return helper.Create500ErrorResponse("[DB ERROR 0082] Error in generating reg_id", "Error generating reg_id: "+err.Error(), logPrefix)
-		}
+			if isActive == utils.ACTIVE_NO {
+				utils.Logger.Info(logPrefix, "Customer is inactive")
+				return helper.CreateErrorResponse("400008", "Customer Present, but not active", logPrefix)
+			} else {
+				utils.Logger.Info(logPrefix, "Customer exists with id:", customerRowId)
+				return helper.CreateErrorResponse("400009", "Customer already exists with reg_id: "+regId, logPrefix)
+			}
 
-		err = tx.QueryRow(ServiceQuery, utils.ACTIVE_YES, ownerRowId, reqBody.CustomerDetails.Name, reqBody.CustomerDetails.ShopName, regId, reqBody.Date, reqBody.CustomerDetails.PhoneNo, reqBody.CustomerDetails.Address, reqBody.Remarks, reqBody.CustomerDetails.GstIN, time.Now(), time.Now()).Scan(&customerRowId)
-		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0083] Error in creating customer", "Error in creating customer: "+err.Error(), logPrefix)
+		} else {
+			// Add Customer Details and return customer id
+			response, rspCode = PostCustomer(reqBody.CustomerDetails, ownerRegId, logPrefix)
+			if rspCode != utils.StatusOK {
+				return response, rspCode
+			}
+			utils.Logger.Info(logPrefix, "Customer created with id: ", customerRowId)
 		}
-		utils.Logger.Info(logPrefix, "Customer created with id: ", customerRowId)
 
 	} else {
-
 		customerRowId, err = helper.GetCustomerId(customerRegId, ownerRowId, tx)
 		if err != nil {
 			return helper.Create500ErrorResponse("[DB ERROR 0084] Error getting customer row ID", "Error getting customer row ID: "+err.Error(), logPrefix)
