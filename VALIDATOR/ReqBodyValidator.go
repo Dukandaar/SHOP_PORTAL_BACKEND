@@ -243,7 +243,208 @@ func ValidatePutStockReqBody(body *structs.PutStock, logPrefix string) (interfac
 	return utils.NULL_STRING, utils.StatusOK
 }
 
+func ValidateTransactionReqBody(body *[]structs.Transaction, logPrefix string) (interface{}, int) {
+
+	transLength := len(*body)
+
+	if transLength == 0 {
+		return helper.CreateErrorResponse("400005", "Missing transactions", logPrefix)
+	}
+
+	for i := 0; i < transLength; i++ {
+		transaction := (*body)[i]
+
+		if transaction.ItemName == utils.NULL_STRING {
+			return helper.CreateErrorResponse("400005", "Missing item_name", logPrefix)
+		}
+
+		if len(transaction.ItemName) > utils.ITEM_NAME_MAX_LEN {
+			return helper.CreateErrorResponse("400007", "item_name length greater than 255", logPrefix)
+		}
+
+		if transaction.Weight == utils.NULL_INT {
+			return helper.CreateErrorResponse("400005", "Missing weight", logPrefix)
+		}
+
+		if transaction.Weight < 0 || transaction.Weight > utils.MAX_FLOAT {
+			return helper.CreateErrorResponse("400006", "Invalid weight", logPrefix)
+		}
+
+		if transaction.Less == utils.NULL_INT {
+			return helper.CreateErrorResponse("400005", "Missing less", logPrefix)
+		}
+
+		if transaction.Less < 0 || transaction.Less > utils.MAX_FLOAT {
+			return helper.CreateErrorResponse("400006", "Invalid less", logPrefix)
+		}
+
+		if transaction.NetWeight == utils.NULL_INT {
+			return helper.CreateErrorResponse("400005", "Missing net_weight", logPrefix)
+		}
+
+		if transaction.NetWeight < 0 || transaction.NetWeight > utils.MAX_FLOAT {
+			return helper.CreateErrorResponse("400006", "Invalid net_weight", logPrefix)
+		}
+
+		if transaction.Tunch == utils.NULL_INT {
+			return helper.CreateErrorResponse("400005", "Missing tunch", logPrefix)
+		}
+
+		if transaction.Tunch < 0 || transaction.Tunch > utils.MAX_FLOAT {
+			return helper.CreateErrorResponse("400006", "Invalid tunch", logPrefix)
+		}
+
+		if transaction.Fine == utils.NULL_INT {
+			return helper.CreateErrorResponse("400005", "Missing fine", logPrefix)
+		}
+
+		if transaction.Fine < 0 || transaction.Fine > utils.MAX_FLOAT {
+			return helper.CreateErrorResponse("400006", "Invalid fine", logPrefix)
+		}
+
+		if transaction.Discount == utils.NULL_FLOAT {
+			transaction.Discount = 0.0
+		}
+
+		if transaction.Discount < 0 || transaction.Discount > utils.MAX_FLOAT {
+			return helper.CreateErrorResponse("400006", "Invalid discount", logPrefix)
+		}
+
+		if transaction.Amount == utils.NULL_INT {
+			return helper.CreateErrorResponse("400005", "Missing amount", logPrefix)
+		}
+
+		if transaction.Amount < 0 || transaction.Amount > utils.MAX_FLOAT {
+			return helper.CreateErrorResponse("400006", "Invalid amount", logPrefix)
+		}
+
+		if transaction.IsActive == utils.NULL_STRING {
+			return helper.CreateErrorResponse("400005", "Missing is_active", logPrefix)
+		}
+
+		if transaction.IsActive != utils.ACTIVE_YES && transaction.IsActive != utils.ACTIVE_NO {
+			return helper.CreateErrorResponse("400006", "Invalid is_active", logPrefix)
+		}
+	}
+
+	return utils.NULL_STRING, utils.StatusOK
+}
+
+func ValidatePaymentReqBody(body *structs.Payment, logPrefix string) (interface{}, int) {
+
+	if body.Factor == utils.NULL_STRING {
+		return helper.CreateErrorResponse("400005", "Missing factor", logPrefix)
+	}
+
+	if body.Factor != utils.AMOUNT && body.Factor != utils.FINE {
+		return helper.CreateErrorResponse("400006", "Invalid factor", logPrefix)
+	}
+
+	if body.New == utils.NULL_FLOAT {
+		return helper.CreateErrorResponse("400005", "Missing new", logPrefix)
+	}
+
+	if body.New < 0 || body.New > utils.MAX_FLOAT {
+		return helper.CreateErrorResponse("400006", "Invalid new", logPrefix)
+	}
+
+	if body.Prev == utils.NULL_FLOAT {
+		return helper.CreateErrorResponse("400005", "Missing prev", logPrefix)
+	}
+
+	if body.Prev < 0 || body.Prev > utils.MAX_FLOAT {
+		return helper.CreateErrorResponse("400006", "Invalid prev", logPrefix)
+	}
+
+	if body.Total == utils.NULL_FLOAT {
+		return helper.CreateErrorResponse("400005", "Missing total", logPrefix)
+	}
+
+	if body.Total < 0 || body.Total > utils.MAX_FLOAT {
+		return helper.CreateErrorResponse("400006", "Invalid total", logPrefix)
+	}
+
+	if body.Paid == utils.NULL_FLOAT {
+		return helper.CreateErrorResponse("400005", "Missing paid", logPrefix)
+	}
+
+	if body.Paid < 0 || body.Paid > utils.MAX_FLOAT {
+		return helper.CreateErrorResponse("400006", "Invalid paid", logPrefix)
+	}
+
+	if body.Rem == utils.NULL_FLOAT {
+		return helper.CreateErrorResponse("400005", "Missing rem", logPrefix)
+	}
+
+	if body.Rem < 0 || body.Rem > utils.MAX_FLOAT {
+		return helper.CreateErrorResponse("400006", "Invalid rem", logPrefix)
+	}
+
+	return utils.NULL_STRING, utils.StatusOK
+}
+
 func ValidatePostCustomerBillReqBody(body *structs.CustomerBill, logPrefix string) (interface{}, int) {
+
+	if body.BillNo == utils.NULL_INT {
+		return helper.CreateErrorResponse("400005", "Missing bill_no", logPrefix)
+	}
+
+	if body.BillNo < 0 || body.BillNo > utils.MAX_INT {
+		return helper.CreateErrorResponse("400006", "Invalid bill_no", logPrefix)
+	}
+
+	if body.Type == utils.NULL_STRING {
+		return helper.CreateErrorResponse("400005", "Missing type", logPrefix)
+	}
+
+	if body.Type != utils.WHOLESALE && body.Type != utils.RETAIL {
+		return helper.CreateErrorResponse("400006", "Invalid type", logPrefix)
+	}
+
+	if body.Metal == utils.NULL_STRING {
+		return helper.CreateErrorResponse("400005", "Missing metal_type", logPrefix)
+	}
+
+	if body.Metal != utils.GOLD && body.Metal != utils.SILVER && body.Metal != utils.BOTH {
+		return helper.CreateErrorResponse("400006", "Invalid metal_type", logPrefix)
+	}
+
+	if body.Rate == utils.NULL_FLOAT {
+		return helper.CreateErrorResponse("400005", "Missing rate", logPrefix)
+	}
+
+	if body.Rate < 0 || body.Rate > utils.MAX_FLOAT {
+		return helper.CreateErrorResponse("400006", "Invalid rate", logPrefix)
+	}
+
+	if body.Date == utils.NULL_STRING {
+		return helper.CreateErrorResponse("400005", "Missing date", logPrefix)
+	}
+
+	_, err := time.Parse("2006-01-02", body.Date) // YYYY-MM-DD
+	if err != nil {
+		return helper.CreateErrorResponse("400006", "Invalid date format", logPrefix)
+	}
+
+	if body.Remarks == utils.NULL_STRING {
+		body.Remarks = "NOT PROVIDED"
+	}
+
+	rsp, code := ValidateCustomerReqBody(&body.CustomerDetails, logPrefix)
+	if code != utils.StatusOK {
+		return rsp, code
+	}
+
+	rsp, code = ValidateTransactionReqBody(&body.TransactionDetails, logPrefix)
+	if code != utils.StatusOK {
+		return rsp, code
+	}
+
+	rsp, code = ValidatePaymentReqBody(&body.PaymentDetails, logPrefix)
+	if code != utils.StatusOK {
+		return rsp, code
+	}
+
 	return utils.NULL_STRING, utils.StatusOK
 }
 

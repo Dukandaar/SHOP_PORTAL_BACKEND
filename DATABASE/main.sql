@@ -35,6 +35,7 @@ CREATE TABLE shop.stock (
     item_name VARCHAR(255) NOT NULL,
     tunch FLOAT,
     weight FLOAT DEFAULT 0.0,
+    is_active is_active DEFAULT 'Y',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
