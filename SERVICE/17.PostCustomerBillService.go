@@ -106,6 +106,9 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 		ServiceQuery = database.GetStockId()
 		err = tx.QueryRow(ServiceQuery, reqBody.TransactionDetails[i].ItemName, ownerRowId).Scan(&stockId, &prev_balance)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				return helper.CreateErrorResponse("400008", "Stock not found", logPrefix)
+			}
 			return helper.Create500ErrorResponse("[DB ERROR 0087] Error in getting stock id", "Error getting stock id: "+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Stock id:", stockId)
