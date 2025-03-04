@@ -153,6 +153,12 @@ func main() {
 		controller.GetAllOwnerBill(ctx)
 	})
 
+	// api to get previous bill no
+	app.Get("shop/getPreviousBillNo", func(ctx iris.Context) {
+		helper.SetApiName(util.GET_PREVIOUS_BILL_NO, ctx)
+		controller.GetPreviousBillNo(ctx)
+	})
+
 	// Start the server on port 8000
 	err := app.Listen(":8000")
 	if err != nil {

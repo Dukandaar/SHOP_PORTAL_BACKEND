@@ -27,6 +27,7 @@ const (
 	GET_ALL_CUSTOMER_BILL             = "GET_ALL_CUSTOMER_BILL"
 	GET_FILTERED_CUSTOMER_TRANSACTION = "GET_FILTERED_CUSTOMER_TRANS"
 	GET_ALL_OWNER_BILL                = "GET_ALL_OWNER_BILL"
+	GET_PREVIOUS_BILL_NO              = "GET_PREVIOUS_BILL_NO"
 
 	// DEFAULTS
 	NULL_STRING = ""
@@ -114,6 +115,7 @@ var GetCustomerBillHeaders map[string]bool
 var GetAllCustomerBillHeaders map[string]bool
 var GetFilteredCustomerTransactionHeaders map[string]bool
 var GetAllOwnerBillHeaders map[string]bool
+var GetPreviousBillNoHeaders map[string]bool
 
 // Qparams
 var PutShopOwnerQParams map[string]bool
@@ -135,6 +137,7 @@ var GetCustomerBillQParams map[string]bool
 var GetAllCustomerBillQParams map[string]bool
 var GetFilteredCustomerTransactionQParams map[string]bool
 var GetAllOwnerBillQParams map[string]bool
+var GetPreviousBillNoQParams map[string]bool
 
 func SetApiHeaders() {
 	PostShopOwnerHeaders = map[string]bool{CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true}
@@ -159,6 +162,7 @@ func SetApiHeaders() {
 	GetAllCustomerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CACHE_CONTROL: true}
 	GetFilteredCustomerTransactionHeaders = map[string]bool{TOKEN: true, CONTENT_TYPE: true, ACCEPT: true, ACCEPT_ENCODING: true, CACHE_CONTROL: true}
 	GetAllOwnerBillHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CACHE_CONTROL: true}
+	GetPreviousBillNoHeaders = map[string]bool{TOKEN: true, ACCEPT: true, ACCEPT_ENCODING: true, CACHE_CONTROL: true}
 }
 
 func SetApiQParams() {
@@ -180,6 +184,7 @@ func SetApiQParams() {
 	GetCustomerBillQParams = map[string]bool{OWNER_REG_ID: true, BILL_ID: true}
 	GetAllCustomerBillQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetAllOwnerBillQParams = map[string]bool{OWNER_REG_ID: true}
+	GetPreviousBillNoQParams = map[string]bool{OWNER_REG_ID: true}
 }
 
 var ValidHeaders map[string][]interface{}
