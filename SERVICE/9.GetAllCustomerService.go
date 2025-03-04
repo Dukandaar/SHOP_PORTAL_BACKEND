@@ -56,6 +56,7 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 					Name:     name,
 					ShopName: shopName,
 					RegId:    regId,
+					GstIN:    GstIN,
 					PhoneNo:  phoneNo,
 					RegDate:  regDate,
 					Address:  address,
