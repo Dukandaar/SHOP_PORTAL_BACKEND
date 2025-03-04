@@ -946,6 +946,7 @@ func GetAllBill() string {
             b.metal,
             b.metal_rate,
             b.date,
+			b.updated_at,
             p.remarks,
             json_build_object(
                 'name', c.name,
@@ -1005,5 +1006,17 @@ func GetAllBill() string {
             b.date DESC;
     `
 
+	return query
+}
+
+func GetPreviousBillNo() string {
+	query := `
+		SELECT
+			b.bill_cnt
+		FROM
+			shop.owner_bill_count b
+		WHERE
+			b.owner_id = $1
+	`
 	return query
 }

@@ -335,6 +335,7 @@ type BillPayloadResponse struct {
 	Metal              string        `json:"metal"`
 	Rate               float64       `json:"rate"`
 	Date               string        `json:"date"`
+	Time               string        `json:"time"`
 	Remarks            string        `json:"remarks"`
 	CustomerDetails    Customer      `json:"customer_details"`
 	TransactionDetails []Transaction `json:"transaction_details"`

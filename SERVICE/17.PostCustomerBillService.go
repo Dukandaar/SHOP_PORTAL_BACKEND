@@ -72,6 +72,9 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 	} else {
 		customerRowId, err = helper.GetCustomerId(customerRegId, ownerRowId, tx)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
+			}
 			return helper.Create500ErrorResponse("[DB ERROR 0084] Error getting customer row ID", "Error getting customer row ID: "+err.Error(), logPrefix)
 		}
 	}
@@ -115,7 +118,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 
 		// decrease amount from stock
 		ServiceQuery = database.DecreaseStock()
-		_, err = tx.Exec(ServiceQuery, (prev_balance - reqBody.TransactionDetails[i].NetWeight), stockId)
+		_, err = tx.Exec(ServiceQuery, (prev_balance - *reqBody.TransactionDetails[i].NetWeight), stockId)
 		if err != nil {
 			return helper.Create500ErrorResponse("[DB ERROR 0088] Error in decreasing stock", "Error in decreasing stock: "+err.Error(), logPrefix)
 		}
@@ -123,7 +126,7 @@ func PostCustomerBill(reqBody structs.CustomerBill, ownerRegId string, customerR
 
 		// update stock histroy table
 		ServiceQuery = database.AddStockHistory()
-		_, err = tx.Exec(ServiceQuery, stockId, prev_balance, (prev_balance - reqBody.TransactionDetails[i].NetWeight), utils.SELL, transcId, time.Now(), time.Now())
+		_, err = tx.Exec(ServiceQuery, stockId, prev_balance, (prev_balance - *reqBody.TransactionDetails[i].NetWeight), utils.SELL, transcId, time.Now(), time.Now())
 		if err != nil {
 			return helper.Create500ErrorResponse("[DB ERROR 0089] Error in adding stock history", "Error in adding stock history: "+err.Error(), logPrefix)
 		}

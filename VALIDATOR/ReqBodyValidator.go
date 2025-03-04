@@ -223,7 +223,7 @@ func ValidatePostStockReqBody(body *structs.PostStock, logPrefix string) (interf
 		return helper.CreateErrorResponse("400006", "Invalid type", logPrefix)
 	}
 
-	if body.Weight == utils.NULL_INT {
+	if body.Weight == nil {
 		return helper.CreateErrorResponse("400005", "Missing weight", logPrefix)
 	}
 
@@ -232,11 +232,11 @@ func ValidatePostStockReqBody(body *structs.PostStock, logPrefix string) (interf
 
 func ValidatePutStockReqBody(body *structs.PutStock, logPrefix string) (interface{}, int) {
 
-	if body.PrevWeight == utils.NULL_INT {
+	if body.PrevWeight == nil {
 		return helper.CreateErrorResponse("400005", "Missing prev_weight", logPrefix)
 	}
 
-	if body.CurrentWeight == utils.NULL_INT {
+	if body.CurrentWeight == nil {
 		return helper.CreateErrorResponse("400005", "Missing current_weight", logPrefix)
 	}
 
@@ -262,59 +262,59 @@ func ValidateTransactionReqBody(body *[]structs.Transaction, logPrefix string) (
 			return helper.CreateErrorResponse("400007", "item_name length greater than 255", logPrefix)
 		}
 
-		if transaction.Weight == utils.NULL_INT {
+		if transaction.Weight == nil {
 			return helper.CreateErrorResponse("400005", "Missing weight", logPrefix)
 		}
 
-		if transaction.Weight < 0 || transaction.Weight > utils.MAX_FLOAT {
+		if *transaction.Weight < 0 || *transaction.Weight > utils.MAX_FLOAT {
 			return helper.CreateErrorResponse("400006", "Invalid weight", logPrefix)
 		}
 
-		if transaction.Less == utils.NULL_INT {
+		if transaction.Less == nil {
 			return helper.CreateErrorResponse("400005", "Missing less", logPrefix)
 		}
 
-		if transaction.Less < 0 || transaction.Less > utils.MAX_FLOAT {
+		if *transaction.Less < 0 || *transaction.Less > utils.MAX_FLOAT {
 			return helper.CreateErrorResponse("400006", "Invalid less", logPrefix)
 		}
 
-		if transaction.NetWeight == utils.NULL_INT {
+		if transaction.NetWeight == nil {
 			return helper.CreateErrorResponse("400005", "Missing net_weight", logPrefix)
 		}
 
-		if transaction.NetWeight < 0 || transaction.NetWeight > utils.MAX_FLOAT {
+		if *transaction.NetWeight < 0 || *transaction.NetWeight > utils.MAX_FLOAT {
 			return helper.CreateErrorResponse("400006", "Invalid net_weight", logPrefix)
 		}
 
-		if transaction.Tunch == utils.NULL_INT {
+		if transaction.Tunch == nil {
 			return helper.CreateErrorResponse("400005", "Missing tunch", logPrefix)
 		}
 
-		if transaction.Tunch < 0 || transaction.Tunch > utils.MAX_FLOAT {
+		if *transaction.Tunch < 0 || *transaction.Tunch > utils.MAX_FLOAT {
 			return helper.CreateErrorResponse("400006", "Invalid tunch", logPrefix)
 		}
 
-		if transaction.Fine == utils.NULL_INT {
+		if transaction.Fine == nil {
 			return helper.CreateErrorResponse("400005", "Missing fine", logPrefix)
 		}
 
-		if transaction.Fine < 0 || transaction.Fine > utils.MAX_FLOAT {
+		if *transaction.Fine < 0 || *transaction.Fine > utils.MAX_FLOAT {
 			return helper.CreateErrorResponse("400006", "Invalid fine", logPrefix)
 		}
 
-		if transaction.Discount == utils.NULL_FLOAT {
-			transaction.Discount = 0.0
+		if transaction.Discount == nil {
+			return helper.CreateErrorResponse("400005", "Missing discount", logPrefix)
 		}
 
-		if transaction.Discount < 0 || transaction.Discount > utils.MAX_FLOAT {
+		if *transaction.Discount < 0 || *transaction.Discount > utils.MAX_FLOAT {
 			return helper.CreateErrorResponse("400006", "Invalid discount", logPrefix)
 		}
 
-		if transaction.Amount == utils.NULL_INT {
+		if transaction.Amount == nil {
 			return helper.CreateErrorResponse("400005", "Missing amount", logPrefix)
 		}
 
-		if transaction.Amount < 0 || transaction.Amount > utils.MAX_FLOAT {
+		if *transaction.Amount < 0 || *transaction.Amount > utils.MAX_FLOAT {
 			return helper.CreateErrorResponse("400006", "Invalid amount", logPrefix)
 		}
 
@@ -340,43 +340,43 @@ func ValidatePaymentReqBody(body *structs.Payment, logPrefix string) (interface{
 		return helper.CreateErrorResponse("400006", "Invalid factor", logPrefix)
 	}
 
-	if body.New == utils.NULL_FLOAT {
+	if body.New == nil {
 		return helper.CreateErrorResponse("400005", "Missing new", logPrefix)
 	}
 
-	if body.New < 0 || body.New > utils.MAX_FLOAT {
+	if *body.New < 0 || *body.New > utils.MAX_FLOAT {
 		return helper.CreateErrorResponse("400006", "Invalid new", logPrefix)
 	}
 
-	if body.Prev == utils.NULL_FLOAT {
+	if body.Prev == nil {
 		return helper.CreateErrorResponse("400005", "Missing prev", logPrefix)
 	}
 
-	if body.Prev < 0 || body.Prev > utils.MAX_FLOAT {
+	if *body.Prev < 0 || *body.Prev > utils.MAX_FLOAT {
 		return helper.CreateErrorResponse("400006", "Invalid prev", logPrefix)
 	}
 
-	if body.Total == utils.NULL_FLOAT {
+	if body.Total == nil {
 		return helper.CreateErrorResponse("400005", "Missing total", logPrefix)
 	}
 
-	if body.Total < 0 || body.Total > utils.MAX_FLOAT {
+	if *body.Total < 0 || *body.Total > utils.MAX_FLOAT {
 		return helper.CreateErrorResponse("400006", "Invalid total", logPrefix)
 	}
 
-	if body.Paid == utils.NULL_FLOAT {
+	if body.Paid == nil {
 		return helper.CreateErrorResponse("400005", "Missing paid", logPrefix)
 	}
 
-	if body.Paid < 0 || body.Paid > utils.MAX_FLOAT {
+	if *body.Paid < 0 || *body.Paid > utils.MAX_FLOAT {
 		return helper.CreateErrorResponse("400006", "Invalid paid", logPrefix)
 	}
 
-	if body.Rem == utils.NULL_FLOAT {
+	if body.Rem == nil {
 		return helper.CreateErrorResponse("400005", "Missing rem", logPrefix)
 	}
 
-	if body.Rem < 0 || body.Rem > utils.MAX_FLOAT {
+	if *body.Rem < 0 || *body.Rem > utils.MAX_FLOAT {
 		return helper.CreateErrorResponse("400006", "Invalid rem", logPrefix)
 	}
 
@@ -409,11 +409,11 @@ func ValidatePostCustomerBillReqBody(body *structs.CustomerBill, logPrefix strin
 		return helper.CreateErrorResponse("400006", "Invalid metal_type", logPrefix)
 	}
 
-	if body.Rate == utils.NULL_FLOAT {
+	if body.Rate == nil {
 		return helper.CreateErrorResponse("400005", "Missing rate", logPrefix)
 	}
 
-	if body.Rate < 0 || body.Rate > utils.MAX_FLOAT {
+	if *body.Rate < 0 || *body.Rate > utils.MAX_FLOAT {
 		return helper.CreateErrorResponse("400006", "Invalid rate", logPrefix)
 	}
 
