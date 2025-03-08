@@ -33,7 +33,7 @@ func GetPreviousBillNo(ownerRegID string, logPrefix string) (interface{}, int) {
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Bill Not Found", logPrefix)
 		}
-		return helper.Create500ErrorResponse("[DB ERROR 0124] Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0133] Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
 	response, rspCode = helper.CreateSuccessWithIdResponse("Bill No fetched successfully", bill_cnt, logPrefix)
@@ -41,7 +41,7 @@ func GetPreviousBillNo(ownerRegID string, logPrefix string) (interface{}, int) {
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0133] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0134] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 	}
 

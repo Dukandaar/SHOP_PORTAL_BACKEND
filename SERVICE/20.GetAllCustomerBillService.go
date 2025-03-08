@@ -29,6 +29,9 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 	// Get customer Id
 	customerId, err := helper.GetCustomerId(customerRegId, ownerRowId, tx)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Customer registered for another owner", logPrefix)
+		}
 		return helper.Create500ErrorResponse("[DB ERROR 0124] Error getting customer row ID", "Error getting customer row ID:"+err.Error(), logPrefix)
 	}
 
