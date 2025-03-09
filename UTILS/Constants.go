@@ -91,6 +91,8 @@ const (
 	CUSTOMER_REG_ID = "customer_reg_id"
 	STOCK_ID        = "stock_id"
 	BILL_ID         = "bill_id"
+	IS_ACTIVE       = "is_active"
+	METAL_TYPE      = "metal_type"
 )
 
 // headers
@@ -122,6 +124,7 @@ var DeleteStockHeaders map[string]bool
 // Qparams
 var PutShopOwnerQParams map[string]bool
 var GetShopOwnerQParams map[string]bool
+var GetAllShopOwnerQParams map[string]bool
 var PostCustomerQParams map[string]bool
 var PutCustomerQParams map[string]bool
 var GetCustomerQParams map[string]bool
@@ -172,15 +175,16 @@ func SetApiHeaders() {
 func SetApiQParams() {
 	PutShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
 	GetShopOwnerQParams = map[string]bool{OWNER_REG_ID: true}
+	GetAllShopOwnerQParams = map[string]bool{IS_ACTIVE: true}
 	PostCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 	PutCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	GetCustomerQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
-	GetAllCustomerQParams = map[string]bool{OWNER_REG_ID: true}
+	GetAllCustomerQParams = map[string]bool{OWNER_REG_ID: true, IS_ACTIVE: true}
 	GetFilteredCustomerQParams = map[string]bool{OWNER_REG_ID: true}
 	PostStockQParams = map[string]bool{OWNER_REG_ID: true}
 	PutStockQParams = map[string]bool{OWNER_REG_ID: true, STOCK_ID: true}
 	GetStockQParams = map[string]bool{OWNER_REG_ID: true, STOCK_ID: true}
-	GetAllStockQParams = map[string]bool{OWNER_REG_ID: true}
+	GetAllStockQParams = map[string]bool{OWNER_REG_ID: true, METAL_TYPE: true}
 	GetStockHistoryQParams = map[string]bool{OWNER_REG_ID: true, STOCK_ID: true}
 	GetPreviousBalanceQParams = map[string]bool{OWNER_REG_ID: true, CUSTOMER_REG_ID: true}
 	PostCustomerBillQParams = map[string]bool{OWNER_REG_ID: true}

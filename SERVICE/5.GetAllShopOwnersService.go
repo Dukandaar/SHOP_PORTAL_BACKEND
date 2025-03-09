@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{}, int) {
+func GetAllShopOwner(IsActive string, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCode := utils.StatusOK
@@ -32,19 +32,19 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0023] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0021] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer tx.Rollback()
 
-	ServiceQuery := database.GetAllShopOwnerData(reqBody.IsActive)
+	ServiceQuery := database.GetAllShopOwnerData(IsActive)
 	rows, err := tx.Query(ServiceQuery)
 	if err == nil {
 		for rows.Next() {
 
 			err = rows.Scan(&shopName, &ownerName, &gst_in, &phoneNo, &regDate, &address, &remarks, &isActive, &gold, &silver, &cash, &billCount)
 			if err != nil {
-				return helper.Create500ErrorResponse("[DB ERROR 0024] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
+				return helper.Create500ErrorResponse("[DB ERROR 0022] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 			} else {
 				owners = append(owners, structs.GetShopOwnerPayloadResponse{
 					ShopName:  shopName,
@@ -66,14 +66,14 @@ func GetAllShopOwner(reqBody structs.AllShopOwner, logPrefix string) (interface{
 		if err == sql.ErrNoRows {
 			return helper.CreateSuccessResponse("No any owner found", "No any owner found", logPrefix)
 		} else {
-			return helper.Create500ErrorResponse("[DB ERROR 0025] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0023] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 		}
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0026] Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0024] Error in commiting transaction", "Error in commiting transaction:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Transaction committed successfully")
 

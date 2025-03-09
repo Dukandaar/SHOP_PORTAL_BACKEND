@@ -30,10 +30,6 @@ type ShopOwner struct {
 	Remarks   string `json:"remarks"`
 }
 
-type AllShopOwner struct {
-	IsActive string `json:"is_active"`
-}
-
 type Customer struct {
 	Name     string `json:"name"`
 	ShopName string `json:"shop_name"`
@@ -109,8 +105,4 @@ type CustomerBill struct {
 	CustomerDetails    Customer      `json:"customer_details"`
 	TransactionDetails []Transaction `json:"transaction_details"`
 	PaymentDetails     Payment       `json:"payment_details"`
-}
-
-type AllStock struct {
-	Metal string `json:"metal"`
 }

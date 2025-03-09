@@ -47,7 +47,7 @@ func GetCustomerBill(ownerRegId string, billId int, logPrefix string) (interface
 	}
 
 	if isActive == utils.NULL_STRING {
-		return helper.CreateErrorResponse("404001", "Customer registered with another owner", logPrefix)
+		return helper.CreateErrorResponse("404001", "Bill Customer registered with another owner", logPrefix)
 	}
 
 	if isActive == utils.ACTIVE_NO {

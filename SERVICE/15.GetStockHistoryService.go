@@ -20,13 +20,38 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0071] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0072] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer tx.Rollback()
 
+	// Get owner row id
+	ownerRowId, err := helper.GetOwnerId(ownerRegID, tx)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
+		return helper.Create500ErrorResponse("[DB ERROR 0073] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+	}
+
+	// Stock id for specific owner only
+	ServiceQuery := database.CheckValidStockId1()
+	var exist bool
+	err = tx.QueryRow(ServiceQuery, stockId, ownerRowId).Scan(&exist)
+	if err != nil {
+		if err == sql.ErrNoRows { // Stock NOT found
+			return helper.CreateErrorResponse("404002", "Stock not found for this owner", logPrefix)
+		} else {
+			return helper.Create500ErrorResponse("[DB ERROR 0074] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
+		}
+	}
+
+	if !exist {
+		return helper.CreateErrorResponse("404001", "Stock not found for this owner", logPrefix)
+	}
+
 	// Get Stock histroy
-	ServiceQuery := database.GetDetailedStockHistory()
+	ServiceQuery = database.GetDetailedStockHistory()
 	var prevBalance float64
 	var newBalance float64
 	var reason string
@@ -50,14 +75,14 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 			msg := fmt.Sprintf("Data for stockId %d and reg_id %s does not exist", stockId, ownerRegID)
 			return helper.CreateErrorResponse("404001", msg, logPrefix)
 		}
-		return helper.Create500ErrorResponse("[DB ERROR 0072] Error in getting stock history row", "Error in getting stock history row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0075] Error in getting stock history row", "Error in getting stock history row:"+err.Error(), logPrefix)
 	}
 
 	// Get transactoin details
 	for rows.Next() {
 		err = rows.Scan(&prevBalance, &newBalance, &reason, &remarks, &createdAt, &tid, &billId, &itemName, &weight, &less, &netWeight, &tunch, &fine, &discount, &amount)
 		if err != nil {
-			return helper.Create500ErrorResponse("Error in getting stock row", "Error getting stock: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0076] Error in getting stock row", "Error getting stock: "+err.Error(), logPrefix)
 		}
 
 		stockHistoryPayloads = append(stockHistoryPayloads, structs.StockHistoryPayloadResponse{
@@ -84,7 +109,7 @@ func GetStockHistory(ownerRegID string, stockId int, logPrefix string) (interfac
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0073] Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0077] Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 
 		utils.Logger.Info(logPrefix, "Transaction committed successfully")

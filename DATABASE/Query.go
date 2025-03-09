@@ -325,26 +325,53 @@ func GetCustomerDataById() string {
 func GetAllCustomerData() string {
 	query := `
         SELECT
-			c.shop_name,
-			c.name,
-			c.gst_in,
-			c.reg_id,
-			c.phone_no,
-			c.reg_date,
-			c.is_active,
-			c.address,
-			c.remarks,
-			b.gold,
-			b.silver,
-			b.cash
-		FROM
-			shop.customer c
-		LEFT JOIN
-			shop.balance b 
-		ON 
-		    c.id = b.customer_id
-		WHERE
-			c.owner_id = $1;
+            c.shop_name,
+            c.name,
+            c.gst_in,
+            c.reg_id,
+            c.phone_no,
+            c.reg_date,
+            c.is_active,
+            c.address,
+            c.remarks,
+            b.gold,
+            b.silver,
+            b.cash
+        FROM
+            shop.customer c
+        LEFT JOIN
+            shop.balance b 
+        ON 
+            c.id = b.customer_id
+        WHERE
+            c.owner_id = $1
+    `
+	return query
+}
+
+func GetAllCustomerData1() string {
+	query := `
+        SELECT
+            c.shop_name,
+            c.name,
+            c.gst_in,
+            c.reg_id,
+            c.phone_no,
+            c.reg_date,
+            c.is_active,
+            c.address,
+            c.remarks,
+            b.gold,
+            b.silver,
+            b.cash
+        FROM
+            shop.customer c
+        LEFT JOIN
+            shop.balance b 
+        ON 
+            c.id = b.customer_id
+        WHERE
+            c.owner_id = $1 and c.is_active = $2
     `
 	return query
 }
@@ -489,6 +516,14 @@ func CheckValidStockId() string {
 	return query
 }
 
+func CheckValidStockId1() string {
+	query := `
+		SELECT EXISTS
+		(SELECT 1 FROM shop.stock WHERE id = $1 and owner_id = $2)
+	`
+	return query
+}
+
 func CheckStockPresent() string {
 	query := `
 		SELECT id
@@ -501,9 +536,9 @@ func CheckStockPresent() string {
 func InsertStockData() string {
 	query := `
 		INSERT INTO
-			shop.stock (owner_id, type, item_name, tunch, weight, created_at, updated_at)
+			shop.stock (owner_id, type, item_name, tunch, weight, is_active, created_at, updated_at)
 		VALUES
-			($1, $2, $3, $4, $5, $6, $7)
+			($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING id;
 	`
 	return query
@@ -719,6 +754,7 @@ func GetBillTransactions() string {
 func GetStock() string {
 	query := `
 		SELECT
+			type,
 			item_name,
 			tunch,
 			weight,

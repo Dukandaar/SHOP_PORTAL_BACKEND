@@ -101,19 +101,6 @@ func ValidateShopOwnerReqBody(body *structs.ShopOwner, logPrefix string) (interf
 	return utils.NULL_STRING, utils.StatusOK
 }
 
-func ValidateAllShopOwnerBody(body *structs.AllShopOwner, logPrefix string) (interface{}, int) {
-
-	if body.IsActive == utils.NULL_STRING {
-		return helper.CreateErrorResponse("400005", "Missing is_active", logPrefix)
-	} else {
-		if body.IsActive != utils.ACTIVE_YES && body.IsActive != utils.ACTIVE_NO && body.IsActive != utils.ALL {
-			return helper.CreateErrorResponse("400006", "Invalid is_active", logPrefix)
-		}
-	}
-
-	return utils.NULL_STRING, utils.StatusOK
-}
-
 func ValidateCustomerReqBody(body *structs.Customer, logPrefix string) (interface{}, int) {
 
 	if body.Name == utils.NULL_STRING {
@@ -443,15 +430,6 @@ func ValidatePostCustomerBillReqBody(body *structs.CustomerBill, logPrefix strin
 	rsp, code = ValidatePaymentReqBody(&body.PaymentDetails, logPrefix)
 	if code != utils.StatusOK {
 		return rsp, code
-	}
-
-	return utils.NULL_STRING, utils.StatusOK
-}
-
-func ValidateGetAllStockReqBody(body *structs.AllStock, logPrefix string) (interface{}, int) {
-
-	if body.Metal != utils.GOLD && body.Metal != utils.SILVER && body.Metal != utils.ALL {
-		return helper.CreateErrorResponse("400006", "Invalid metal", logPrefix)
 	}
 
 	return utils.NULL_STRING, utils.StatusOK

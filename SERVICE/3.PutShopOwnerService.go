@@ -18,7 +18,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 00015] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0013] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer tx.Rollback()
@@ -30,7 +30,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 
 	err = tx.QueryRow(ServiceQuery, reqBody.OwnerName, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &reg_id, &isActive)
 	if err != nil && err != sql.ErrNoRows {
-		return helper.Create500ErrorResponse("[DB ERROR 00016] Error in getting row", "Error in getting row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0014] Error in getting row", "Error in getting row:"+err.Error(), logPrefix)
 	}
 
 	if isActive != utils.NULL_STRING {
@@ -45,7 +45,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 	ServiceQuery = database.UpdateShopOwnerData()
 	_, err = tx.Exec(ServiceQuery, reqBody.ShopName, reqBody.OwnerName, reqBody.GstIN, reqBody.PhoneNo, utils.ACTIVE_YES, reqBody.RegDate, reqBody.Address, reqBody.Remarks, time.Now(), OwnerRegId)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 00017] Error in updating row", "Error in updating row:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 00015] Error in updating row", "Error in updating row:"+err.Error(), logPrefix)
 	} else {
 		response, rspCode = helper.CreateSuccessResponse("Updated Successfully.", "Updated owner with reg_id : "+OwnerRegId, logPrefix)
 	}
@@ -53,7 +53,7 @@ func PutShopOwner(reqBody structs.ShopOwner, OwnerRegId string, logPrefix string
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 00018] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 00016] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Transaction committed")
 	}

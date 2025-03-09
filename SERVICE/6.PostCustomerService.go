@@ -18,13 +18,16 @@ func PostCustomer(reqBody structs.Customer, ownerRegID string, logPrefix string)
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0027] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0025] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 	defer tx.Rollback()
 
 	ownerRowID, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0028] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
+		return helper.Create500ErrorResponse("[DB ERROR 0026] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery := database.CheckCustomerPresent()
@@ -44,7 +47,7 @@ func PostCustomer(reqBody structs.Customer, ownerRegID string, logPrefix string)
 
 		err = tx.QueryRow(ServiceQuery, utils.ACTIVE_YES, ownerRowID, reqBody.Name, reqBody.ShopName, regID, date, reqBody.PhoneNo, reqBody.Address, reqBody.Remarks, reqBody.GstIN, time.Now(), time.Now()).Scan(&rowID)
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0029] Error in inserting row in customer table", "Error inserting customer data:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0027] Error in inserting row in customer table", "Error inserting customer data: "+err.Error(), logPrefix)
 		}
 
 		utils.Logger.Info(logPrefix, "Inserted customer with reg_id:", regID)
@@ -53,13 +56,13 @@ func PostCustomer(reqBody structs.Customer, ownerRegID string, logPrefix string)
 		ServiceQuery = database.InsertCustomerBalanceData()
 		_, err = tx.Exec(ServiceQuery, rowID, utils.NULL_FLOAT, utils.NULL_FLOAT, utils.NULL_FLOAT, time.Now(), time.Now())
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0030] Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0028] Error inserting Shop Owner Balance Data", "Error inserting Shop Owner Balance Data:"+err.Error(), logPrefix)
 		}
 
 		response, rspCode = helper.CreatePostCustomerResponse(regID, "Customer Added Successfully", logPrefix)
 
 	} else if err != nil { // Database error checking for existing customer
-		return helper.Create500ErrorResponse("[DB ERROR 0031] Error in checking row", "Error checking for existing customer:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0029] Error in checking row", "Error checking for existing customer: "+err.Error(), logPrefix)
 	} else { // Existing customer
 		if isActive == utils.ACTIVE_YES {
 			utils.Logger.Info(logPrefix, "Same customer data exists")
@@ -70,7 +73,7 @@ func PostCustomer(reqBody structs.Customer, ownerRegID string, logPrefix string)
 		ServiceQuery = database.UpdateOwnerCustomerData()
 		_, err = tx.Exec(ServiceQuery, utils.ACTIVE_YES, reqBody.Remarks, customerRegID)
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0032] Error in updating active status", "Error updating customer status:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0030] Error in updating active status", "Error updating customer status: "+err.Error(), logPrefix)
 		}
 
 		response, rspCode = helper.CreatePostCustomerResponse(customerRegID, "Customer Activated Successfully", logPrefix)
@@ -79,7 +82,7 @@ func PostCustomer(reqBody structs.Customer, ownerRegID string, logPrefix string)
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0033] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0031] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Transaction committed")
 	}

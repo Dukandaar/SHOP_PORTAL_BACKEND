@@ -18,14 +18,17 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0066] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0067] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
 	}
 	defer tx.Rollback()
 
 	// Get owner row id
 	ownerRowId, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0067] Error getting owner row ID", "Error getting owner row ID: "+err.Error(), logPrefix)
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
+		return helper.Create500ErrorResponse("[DB ERROR 0068] Error getting owner row ID", "Error getting owner row ID: "+err.Error(), logPrefix)
 	}
 
 	ServiceQuery := utils.NULL_STRING
@@ -50,14 +53,14 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404002", "Stock Not Found", logPrefix)
 		}
-		return helper.Create500ErrorResponse("[DB ERROR 0068] Error getting stock", "Error getting stock: "+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0069] Error getting stock", "Error getting stock: "+err.Error(), logPrefix)
 	}
 	defer rows.Close()
 
 	for rows.Next() {
 		err = rows.Scan(&id, &mType, &itemName, &tunch, &weight, &updatedAt)
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0069] Error scanning row", "Error scanning row: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0070] Error scanning row", "Error scanning row: "+err.Error(), logPrefix)
 		}
 
 		stockPayloads = append(stockPayloads, structs.OwnerStockPayloadResponse{
@@ -73,7 +76,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0070] Error committing transaction", "Error committing transaction: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0071] Error committing transaction", "Error committing transaction: "+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Transaction committed successfully")
 

@@ -4,6 +4,7 @@ import (
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"database/sql"
 )
 
 func GetAllOwnerBill(ownerRegId string, logPrefix string) (interface{}, int) {
@@ -22,6 +23,9 @@ func GetAllOwnerBill(ownerRegId string, logPrefix string) (interface{}, int) {
 
 	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
 		return helper.Create500ErrorResponse("[DB ERROR 0134] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 

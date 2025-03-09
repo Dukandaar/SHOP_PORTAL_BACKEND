@@ -23,6 +23,9 @@ func GetPreviousBillNo(ownerRegID string, logPrefix string) (interface{}, int) {
 
 	ownerRowId, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
 		return helper.Create500ErrorResponse("[DB ERROR 0137] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
