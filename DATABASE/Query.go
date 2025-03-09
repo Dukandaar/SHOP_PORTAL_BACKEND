@@ -747,6 +747,22 @@ func GetAllStock() string {
 	return query
 }
 
+func GetAllStock1() string {
+	query := `
+		SELECT
+			id,
+			item_name,
+			tunch,
+			weight,
+			updated_at
+		FROM
+			shop.stock
+		WHERE
+			owner_id = $1 and is_active = 'Y';
+	`
+	return query
+}
+
 func GetStockHistory() string {
 	query := `
 		SELECT

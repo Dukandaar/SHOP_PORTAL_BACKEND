@@ -27,7 +27,7 @@ func GetAllStock(ctx iris.Context) {
 			if rspCode == utils.StatusOK {
 				response, rspCode = validator.ValidateGetAllStockReqBody(&reqBody, logPrefix)
 				if rspCode == utils.StatusOK {
-					response, rspCode = service.GetAllStock(reqBody.Type, ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
+					response, rspCode = service.GetAllStock(reqBody.Metal, ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
 				}
 			}
 		}
