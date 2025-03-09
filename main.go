@@ -160,6 +160,12 @@ func main() {
 		controller.GetPreviousBillNo(ctx)
 	})
 
+	// api to delete stock
+	app.Delete("shop/deleteStock", func(ctx iris.Context) {
+		helper.SetApiName(util.DELETE_STOCK, ctx)
+		controller.DeleteStock(ctx)
+	})
+
 	// Start the server on port 8000
 	// err := app.Listen(":8000")
 	// if err != nil {
