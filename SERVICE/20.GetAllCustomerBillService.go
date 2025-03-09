@@ -59,7 +59,7 @@ func GetAllCustomerBill(ownerRegId string, customerRegId string, logPrefix strin
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0131] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0132] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		response = result
 		utils.Logger.Info(logPrefix, "Transaction committed")

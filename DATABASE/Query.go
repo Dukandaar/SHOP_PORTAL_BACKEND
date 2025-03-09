@@ -1035,3 +1035,17 @@ func GetPreviousBillNo() string {
 	`
 	return query
 }
+
+func DeleteStock() string {
+	query := `
+		UPDATE 
+			shop.stock
+		SET
+			is_active = 'N'
+		WHERE
+			id = $1 and owner_id = $2
+		RETURNING 
+			item_name
+	`
+	return query
+}

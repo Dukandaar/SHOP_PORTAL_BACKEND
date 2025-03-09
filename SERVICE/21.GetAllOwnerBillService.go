@@ -15,14 +15,14 @@ func GetAllOwnerBill(ownerRegId string, logPrefix string) (interface{}, int) {
 
 	tx, err := Db.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0131] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0133] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer tx.Rollback()
 
 	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0132] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0134] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	result, response, rspCode := helper.AllBill(ownerRowId, utils.NULL_INT, tx, logPrefix)
@@ -32,7 +32,7 @@ func GetAllOwnerBill(ownerRegId string, logPrefix string) (interface{}, int) {
 
 	err = tx.Commit()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0133] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0135] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 	}
 
 	return result, rspCode
