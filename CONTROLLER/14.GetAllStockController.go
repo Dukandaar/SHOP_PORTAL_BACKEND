@@ -1,7 +1,6 @@
 package controller
 
 import (
-	helper "SHOP_PORTAL_BACKEND/HELPER"
 	service "SHOP_PORTAL_BACKEND/SERVICE"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	validator "SHOP_PORTAL_BACKEND/VALIDATOR"
@@ -17,18 +16,14 @@ func GetAllStock(ctx iris.Context) {
 
 	headers := utils.ReadHeader(ctx)
 	qparams := utils.ReadQParams(ctx)
-	reqBody, response, rspCode := utils.ReadGetAllStockReqBody(ctx, logPrefix, helper.CreateErrorResponse)
-	utils.LogRequest(logPrefix, ctx, reqBody)
+	utils.LogRequest(logPrefix, ctx, response)
 
 	if rspCode == utils.StatusOK {
 		response, rspCode = validator.ValidateHeader(utils.GetAllStockHeaders, headers, ctx, logPrefix)
 		if rspCode == utils.StatusOK {
 			response, rspCode = validator.ValidateQParams(utils.GetAllStockQParams, qparams, logPrefix)
 			if rspCode == utils.StatusOK {
-				response, rspCode = validator.ValidateGetAllStockReqBody(&reqBody, logPrefix)
-				if rspCode == utils.StatusOK {
-					response, rspCode = service.GetAllStock(reqBody.Metal, ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
-				}
+				response, rspCode = service.GetAllStock(ctx.URLParam(utils.METAL_TYPE), ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
 			}
 		}
 	}

@@ -53,17 +53,6 @@ func ReadShopOwnerReqBody(ctx iris.Context, logPrefix string, CreateErrorRespons
 	return body, response, rspCode
 }
 
-func ReadAllShopOwnerBody(ctx iris.Context, logPrefix string, CreateErrorResponse func(string, string, string) (structs.ErrorResponse, int)) (structs.AllShopOwner, interface{}, int) {
-	body := structs.AllShopOwner{}
-	var response interface{}
-	var rspCode = StatusOK
-	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
-	if err != nil {
-		response, rspCode = CreateErrorResponse("400008", "Error in decoding request body", logPrefix)
-	}
-	return body, response, rspCode
-}
-
 func ReadCustomerReqBody(ctx iris.Context, logPrefix string, CreateErrorResponse func(string, string, string) (structs.ErrorResponse, int)) (structs.Customer, interface{}, int) {
 	body := structs.Customer{}
 	var response interface{}
@@ -110,17 +99,6 @@ func ReadPutStockReqBody(ctx iris.Context, logPrefix string, CreateErrorResponse
 
 func ReadCustomerBillReqBody(ctx iris.Context, logPrefix string, CreateErrorResponse func(string, string, string) (structs.ErrorResponse, int)) (structs.CustomerBill, interface{}, int) {
 	body := structs.CustomerBill{}
-	var response interface{}
-	var rspCode = StatusOK
-	err := json.NewDecoder(ctx.Request().Body).Decode(&body)
-	if err != nil {
-		response, rspCode = CreateErrorResponse("400008", "Error in decoding request body", logPrefix)
-	}
-	return body, response, rspCode
-}
-
-func ReadGetAllStockReqBody(ctx iris.Context, logPrefix string, CreateErrorResponse func(string, string, string) (structs.ErrorResponse, int)) (structs.AllStock, interface{}, int) {
-	body := structs.AllStock{}
 	var response interface{}
 	var rspCode = StatusOK
 	err := json.NewDecoder(ctx.Request().Body).Decode(&body)

@@ -6,6 +6,7 @@ import (
 	utils "SHOP_PORTAL_BACKEND/UTILS"
 	"database/sql"
 	"fmt"
+	"strconv"
 )
 
 func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interface{}, logPrefix string) (interface{}, int) {
@@ -29,6 +30,9 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				return helper.CreateErrorResponse("404001", "Owner for reg_id "+regId+" does not exist", logPrefix)
+			}
 			errMsg := fmt.Sprintf("[DB ERROR 0001] Error in checking if owner with reg_id %s exists", regId)
 			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}
@@ -58,6 +62,9 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, regId).Scan(&exists)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				return helper.CreateErrorResponse("404001", "Customer for reg_id "+regId+" does not exist", logPrefix)
+			}
 			errMsg := fmt.Sprintf("[DB ERROR 0002] Error in checking if customer with reg_id %s exists", regId)
 			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}
@@ -76,21 +83,37 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 			return helper.CreateErrorResponse("400003", "Missing stock_id", logPrefix)
 		}
 
-		stockId, _ := apiQParams[utils.STOCK_ID].(string)
+		stockIdStr, ok := apiQParams[utils.STOCK_ID].(string)
+		if !ok {
+			return helper.CreateErrorResponse("400003", "Missing stock_id", logPrefix)
+		}
+
+		if stockIdStr == utils.NULL_STRING {
+			return helper.CreateErrorResponse("400003", "Missing stock_id", logPrefix)
+		}
+
+		stockID, err := strconv.Atoi(stockIdStr)
+		if err != nil {
+			return helper.CreateErrorResponse("400004", "Invalid stock_id, must be an integer", logPrefix)
+		}
+
+		if stockID <= 0 || stockID > 9999999999 {
+			return helper.CreateErrorResponse("400004", "Invalid stock_id value range", logPrefix)
+		}
 
 		ServiceQuery := database.CheckValidStockId()
 		var exists bool
-		err := DB.QueryRow(ServiceQuery, stockId).Scan(&exists)
+		err = DB.QueryRow(ServiceQuery, stockID).Scan(&exists)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				return helper.CreateErrorResponse("404001", "Stock ID does not exist", logPrefix)
 			}
-			errMsg := fmt.Sprintf("[DB ERROR 0003] Error in checking if row with stock_id %s exists", stockId)
+			errMsg := fmt.Sprintf("[DB ERROR 0003] Error in checking if row with stock_id %v exists", stockID)
 			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}
 
 		if exists {
-			utils.Logger.Info(logPrefix, "Row with stock_id : ", stockId, " exists")
+			utils.Logger.Info(logPrefix, "Row with stock_id : ", stockID, " exists")
 		} else {
 			return helper.CreateErrorResponse("404001", "Stock ID does not exist", logPrefix)
 		}
@@ -109,6 +132,9 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, billId).Scan(&exists)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				return helper.CreateErrorResponse("404001", "Bill ID does not exist", logPrefix)
+			}
 			errMsg := fmt.Sprintf("[DB ERROR 0004] Error in checking if row with bill_id %s exists", billId)
 			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}
@@ -117,6 +143,40 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 			utils.Logger.Info(logPrefix, "Row with bill_id : ", billId, " exists")
 		} else {
 			return helper.CreateErrorResponse("404001", "Bill ID does not exist", logPrefix)
+		}
+	}
+
+	// is_Active
+	if reqApiQParams[utils.IS_ACTIVE] {
+
+		if apiQParams[utils.IS_ACTIVE] == utils.NULL_STRING {
+			return helper.CreateErrorResponse("400003", "Missing is_active", logPrefix)
+		}
+
+		isActive, ok := apiQParams[utils.IS_ACTIVE].(string)
+		if !ok {
+			return helper.CreateErrorResponse("400003", "Missing is_active", logPrefix)
+		}
+
+		if isActive != utils.ACTIVE_YES && isActive != utils.ACTIVE_NO && isActive != utils.ALL {
+			return helper.CreateErrorResponse("400004", "Invalid is_active", logPrefix)
+		}
+	}
+
+	// metal_type
+	if reqApiQParams[utils.METAL_TYPE] {
+
+		if apiQParams[utils.METAL_TYPE] == utils.NULL_STRING {
+			return helper.CreateErrorResponse("400003", "Missing metal_type", logPrefix)
+		}
+
+		metalType, ok := apiQParams[utils.METAL_TYPE].(string)
+		if !ok {
+			return helper.CreateErrorResponse("400003", "Missing metal_type", logPrefix)
+		}
+
+		if metalType != utils.GOLD && metalType != utils.SILVER && metalType != utils.ALL {
+			return helper.CreateErrorResponse("400004", "Invalid metal_type", logPrefix)
 		}
 	}
 

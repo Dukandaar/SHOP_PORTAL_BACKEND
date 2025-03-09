@@ -32,7 +32,7 @@ func GetShopOwner(ownerRegID string, logPrefix string) (interface{}, int) {
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0019] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0017] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer tx.Rollback()
@@ -43,7 +43,7 @@ func GetShopOwner(ownerRegID string, logPrefix string) (interface{}, int) {
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Data for owner reg_id "+ownerRegID+" does not exist", logPrefix)
 		} else {
-			return helper.Create500ErrorResponse("[DB ERROR 0020] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0018] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
 		}
 	}
 
@@ -53,7 +53,7 @@ func GetShopOwner(ownerRegID string, logPrefix string) (interface{}, int) {
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Bill count data for owner reg_id "+ownerRegID+" does not exist", logPrefix)
 		} else {
-			return helper.Create500ErrorResponse("[DB ERROR 00021] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0019] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
 		}
 	}
 
@@ -61,7 +61,7 @@ func GetShopOwner(ownerRegID string, logPrefix string) (interface{}, int) {
 
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0022] Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0020] Error in committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		response = structs.GetShopOwnerResponse{
 			Response: structs.GetShopOwnerSubResponse{

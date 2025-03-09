@@ -8,7 +8,7 @@ import (
 	"database/sql"
 )
 
-func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
+func GetAllCustomer(owner_reg_id string, is_active string, logPrefix string) (interface{}, int) {
 
 	var response interface{}
 	rspCode := utils.StatusOK
@@ -32,24 +32,36 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0043] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0041] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 	defer tx.Rollback()
 
 	ownerRowId, err := helper.GetOwnerId(owner_reg_id, tx)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0044] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
+		return helper.Create500ErrorResponse("[DB ERROR 0042] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
-	ServiceQuery := database.GetAllCustomerData()
-	rows, err := tx.Query(ServiceQuery, ownerRowId)
+	var ServiceQuery string
+	var rows *sql.Rows
+
+	if is_active == utils.ACTIVE_YES || is_active == utils.ACTIVE_NO {
+		ServiceQuery := database.GetAllCustomerData1()
+		rows, err = tx.Query(ServiceQuery, ownerRowId, is_active)
+	} else {
+		ServiceQuery = database.GetAllCustomerData()
+		rows, err = tx.Query(ServiceQuery, ownerRowId)
+	}
+
 	if err == nil {
 		for rows.Next() {
 
 			err = rows.Scan(&shopName, &name, &GstIN, &regId, &phoneNo, &regDate, &isActive, &address, &remarks, &gold, &silver, &cash)
 			if err != nil {
 				utils.Logger.Error(err.Error())
-				return helper.Create500ErrorResponse("[DB ERROR 0045] Error in getting rows", "Error in getting rows: "+err.Error(), logPrefix)
+				return helper.Create500ErrorResponse("[DB ERROR 0043] Error in getting rows", "Error in getting rows: "+err.Error(), logPrefix)
 			} else {
 
 				customerPayload = append(customerPayload, structs.GetCustomerPayloadResponse{
@@ -72,14 +84,14 @@ func GetAllCustomer(owner_reg_id string, logPrefix string) (interface{}, int) {
 		if err == sql.ErrNoRows {
 			return helper.CreateSuccessResponse("No any customer found", "No customer found for owner reg id : "+owner_reg_id, logPrefix)
 		} else {
-			return helper.Create500ErrorResponse("[DB ERROR 0046] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0044] Error in getting rows", "Error in getting rows:"+err.Error(), logPrefix)
 		}
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0047] Error in committing transaction", "Error in committing transaction: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0045] Error in committing transaction", "Error in committing transaction: "+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix + "Transaction committed successfully")
 		response, rspCode = helper.CreateGetAllCustomerResponse(customerPayload, "All Customer found successfully for owner with regId : "+owner_reg_id, logPrefix)

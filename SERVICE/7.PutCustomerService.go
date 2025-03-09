@@ -17,14 +17,17 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 
 	tx, err := DB.Begin() // Start transaction
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0034] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0032] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer tx.Rollback()
 
 	ownerRowId, err := helper.GetOwnerId(OwnerRegId, tx)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0035] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
+		return helper.Create500ErrorResponse("[DB ERROR 0033] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	// Check if customer exists with same name, shopname and phone no
@@ -36,7 +39,7 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Name, reqBody.ShopName, reqBody.PhoneNo).Scan(&rowId, &isActive, &customer_reg_id)
 	if err != nil {
 		if err != sql.ErrNoRows {
-			return helper.Create500ErrorResponse("[DB ERROR 0036] Error in checking customer", "Error in checking customer:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0034] Error in checking customer", "Error in checking customer:"+err.Error(), logPrefix)
 		}
 	}
 
@@ -52,13 +55,13 @@ func PutCustomer(reqBody structs.Customer, OwnerRegId string, CustomerRegId stri
 	ServiceQuery = database.UpdateCustomerData()
 	_, err = tx.Exec(ServiceQuery, reqBody.Name, reqBody.ShopName, reqBody.GstIN, reqBody.RegDate, reqBody.PhoneNo, utils.ACTIVE_YES, reqBody.Address, time.Now(), CustomerRegId)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0037] Error updating customer", "Error updating customer:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0035] Error updating customer", "Error updating customer:"+err.Error(), logPrefix)
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0038] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0036] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		utils.Logger.Info(logPrefix, "Transaction committed")
 		response, rspCode = helper.CreateSuccessResponse("Customer updated successfully", "Customer with reg_id "+CustomerRegId+" updated successfully", logPrefix)

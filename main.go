@@ -101,7 +101,7 @@ func main() {
 	})
 
 	// get all stock details
-	app.Post("shop/getAllStock", func(ctx iris.Context) {
+	app.Get("shop/getAllStock", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_ALL_STOCK, ctx)
 		controller.GetAllStock(ctx)
 	})

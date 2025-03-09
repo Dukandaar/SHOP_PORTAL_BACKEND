@@ -17,18 +17,20 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0052] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0051] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
 	}
 
 	defer tx.Rollback()
 
 	ownerRowId, err := helper.GetOwnerId(ownerRegId, tx) // Get ownerRowId
 	if err != nil {
-		return helper.Create500ErrorResponse("Error in getting row", "Error getting owner row ID: "+err.Error(), logPrefix)
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
+		return helper.Create500ErrorResponse("[DB ERROR 0052] Error in getting row", "Error getting owner row ID: "+err.Error(), logPrefix)
 	}
 
 	// check stock with same item_name
-
 	ServiceQuery := database.CheckStockPresent() // tunch validation not added now : todo
 	var rowId int
 	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Type, reqBody.ItemName).Scan(&rowId)
@@ -40,20 +42,20 @@ func PostStock(reqBody structs.PostStock, ownerRegId string, logPrefix string) (
 		}
 	}
 
-	if rowId > 0 { // Stock found
+	if rowId != utils.NULL_INT { // Stock found
 		return helper.CreateErrorResponse("400009", "Stock with same item name, type already present", logPrefix)
 	}
 
 	// insert stock
 	var id int
 	ServiceQuery = database.InsertStockData()
-	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Type, reqBody.ItemName, reqBody.Tunch, reqBody.Weight, time.Now(), time.Now()).Scan(&id)
+	err = tx.QueryRow(ServiceQuery, ownerRowId, reqBody.Type, reqBody.ItemName, reqBody.Tunch, reqBody.Weight, utils.ACTIVE_YES, time.Now(), time.Now()).Scan(&id)
 	if err != nil {
 		return helper.Create500ErrorResponse("[DB ERROR 0054] Error in inserting row", "Error in inserting row:"+err.Error(), logPrefix)
 	}
 	utils.Logger.Info(logPrefix, "Stock added successfully")
 
-	// insert data in stock history
+	// insert initial data in stock history
 	ServiceQuery = database.InsertStockHistoryData()
 	_, err = tx.Exec(ServiceQuery, id, utils.NULL_FLOAT, reqBody.Weight, utils.BUY, "Initial Stock", time.Now())
 	if err != nil {

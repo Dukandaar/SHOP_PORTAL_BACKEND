@@ -28,13 +28,16 @@ func GetCustomer(ownerRegID string, customerRegID string, logPrefix string) (int
 
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0039] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0037] Error starting transaction", "Error starting transaction: "+err.Error(), logPrefix)
 	}
 	defer tx.Rollback()
 
 	ownerRowID, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0040] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner not found", logPrefix)
+		}
+		return helper.Create500ErrorResponse("[DB ERROR 0038] Error getting owner row ID", "Error getting owner row ID: "+err.Error(), logPrefix)
 	}
 
 	serviceQuery := database.GetCustomerData()
@@ -43,14 +46,14 @@ func GetCustomer(ownerRegID string, customerRegID string, logPrefix string) (int
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Data for reg_id "+customerRegID+" does not exist", logPrefix)
 		} else {
-			return helper.Create500ErrorResponse("[DB ERROR 0041] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0039] Error in getting row", "Error in getting row: "+err.Error(), logPrefix)
 		}
 	}
 
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0042] Error committing transaction", "Error committing transaction: "+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0040] Error committing transaction", "Error committing transaction: "+err.Error(), logPrefix)
 		}
 
 		customerPayload := structs.GetCustomerPayloadResponse{

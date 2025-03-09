@@ -18,14 +18,17 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	// Start transaction
 	tx, err := DB.Begin()
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0048] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0046] Error starting transaction", "Error starting transaction:"+err.Error(), logPrefix)
 	}
 
 	defer tx.Rollback()
 
 	ownerRowID, err := helper.GetOwnerId(ownerRegID, tx)
 	if err != nil {
-		return helper.Create500ErrorResponse("[DB ERROR 0049] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
+		if err == sql.ErrNoRows {
+			return helper.CreateErrorResponse("404001", "Owner Not Found", logPrefix)
+		}
+		return helper.Create500ErrorResponse("[DB ERROR 0047] Error getting owner row ID", "Error getting owner row ID:"+err.Error(), logPrefix)
 	}
 
 	ServiceQuery := database.GetFilteredCustomerData(reqBody)
@@ -34,7 +37,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404001", "Customer Not Found", logPrefix)
 		}
-		return helper.Create500ErrorResponse("[DB ERROR 0050] Error in getting filtered rows", "Error in getting filtered rows: "+err.Error(), logPrefix)
+		return helper.Create500ErrorResponse("[DB ERROR 0048] Error in getting filtered rows", "Error in getting filtered rows: "+err.Error(), logPrefix)
 	}
 
 	customerPayload := make([]structs.GetCustomerPayloadResponse, 0)
@@ -53,9 +56,7 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 		var isActive string
 		err = rows.Scan(&shopName, &name, &GstIN, &regId, &regDate, &phoneNo, &isActive, &address, &remarks, &gold, &silver, &cash)
 		if err != nil {
-			utils.Logger.Error(err.Error())
-			response, rspCode = helper.CreateErrorResponse("500001", "Error in getting filtered rows", logPrefix)
-			return response, rspCode
+			return helper.Create500ErrorResponse("[DB ERROR 0049] Error scanning rows", "Error scanning rows: "+err.Error(), logPrefix)
 		}
 		customerPayload = append(customerPayload, structs.GetCustomerPayloadResponse{
 			ShopName: shopName,
@@ -76,14 +77,14 @@ func GetFilteredCustomer(reqBody structs.FilteredCustomer, ownerRegID string, lo
 	if rspCode == utils.StatusOK {
 		err = tx.Commit()
 		if err != nil {
-			return helper.Create500ErrorResponse("[DB ERROR 0051] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
+			return helper.Create500ErrorResponse("[DB ERROR 0050] Error committing transaction", "Error committing transaction:"+err.Error(), logPrefix)
 		}
 		response = structs.GetAllCustomerResponse{
 			Response: structs.GetAllCustomerSubResponse{
 				Stat:        "OK",
 				Count:       len(customerPayload),
 				Payload:     customerPayload,
-				Description: "All Customers Fetched Successfully",
+				Description: "All Filtered Customers Fetched Successfully",
 			},
 		}
 	}

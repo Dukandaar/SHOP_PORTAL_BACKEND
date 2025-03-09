@@ -1,5 +1,6 @@
 package structs
 
+// Error Response
 type ErrorResponse struct {
 	Response ErrorSubResponse `json:"rsp"`
 }
@@ -15,6 +16,7 @@ type ErrorPayloadResponse struct {
 	Message string `json:"msg"`
 }
 
+// Success Response
 type SuccessResponse struct {
 	Response SuccessSubResponse `json:"rsp"`
 }
@@ -235,75 +237,6 @@ type CustomerPreviousBalancePayloadResponse struct {
 	Gold   float64 `json:"gold"`
 	Silver float64 `json:"silver"`
 	Cash   float64 `json:"cash"`
-}
-
-type SuccessIdResponse struct {
-	Stat               string               `json:"stat"`
-	SuccessSubResponse SuccessIdSubResponse `json:"rsp"`
-}
-
-type SuccessIdSubResponse struct {
-	SuccessMsg string `json:"msg"`
-	Id         int    `json:"id"`
-}
-
-type SuccessRegIdSubResponse struct {
-	SuccessMsg string `json:"msg"`
-	RegId      string `json:"reg_id"`
-}
-
-type ShopOwnerDetailsResponse struct {
-	Stat                        string                      `json:"stat"`
-	ShopOwnerDetailsSubResponse ShopOwnerDetailsSubResponse `json:"rsp"`
-}
-
-type ShopOwnerDetailsSubResponse struct {
-	ShopName  string  `json:"shop_name"`
-	OwnerName string  `json:"owner_name"`
-	GstIN     string  `json:"gst_in"`
-	PhoneNo   string  `json:"phone_no"`
-	RegDate   string  `json:"reg_date"`
-	Address   string  `json:"address"`
-	Remarks   string  `json:"remarks"`
-	Gold      float64 `json:"gold"`
-	Silver    float64 `json:"silver"`
-	Cash      float64 `json:"cash"`
-	IsActive  string  `json:"is_active"`
-	BillCount int     `json:"bill_count"`
-}
-
-type AllShopOwnerDetailsResponse struct {
-	Stat                           string                        `json:"stat"`
-	Count                          int                           `json:"count"`
-	AllShopOwnerDetailsSubResponse []ShopOwnerDetailsSubResponse `json:"rsp"`
-}
-
-type CustomerDetailsResponse struct {
-	Stat                       string                     `json:"stat"`
-	Count                      int                        `json:"count"`
-	CustomerDetailsSubResponse CustomerDetailsSubResponse `json:"rsp"`
-}
-
-type AllCustomerDetailsResponse struct {
-	Stat                       string                       `json:"stat"`
-	Count                      int                          `json:"count"`
-	CustomerDetailsSubResponse []CustomerDetailsSubResponse `json:"rsp"`
-}
-
-type CustomerDetailsSubResponse struct {
-	Name      string  `json:"name"`
-	ShopName  string  `json:"shop_name"`
-	GstIN     string  `json:"gst_in"`
-	RegId     string  `json:"reg_id"`
-	PhoneNo   string  `json:"phone_no"`
-	RegDate   string  `json:"reg_date"`
-	Address   string  `json:"address"`
-	Remarks   string  `json:"remarks"`
-	Gold      float64 `json:"gold"`
-	Silver    float64 `json:"silver"`
-	Cash      float64 `json:"cash"`
-	IsActive  string  `json:"isActive"`
-	BillCount int     `json:"bill_count"`
 }
 
 type TransactionResponse struct {

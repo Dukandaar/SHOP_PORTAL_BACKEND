@@ -23,7 +23,7 @@ func GetAllCustomer(ctx iris.Context) {
 		if rspCode == utils.StatusOK {
 			response, rspCode = validator.ValidateQParams(utils.GetAllCustomerQParams, qparams, logPrefix)
 			if rspCode == utils.StatusOK {
-				response, rspCode = service.GetAllCustomer(ctx.URLParam(utils.OWNER_REG_ID), logPrefix)
+				response, rspCode = service.GetAllCustomer(ctx.URLParam(utils.OWNER_REG_ID), ctx.URLParam(utils.IS_ACTIVE), logPrefix)
 			}
 		}
 	}
