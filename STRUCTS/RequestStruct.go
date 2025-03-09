@@ -112,5 +112,5 @@ type CustomerBill struct {
 }
 
 type AllStock struct {
-	Type string `json:"type"`
+	Metal string `json:"metal"`
 }

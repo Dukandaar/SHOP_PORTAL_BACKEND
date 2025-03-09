@@ -28,19 +28,27 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 		return helper.Create500ErrorResponse("[DB ERROR 0067] Error getting owner row ID", "Error getting owner row ID: "+err.Error(), logPrefix)
 	}
 
-	ServiceQuery := database.GetAllStock()
+	ServiceQuery := utils.NULL_STRING
+	var rows *sql.Rows
+
+	if metalType != utils.ALL {
+		ServiceQuery = database.GetAllStock()
+		rows, err = tx.Query(ServiceQuery, ownerRowId, metalType)
+	} else {
+		ServiceQuery = database.GetAllStock1()
+		rows, err = tx.Query(ServiceQuery, ownerRowId)
+	}
+
 	var id int
 	var itemName string
-	var tunch float64
-	var weight float64
+	var tunch sql.NullFloat64
+	var weight sql.NullFloat64
 	var updatedAt string
 
-	rows, err := tx.Query(ServiceQuery, ownerRowId, metalType)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return helper.CreateErrorResponse("404002", "Stock Not Found", logPrefix)
 		}
-		utils.Logger.Error(err.Error())
 		return helper.Create500ErrorResponse("[DB ERROR 0068] Error getting stock", "Error getting stock: "+err.Error(), logPrefix)
 	}
 	defer rows.Close()
@@ -48,15 +56,14 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	for rows.Next() {
 		err = rows.Scan(&id, &itemName, &tunch, &weight, &updatedAt)
 		if err != nil {
-			utils.Logger.Error(err.Error())
 			return helper.Create500ErrorResponse("[DB ERROR 0069] Error scanning row", "Error scanning row: "+err.Error(), logPrefix)
 		}
 
 		stockPayloads = append(stockPayloads, structs.OwnerStockPayloadResponse{
 			Id:        id,
 			ItemName:  itemName,
-			Tunch:     tunch,
-			Weight:    weight,
+			Tunch:     tunch.Float64,
+			Weight:    weight.Float64,
 			UpdatedAt: updatedAt,
 		})
 	}

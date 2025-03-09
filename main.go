@@ -4,6 +4,7 @@ import (
 	controller "SHOP_PORTAL_BACKEND/CONTROLLER"
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	util "SHOP_PORTAL_BACKEND/UTILS"
+	"fmt"
 
 	"github.com/kataras/iris/v12"
 )
@@ -100,7 +101,7 @@ func main() {
 	})
 
 	// get all stock details
-	app.Get("shop/getAllStock", func(ctx iris.Context) {
+	app.Post("shop/getAllStock", func(ctx iris.Context) {
 		helper.SetApiName(util.GET_ALL_STOCK, ctx)
 		controller.GetAllStock(ctx)
 	})
@@ -160,17 +161,17 @@ func main() {
 	})
 
 	// Start the server on port 8000
-	err := app.Listen(":8000")
-	if err != nil {
-		app.Logger().Fatal(err)
-	}
-
-	// port := "8000"
-	// addr := "0.0.0.0:" + port // Bind to 0.0.0.0
-	// fmt.Println("Server listening on:", addr)
-
-	// err := app.Listen(addr) // Start the Iris server
+	// err := app.Listen(":8000")
 	// if err != nil {
-	// 	fmt.Println("Error starting server:", err)
+	// 	app.Logger().Fatal(err)
 	// }
+
+	port := "8000"
+	addr := "0.0.0.0:" + port // Bind to 0.0.0.0
+	fmt.Println("Server listening on:", addr)
+
+	err := app.Listen(addr) // Start the Iris server
+	if err != nil {
+		fmt.Println("Error starting server:", err)
+	}
 }

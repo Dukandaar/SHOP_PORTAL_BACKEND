@@ -450,12 +450,8 @@ func ValidatePostCustomerBillReqBody(body *structs.CustomerBill, logPrefix strin
 
 func ValidateGetAllStockReqBody(body *structs.AllStock, logPrefix string) (interface{}, int) {
 
-	if body.Type == utils.NULL_STRING {
-		return helper.CreateErrorResponse("400005", "Missing type", logPrefix)
-	}
-
-	if body.Type != utils.GOLD && body.Type != utils.SILVER && body.Type != utils.ALL {
-		return helper.CreateErrorResponse("400006", "Invalid type", logPrefix)
+	if body.Metal != utils.GOLD && body.Metal != utils.SILVER && body.Metal != utils.ALL {
+		return helper.CreateErrorResponse("400006", "Invalid metal", logPrefix)
 	}
 
 	return utils.NULL_STRING, utils.StatusOK

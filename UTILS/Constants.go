@@ -38,7 +38,7 @@ const (
 	OK          = "OK"
 	ACTIVE_YES  = "Y"
 	ACTIVE_NO   = "N"
-	ALL         = "ALL"
+	ALL         = "All"
 	SUCCESS     = "200000"
 	GOLD        = "Gold"
 	SILVER      = "Silver"
