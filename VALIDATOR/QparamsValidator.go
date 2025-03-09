@@ -4,6 +4,7 @@ import (
 	database "SHOP_PORTAL_BACKEND/DATABASE"
 	helper "SHOP_PORTAL_BACKEND/HELPER"
 	utils "SHOP_PORTAL_BACKEND/UTILS"
+	"database/sql"
 	"fmt"
 )
 
@@ -81,6 +82,9 @@ func ValidateQParams(reqApiQParams map[string]bool, apiQParams map[string]interf
 		var exists bool
 		err := DB.QueryRow(ServiceQuery, stockId).Scan(&exists)
 		if err != nil {
+			if err == sql.ErrNoRows {
+				return helper.CreateErrorResponse("404001", "Stock ID does not exist", logPrefix)
+			}
 			errMsg := fmt.Sprintf("[DB ERROR 0003] Error in checking if row with stock_id %s exists", stockId)
 			return helper.Create500ErrorResponse(errMsg, err.Error(), logPrefix)
 		}

@@ -179,6 +179,7 @@ type OwnerStockSubResponse struct {
 
 type OwnerStockPayloadResponse struct {
 	Id        int     `json:"id"`
+	Type      string  `json:"type"`
 	ItemName  string  `json:"item_name"`
 	Tunch     float64 `json:"tunch"`
 	Weight    float64 `json:"weight"`

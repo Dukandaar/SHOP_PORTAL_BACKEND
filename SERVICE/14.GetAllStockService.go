@@ -40,6 +40,7 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	}
 
 	var id int
+	var mType string
 	var itemName string
 	var tunch sql.NullFloat64
 	var weight sql.NullFloat64
@@ -54,13 +55,14 @@ func GetAllStock(metalType string, ownerRegID string, logPrefix string) (interfa
 	defer rows.Close()
 
 	for rows.Next() {
-		err = rows.Scan(&id, &itemName, &tunch, &weight, &updatedAt)
+		err = rows.Scan(&id, &mType, &itemName, &tunch, &weight, &updatedAt)
 		if err != nil {
 			return helper.Create500ErrorResponse("[DB ERROR 0069] Error scanning row", "Error scanning row: "+err.Error(), logPrefix)
 		}
 
 		stockPayloads = append(stockPayloads, structs.OwnerStockPayloadResponse{
 			Id:        id,
+			Type:      mType,
 			ItemName:  itemName,
 			Tunch:     tunch.Float64,
 			Weight:    weight.Float64,

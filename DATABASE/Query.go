@@ -735,6 +735,7 @@ func GetAllStock() string {
 	query := `
 		SELECT
 			id,
+			type,
 			item_name,
 			tunch,
 			weight,
@@ -751,6 +752,7 @@ func GetAllStock1() string {
 	query := `
 		SELECT
 			id,
+			type,
 			item_name,
 			tunch,
 			weight,
